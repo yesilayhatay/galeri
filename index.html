@@ -64,14 +64,13 @@
     </main>
 
     <script>
-       const CLOUD_NAME = "yesilay-hatay";
-const TAG_NAME = "yesilay-hatay"; // Burayı Cloudinary'de verdiğiniz etiketle aynı yaptık
+        const CLOUD_NAME = "yesilay-hatay";
+        const TAG_NAME = "yesilay-hatay";
+        let tumMedyaVerileri = [];
 
         async function cloudinaryVerileriniCek() {
             const galleryGrid = document.getElementById("galleryGrid");
-            
-            // Etiket şartı olmaksızın en son yüklenen tüm görselleri çeker
-            const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/v${Date.now()}.json`;
+            const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG_NAME}.json`;
 
             try {
                 const response = await fetch(url);
@@ -81,7 +80,6 @@ const TAG_NAME = "yesilay-hatay"; // Burayı Cloudinary'de verdiğiniz etiketle 
                 
                 tumMedyaVerileri = data.resources.map(item => {
                     const pathParts = item.public_id.split('/');
-                    // Klasör adını otomatik Kategori yapar (örn: etkinlikler/foto1.jpg -> ETKİNLİKLER)
                     const kategori = pathParts.length > 1 ? pathParts[0].toUpperCase() : "GENEL";
                     const isVideo = item.format === 'mp4' || item.resource_type === 'video';
 
@@ -100,7 +98,7 @@ const TAG_NAME = "yesilay-hatay"; // Burayı Cloudinary'de verdiğiniz etiketle 
                 galleryGrid.innerHTML = `
                     <div class="error-text">
                         <p style="color:red;"><strong>İçerikler Çekilemedi!</strong></p>
-                        <p style="font-size:0.9rem; margin-top:10px;">Cloudinary panelinde görsellerin bulunduğu klasör isimlerini kontrol edin veya doğrudan yükleme yapıldığından emin olun.</p>
+                        <p style="font-size:0.9rem; margin-top:10px;">Cloudinary tarafında "yesilay-hatay" etiketinin kaydedildiğinden emin olun.</p>
                     </div>`;
             }
         }
