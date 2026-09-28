@@ -182,6 +182,19 @@
         let startY = 0;
         let initialPinchDist = 0;
 
+        // Sayaçları LocalStorage'da saklama ve yönetme fonksiyonları
+        function sayacGetir(id, tip) {
+            const key = `yesilay_stats_${id}_${tip}`;
+            return parseInt(localStorage.getItem(key) || '0', 10);
+        }
+
+        function sayacArtir(id, tip) {
+            const key = `yesilay_stats_${id}_${tip}`;
+            let val = sayacGetir(id, tip) + 1;
+            localStorage.setItem(key, val);
+            return val;
+        }
+
         function toSlug(str) {
             if (!str) return '';
             return str.toString().trim()
@@ -246,9 +259,11 @@
                     
                     const etiketler = otomatıkEtiketCikar(item.public_id + " " + kat);
                     const ozellink = ozelLinkBul(item.public_id);
+                    const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                     return {
                         idx: idx,
+                        id: uniqueId,
                         yol: mediaUrl,
                         kategori: kat,
                         link: ozellink,
@@ -289,9 +304,17 @@
                 return;
             }
 
-            grid.innerHTML = tumVeriler.map(item => `
+            grid.innerHTML = tumVeriler.map(item => {
+                // Sayaç değerlerini al
+                const waCount = sayacGetir(item.id, 'whatsapp');
+                const igCount = sayacGetir(item.id, 'instagram');
+                const fbCount = sayacGetir(item.id, 'facebook');
+                const dlCount = sayacGetir(item.id, 'download');
+
+                return `
                 <div class="gorsel-kart bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg border border-slate-200" 
                      data-idx="${item.idx}"
+                     data-id="${item.id}"
                      data-kategori="${item.kategori}"
                      data-etiketler='${JSON.stringify(item.etiketler)}'
                      data-yol="${item.yol}"
@@ -347,24 +370,35 @@
                             `}
                         </div>
 
-                        <!-- SOSYAL MEDYA İKONLARI VE AKSİYONLAR -->
+                        <!-- SOSYAL MEDYA İKONLARI VE SAYAÇLAR (0'LAR GÖRÜNMEZ, 1 VE ÜZERİNDE GÖRÜNÜR) -->
                         <div class="pt-3 border-t border-slate-100 grid grid-cols-4 gap-2">
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp')" title="WhatsApp'ta Paylaş" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-2 rounded-lg text-base flex items-center justify-center transition">
+                            <!-- WhatsApp -->
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp'ta Paylaş" class="relative bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-2 rounded-lg text-base flex items-center justify-center transition">
                                 <i class="fa-brands fa-whatsapp"></i>
+                                ${waCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${waCount}</span>` : ''}
                             </button>
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram')" title="Instagram'da Paylaş" class="bg-pink-50 hover:bg-pink-100 text-pink-600 py-2 rounded-lg text-base flex items-center justify-center transition">
+
+                            <!-- Instagram -->
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram', '${item.id}')" title="Instagram'da Paylaş" class="relative bg-pink-50 hover:bg-pink-100 text-pink-600 py-2 rounded-lg text-base flex items-center justify-center transition">
                                 <i class="fa-brands fa-instagram"></i>
+                                ${igCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-pink-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${igCount}</span>` : ''}
                             </button>
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook')" title="Facebook'ta Paylaş" class="bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-base flex items-center justify-center transition">
+
+                            <!-- Facebook -->
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook', '${item.id}')" title="Facebook'ta Paylaş" class="relative bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-base flex items-center justify-center transition">
                                 <i class="fa-brands fa-facebook-f"></i>
+                                ${fbCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${fbCount}</span>` : ''}
                             </button>
-                            <button onclick="dosyaIndir('${item.yol}')" title="Cihaza İndir" class="bg-slate-100 hover:bg-emerald-700 hover:text-white text-slate-700 py-2 rounded-lg text-base flex items-center justify-center transition">
+
+                            <!-- İndir (Doğrudan tetiklenir, lightbox açılmaz) -->
+                            <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="Cihaza İndir" class="relative bg-slate-100 hover:bg-emerald-700 hover:text-white text-slate-700 py-2 rounded-lg text-base flex items-center justify-center transition">
                                 <i class="fa-solid fa-download"></i>
+                                ${dlCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-slate-700 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${dlCount}</span>` : ''}
                             </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
 
             filtreleVeSayfala();
         }
@@ -528,6 +562,7 @@
 
             const yol = kart.dataset.yol;
             const link = kart.dataset.link;
+            const id = kart.dataset.id;
             const isVid = kart.dataset.isvideo === '1';
 
             const gorsel = document.getElementById('lightboxGorsel');
@@ -552,10 +587,10 @@
                 linkContainer.innerHTML = `<span class="text-slate-400 italic">⚠️ İçerikte bağlantı yok.</span>`;
             }
 
-            document.getElementById('lbWaBtn').onclick = () => kopyalaVePaylas(yol, link, 'whatsapp');
-            document.getElementById('lbFbBtn').onclick = () => kopyalaVePaylas(yol, link, 'facebook');
-            document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(yol, link, 'instagram');
-            document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(yol, link, 'twitter');
+            document.getElementById('lbWaBtn').onclick = () => kopyalaVePaylas(yol, link, 'whatsapp', id);
+            document.getElementById('lbFbBtn').onclick = () => kopyalaVePaylas(yol, link, 'facebook', id);
+            document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(yol, link, 'instagram', id);
+            document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(yol, link, 'twitter', id);
         }
 
         function gorselTiklama(e) {
@@ -576,7 +611,7 @@
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
                 const gorsel = document.getElementById('lightboxGorsel');
-                gorsel.style.transformOrigin = `${xPercent}% ${originY}%`;
+                gorsel.style.transformOrigin = `${xPercent}% ${yPercent}%`;
             }
         }
 
@@ -754,6 +789,14 @@
             }
         });
 
+        // Kart üzerinden direkt indirme (görseli açmaz, indirmeyi tetikler ve sayacı günceller)
+        function dosyaIndirKartTikla(event, dosyaYolu, id) {
+            event.stopPropagation(); // Kartın lightbox açmasını engeller
+            sayacArtir(id, 'download');
+            galeriKartlariniEkranaBas(); // Sayaç rozetini güncellemek için
+            dosyaIndir(dosyaYolu);
+        }
+
         async function dosyaIndir(dosyaYolu) {
             try {
                 showToast('📥 Dosya indirilmeye başlanıyor...');
@@ -790,12 +833,17 @@
         function dosyaIndirMevcut() {
             const kart = gorunurKartlar[lightboxMevcutIndex];
             if (kart && kart.dataset.yol) {
+                sayacArtir(kart.dataset.id, 'download');
+                galeriKartlariniEkranaBas();
                 dosyaIndir(kart.dataset.yol);
             }
         }
 
-        async function kopyalaVePaylas(dosyaUrl, ozelLink, platform) {
+        async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id) {
             try {
+                sayacArtir(id, platform);
+                galeriKartlariniEkranaBas(); // Sayaç rozetini anlık güncelle
+
                 if (ozelLink && ozelLink.trim() !== '') {
                     try {
                         await navigator.clipboard.writeText(ozelLink);
