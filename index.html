@@ -114,20 +114,23 @@
         <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0 transition-opacity duration-300" onclick="event.stopPropagation()">
             <div id="lightboxLinkContainer" class="text-xs text-blue-400 mb-2.5 truncate font-mono px-2"></div>
             
-            <div class="flex justify-center items-center gap-4">
-                <button id="lbWaBtn" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-2xl transition p-1">
+            <div class="flex justify-center items-center gap-5">
+                <button id="lbWaBtn" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-xl transition p-1">
                     <i class="fa-brands fa-whatsapp"></i>
                 </button>
-                <button id="lbFbBtn" title="Facebook" class="text-blue-400 hover:text-blue-300 text-2xl transition p-1">
+                <button id="lbFbBtn" title="Facebook" class="text-blue-400 hover:text-blue-300 text-xl transition p-1">
                     <i class="fa-brands fa-facebook-f"></i>
                 </button>
-                <button id="lbIgBtn" title="Instagram" class="text-pink-400 hover:text-pink-300 text-2xl transition p-1">
+                <button id="lbIgBtn" title="Instagram" class="text-pink-400 hover:text-pink-300 text-xl transition p-1">
                     <i class="fa-brands fa-instagram"></i>
                 </button>
-                <button id="lbTwBtn" title="X (Twitter)" class="text-slate-200 hover:text-white text-2xl transition p-1 flex items-center justify-center">
-                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <button id="lbTwBtn" title="X (Twitter)" class="text-slate-200 hover:text-white text-xl transition p-1 flex items-center justify-center">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </button>
-                <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-2xl transition p-1">
+                <button id="lbHeartBtn" title="Beğen" class="text-rose-500 hover:text-rose-400 text-xl transition p-1">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+                <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-xl transition p-1">
                     <i class="fa-solid fa-download"></i>
                 </button>
             </div>
@@ -139,7 +142,6 @@
         const TAG_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
-        // Görsel veya klasör adlarına göre detay linklerinin eşleştirildiği harita
         const LINK_HARITASI = {
             'yedam': 'https://yedam.yesilay.org.tr/',
             'tbm': 'https://tbm.org.tr/',
@@ -182,7 +184,6 @@
         let startY = 0;
         let initialPinchDist = 0;
 
-        // Sayaçları LocalStorage'da saklama ve yönetme fonksiyonları
         function sayacGetir(id, tip) {
             const key = `yesilay_stats_${id}_${tip}`;
             return parseInt(localStorage.getItem(key) || '0', 10);
@@ -225,7 +226,7 @@
                     return link;
                 }
             }
-            return 'https://www.yesilay.org.tr/'; // Varsayılan genel bağlantı
+            return 'https://www.yesilay.org.tr/';
         }
 
         async function cloudinaryVerileriniCek() {
@@ -305,10 +306,11 @@
             }
 
             grid.innerHTML = tumVeriler.map(item => {
-                // Sayaç değerlerini al
                 const waCount = sayacGetir(item.id, 'whatsapp');
                 const igCount = sayacGetir(item.id, 'instagram');
                 const fbCount = sayacGetir(item.id, 'facebook');
+                const twCount = sayacGetir(item.id, 'twitter');
+                const heartCount = sayacGetir(item.id, 'heart');
                 const dlCount = sayacGetir(item.id, 'download');
 
                 return `
@@ -370,30 +372,42 @@
                             `}
                         </div>
 
-                        <!-- SOSYAL MEDYA İKONLARI VE SAYAÇLAR (0'LAR GÖRÜNMEZ, 1 VE ÜZERİNDE GÖRÜNÜR) -->
-                        <div class="pt-3 border-t border-slate-100 grid grid-cols-4 gap-2">
+                        <!-- 6'LI ESNEK İKON VE SAYAÇ YAPISI (WhatsApp, Instagram, Facebook, Twitter, Kalp, İndir) -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-1">
                             <!-- WhatsApp -->
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp'ta Paylaş" class="relative bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-2 rounded-lg text-base flex items-center justify-center transition">
-                                <i class="fa-brands fa-whatsapp"></i>
-                                ${waCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${waCount}</span>` : ''}
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-1.5 px-0.5 rounded-lg text-xs flex flex-col items-center justify-center transition">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                ${waCount > 0 ? `<span class="text-[10px] font-bold mt-0.5">${waCount}</span>` : ''}
                             </button>
 
                             <!-- Instagram -->
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram', '${item.id}')" title="Instagram'da Paylaş" class="relative bg-pink-50 hover:bg-pink-100 text-pink-600 py-2 rounded-lg text-base flex items-center justify-center transition">
-                                <i class="fa-brands fa-instagram"></i>
-                                ${igCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-pink-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${igCount}</span>` : ''}
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram', '${item.id}')" title="Instagram" class="flex-1 bg-pink-50 hover:bg-pink-100 text-pink-600 py-1.5 px-0.5 rounded-lg text-xs flex flex-col items-center justify-center transition">
+                                <i class="fa-brands fa-instagram text-sm"></i>
+                                ${igCount > 0 ? `<span class="text-[10px] font-bold mt-0.5">${igCount}</span>` : ''}
                             </button>
 
                             <!-- Facebook -->
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook', '${item.id}')" title="Facebook'ta Paylaş" class="relative bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-base flex items-center justify-center transition">
-                                <i class="fa-brands fa-facebook-f"></i>
-                                ${fbCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${fbCount}</span>` : ''}
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook', '${item.id}')" title="Facebook" class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-600 py-1.5 px-0.5 rounded-lg text-xs flex flex-col items-center justify-center transition">
+                                <i class="fa-brands fa-facebook-f text-sm"></i>
+                                ${fbCount > 0 ? `<span class="text-[10px] font-bold mt-0.5">${fbCount}</span>` : ''}
                             </button>
 
-                            <!-- İndir (Doğrudan tetiklenir, lightbox açılmaz) -->
-                            <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="Cihaza İndir" class="relative bg-slate-100 hover:bg-emerald-700 hover:text-white text-slate-700 py-2 rounded-lg text-base flex items-center justify-center transition">
-                                <i class="fa-solid fa-download"></i>
-                                ${dlCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-slate-700 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full shadow">${dlCount}</span>` : ''}
+                            <!-- Twitter / X -->
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'twitter', '${item.id}')" title="X (Twitter)" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 py-1.5 px-0.5 rounded-lg text-xs flex flex-col items-center justify-center transition">
+                                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                ${twCount > 0 ? `<span class="text-[10px] font-bold mt-0.5">${twCount}</span>` : ''}
+                            </button>
+
+                            <!-- Kalp / Beğeni -->
+                            <button onclick="kalpTikla(event, '${item.id}')" title="Beğen" class="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-600 py-1.5 px-0.5 rounded-lg text-xs flex flex-col items-center justify-center transition">
+                                <i class="fa-solid fa-heart text-sm"></i>
+                                ${heartCount > 0 ? `<span class="text-[10px] font-bold mt-0.5">${heartCount}</span>` : ''}
+                            </button>
+
+                            <!-- İndir -->
+                            <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="Cihaza İndir" class="flex-1 bg-slate-100 hover:bg-emerald-700 hover:text-white text-slate-700 py-1.5 px-0.5 rounded-lg text-xs flex flex-col items-center justify-center transition">
+                                <i class="fa-solid fa-download text-sm"></i>
+                                ${dlCount > 0 ? `<span class="text-[10px] font-bold mt-0.5">${dlCount}</span>` : ''}
                             </button>
                         </div>
                     </div>
@@ -591,6 +605,11 @@
             document.getElementById('lbFbBtn').onclick = () => kopyalaVePaylas(yol, link, 'facebook', id);
             document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(yol, link, 'instagram', id);
             document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(yol, link, 'twitter', id);
+            document.getElementById('lbHeartBtn').onclick = () => {
+                sayacArtir(id, 'heart');
+                galeriKartlariniEkranaBas();
+                showToast('❤️ İçerik beğenildi!');
+            };
         }
 
         function gorselTiklama(e) {
@@ -789,11 +808,17 @@
             }
         });
 
-        // Kart üzerinden direkt indirme (görseli açmaz, indirmeyi tetikler ve sayacı günceller)
+        function kalpTikla(event, id) {
+            event.stopPropagation();
+            sayacArtir(id, 'heart');
+            galeriKartlariniEkranaBas();
+            showToast('❤️ İçerik beğenildi!');
+        }
+
         function dosyaIndirKartTikla(event, dosyaYolu, id) {
-            event.stopPropagation(); // Kartın lightbox açmasını engeller
+            event.stopPropagation();
             sayacArtir(id, 'download');
-            galeriKartlariniEkranaBas(); // Sayaç rozetini güncellemek için
+            galeriKartlariniEkranaBas();
             dosyaIndir(dosyaYolu);
         }
 
@@ -842,7 +867,7 @@
         async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id) {
             try {
                 sayacArtir(id, platform);
-                galeriKartlariniEkranaBas(); // Sayaç rozetini anlık güncelle
+                galeriKartlariniEkranaBas();
 
                 if (ozelLink && ozelLink.trim() !== '') {
                     try {
@@ -856,6 +881,15 @@
                 if (platform === 'facebook') {
                     if (ozelLink) {
                         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ozelLink)}`, '_blank');
+                    } else {
+                        showToast('⚠️ İçerik bağlantısı bulunamadı.');
+                    }
+                    return;
+                }
+
+                if (platform === 'twitter') {
+                    if (ozelLink) {
+                        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(ozelLink)}`, '_blank');
                     } else {
                         showToast('⚠️ İçerik bağlantısı bulunamadı.');
                     }
