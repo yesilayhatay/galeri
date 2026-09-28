@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <!-- ALT BİLGİ ŞERİDİ (YEŞİLAY HATAY ŞUBESİ) -->
+    <!-- ALT BİLGİ ŞERİDİ -->
     <footer class="mt-16 bg-emerald-950 text-white text-center py-4 px-4 text-xs font-medium border-t border-emerald-900">
         Bu sayfa Yeşilay Hatay Şubesi Tanıtım ve Medya Komisyonu B. / <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından Gemini ile hazırlanmıştır.
     </footer>
@@ -139,6 +139,15 @@
         const TAG_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
+        // GÖRSELLERİN PAYLAŞIM LİNKLERİ HARİTASI
+        // Cloudinary Public ID'si veya dosya adının bir parçası ile eşleşen yönlendirme linklerini buraya yazabilirsiniz.
+        const LINK_HARITASI = {
+            // "dosya_adi_veya_public_id": "https://www.yesilay.org.tr/...",
+            // Örnek:
+            // "yedam_poster": "https://www.yedam.org.tr",
+            // "tutun_afis": "https://www.yesilay.org.tr/tr/bagimliliklar/tutun-bagimliligi"
+        };
+
         const SABIT_ETIKETLER = {
             'Tütün': ['tutun', 'tütün', 'sigara', 'nikotin', 'nargile', 'puf', 'vape', 'duman'],
             'Alkol': ['alkol', 'icki', 'içki', 'bira', 'sarap', 'şarap', 'raki', 'rakı', 'kadeh'],
@@ -197,6 +206,15 @@
             return bulunanlar.length > 0 ? bulunanlar.slice(0, 3) : ['Yayın'];
         }
 
+        function ozelLinkBul(publicId) {
+            for (const [key, link] of Object.entries(LINK_HARITASI)) {
+                if (publicId.toLowerCase().includes(key.toLowerCase())) {
+                    return link;
+                }
+            }
+            return '';
+        }
+
         async function cloudinaryVerileriniCek() {
             const grid = document.getElementById("galeriGrid");
             const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG_NAME}.json`;
@@ -210,7 +228,17 @@
 
                 tumVeriler = data.resources.map((item, idx) => {
                     const pathParts = item.public_id.split('/');
-                    const kat = pathParts.length > 1 ? pathParts[0].toUpperCase() : "GENEL";
+                    
+                    let kat = "GENEL";
+                    if (pathParts.length > 1) {
+                        kat = pathParts[0].toUpperCase();
+                    } else {
+                        // Dosya adından otomatik kategori türetme
+                        const etiketler = otomatıkEtiketCikar(item.public_id);
+                        if (etiketler.length > 0) {
+                            kat = etiketler[0].toUpperCase();
+                        }
+                    }
                     kategorilerSet.add(kat);
 
                     const ext = item.format ? item.format.toLowerCase() : '';
@@ -218,12 +246,13 @@
                     const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`;
                     
                     const etiketler = otomatıkEtiketCikar(item.public_id + " " + kat);
+                    const ozellink = ozelLinkBul(item.public_id);
 
                     return {
                         idx: idx,
                         yol: mediaUrl,
                         kategori: kat,
-                        link: '',
+                        link: ozellink,
                         etiketler: etiketler,
                         is_video: isVid
                     };
@@ -314,7 +343,7 @@
                                 </div>
                             ` : `
                                 <div class="text-xs text-slate-400 italic mb-4 bg-slate-50 p-2 rounded border border-slate-100 truncate">
-                                    ⚠️ Açıklamada bağlantı yok.
+                                    ⚠️ Bağlantı bulunmuyor
                                 </div>
                             `}
                         </div>
@@ -430,7 +459,7 @@
                 }
             }
 
-            html += `<button onclick="sayfaDegistir(${mevcutSayfa + 1})" ${mevcutSayfa === toplamSayfa ? 'disabled class="opacity-40 cursor-not-allowed bg-white text-slate-400 px-3 py-1.5 rounded-lg border text-xs"' : 'class="bg-white hover:bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-lg border text-xs font-semibold"'}>Sonraki</button>`;
+            html += `<button onclick="sayfaDegistir(${mevcutSayfa + 1})" ${mevcutSayfa === toplamSayfa ? 'disabled class="opacity-40 cursor-not-allowed bg-white text-slate-400 px-3 py-1.5 rounded-lg border text-xs"' : 'class="bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border text-xs font-semibold"'}>Sonraki</button>`;
 
             container.innerHTML = html;
         }
@@ -550,7 +579,7 @@
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
                 const gorsel = document.getElementById('lightboxGorsel');
-                gorsel.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+                gorsel.style.transformOrigin = `${xPercent}% ${originY}%`;
             }
         }
 
