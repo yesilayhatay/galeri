@@ -63,7 +63,7 @@
 
     <!-- ALT BİLGİ ŞERİDİ -->
     <footer class="mt-16 bg-emerald-950 text-white text-center py-4 px-4 text-xs font-medium border-t border-emerald-900">
-        Bu sayfa Yeşilay Hatay Şubesi Tanıtım ve Medya Komisyonu B. / <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından Gemini ile hazırlanmıştır.
+        Bu sayfa Yeşilay Hatay Şubesi Tanıtım ve Medya Komisyonu B. / <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından hazırlanmıştır.
     </footer>
 
     <!-- LIGHTBOX MODAL -->
@@ -117,24 +117,14 @@
     <script>
         const SAYFA_BASI_GORSEL = 20;
 
-        // Python ile 6 klasöre aktardığınız Cloudinary yapılandırmanıza uygun veriler
         let tumVeriler = [
             {
                 idx: 0,
                 public_id: "ornek_gorsel_1",
-                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/klasor1/ornek1.jpg",
+                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg",
                 kategori: "GENEL",
-                link: "https://yesilay.org.tr",
-                etiketler: ["Tütün", "Savunuculuk"],
-                is_video: false
-            },
-            {
-                idx: 1,
-                public_id: "ornek_gorsel_2",
-                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/klasor2/ornek2.jpg",
-                kategori: "YEDAM",
-                link: "https://yedam.org.tr",
-                etiketler: ["YEDAM", "Eğitim"],
+                link: "",
+                etiketler: ["Tütün"],
                 is_video: false
             }
         ];
@@ -302,19 +292,19 @@
 
                         <div>
                             <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 px-1">
-                                <button onclick="kopyalaVePaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-1 text-emerald-600 hover:bg-emerald-50 py-1.5 px-1.5 rounded transition text-base">
+                                <button onclick="kopyalaVisaPaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-1 text-emerald-600 hover:bg-emerald-50 py-1.5 px-1.5 rounded transition text-base">
                                     <i class="fa-brands fa-whatsapp text-lg"></i>
                                     <span class="font-bold text-xs count-whatsapp ${waCount > 0 ? '' : 'hidden'}">${waCount > 0 ? waCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'facebook')" title="Facebook" class="flex items-center gap-1 text-blue-600 hover:bg-blue-50 py-1.5 px-1.5 rounded transition text-base">
+                                <button onclick="kopyalaVisaPaylasByKart(this, 'facebook')" title="Facebook" class="flex items-center gap-1 text-blue-600 hover:bg-blue-50 py-1.5 px-1.5 rounded transition text-base">
                                     <i class="fa-brands fa-facebook-f text-base"></i>
                                     <span class="font-bold text-xs count-facebook ${fbCount > 0 ? '' : 'hidden'}">${fbCount > 0 ? fbCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'instagram')" title="Instagram" class="flex items-center gap-1 text-pink-600 hover:bg-pink-50 py-1.5 px-1.5 rounded transition text-base">
+                                <button onclick="kopyalaVisaPaylasByKart(this, 'instagram')" title="Instagram" class="flex items-center gap-1 text-pink-600 hover:bg-pink-50 py-1.5 px-1.5 rounded transition text-base">
                                     <i class="fa-brands fa-instagram text-lg"></i>
                                     <span class="font-bold text-xs count-instagram ${igCount > 0 ? '' : 'hidden'}">${igCount > 0 ? igCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'twitter')" title="X (Twitter)" class="flex items-center gap-1 text-slate-900 hover:bg-slate-100 py-1.5 px-1.5 rounded transition text-base">
+                                <button onclick="kopyalaVisaPaylasByKart(this, 'twitter')" title="X (Twitter)" class="flex items-center gap-1 text-slate-900 hover:bg-slate-100 py-1.5 px-1.5 rounded transition text-base">
                                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                                     <span class="font-bold text-xs count-twitter ${twCount > 0 ? '' : 'hidden'}">${twCount > 0 ? twCount : ''}</span>
                                 </button>
@@ -508,7 +498,7 @@
             kopyalaVePaylas(kart.dataset.yol, kart.dataset.link, platform, kart.dataset.id, kart);
         }
 
-        function kopyalaVePaylasByKart(btn, platform) {
+        function kopyalaVisaPaylasByKart(btn, platform) {
             const kart = btn.closest('.gorsel-kart');
             kopyalaVePaylas(kart.dataset.yol, kart.dataset.link, platform, kart.dataset.id, kart);
         }
