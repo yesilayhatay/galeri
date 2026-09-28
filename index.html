@@ -320,22 +320,32 @@
             return bulunanlar.length > 0 ? bulunanlar.slice(0, 3) : ['Yayın'];
         }
 
-        function ozgunLinkBul(publicId, aramaText) {
-            // 1. Doğrudan dosya adı haritasında var mı kontrol et
+        function ozgunLinkBul(item, aramaText) {
+            // 1. Önce Cloudinary panelindeki Contextual Metadata içindeki 'link' alanını kontrol et
+            if (item && item.context) {
+                if (item.context.custom && item.context.custom.link) {
+                    return item.context.custom.link;
+                }
+                if (item.context.link) {
+                    return item.context.link;
+                }
+            }
+
+            // 2. Eğer özel dosya adı listesinde varsa onu kullan
             for (const [dosyaAdi, link] of Object.entries(OZEL_DOSYA_LINKLERI)) {
-                if (publicId.toLowerCase().includes(dosyaAdi.toLowerCase())) {
+                if (item && item.public_id && item.public_id.toLowerCase().includes(dosyaAdi.toLowerCase())) {
                     return link;
                 }
             }
 
-            // 2. Genel anahtar kelime haritasında var mı kontrol et
+            // 3. Genel anahtar kelime haritasına bak
             for (const [key, link] of Object.entries(LINK_HARITASI)) {
                 if (aramaText.toLowerCase().includes(key.toLowerCase())) {
                     return link;
                 }
             }
 
-            // 3. Hiçbiri yoksa varsayılan ana site
+            // 4. Hiçbiri yoksa varsayılan ana site
             return 'https://www.yesilay.org.tr/';
         }
 
