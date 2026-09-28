@@ -7,16 +7,25 @@
   <style>
     :root { --primary: #008752; --bg: #f4f6f8; --card-bg: #ffffff; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
-    header { text-align: center; margin-bottom: 30px; }
+    header { text-align: center; margin-bottom: 25px; }
     header h1 { color: var(--primary); margin-bottom: 5px; }
+    
+    /* Kategori Butonları */
+    .categories { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+    .cat-btn { background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .cat-btn.active, .cat-btn:hover { background: var(--primary); color: #fff; }
+
+    /* Galeri Grid Düzeni */
     .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
     .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; display: flex; flex-direction: column; }
     .card:hover { transform: translateY(-4px); }
-    .card img { width: 100%; height: 220px; object-fit: cover; }
+    .card img, .card video { width: 100%; height: 220px; object-fit: cover; background: #000; }
     .card-body { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
-    .card-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 8px; }
-    .card-desc { font-size: 0.9rem; color: #666; margin-bottom: 12px; flex-grow: 1; }
-    .link-box { background: #eef7f2; border: 1px dashed var(--primary); padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; word-break: break-all; margin-bottom: 10px; color: var(--primary); }
+    .card-title { font-weight: 600; font-size: 1.05rem; margin-bottom: 6px; }
+    .card-folder { font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; display: inline-block; width: fit-content; margin-bottom: 8px; font-weight: 600; }
+    .card-type { font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px; display: inline-block; width: fit-content; margin-bottom: 8px; font-weight: 600; margin-left: 5px; }
+    .card-desc { font-size: 0.88rem; color: #555; margin-bottom: 12px; flex-grow: 1; }
+    .link-box { background: #eef7f2; border: 1px dashed var(--primary); padding: 8px; border-radius: 6px; font-size: 0.82rem; word-break: break-all; margin-bottom: 10px; color: var(--primary); }
     .btn-copy { background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: background 0.2s; }
     .btn-copy:hover { background: #006b40; }
     .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; display: none; z-index: 1000; }
@@ -26,58 +35,123 @@
 
   <header>
     <h1>Yeşilay Hatay Şubesi</h1>
-    <p>Dijital Medya Arşivi & Afiş Galerisi</p>
+    <p>Dijital Medya Arşivi & Galeri</p>
   </header>
 
+  <!-- Dinamik Kategori Butonları -->
+  <div class="categories" id="categories">
+    <button class="cat-btn active" onclick="filterCategory('all', this)">Tümü</button>
+  </div>
+
   <div class="gallery" id="gallery">
-    <!-- Görseller Cloudinary API ile buraya dinamik dolacak -->
+    <!-- İçerikler Yükleniyor... -->
   </div>
 
   <div id="toast" class="toast">🔗 Bağlantı panoya kopyalandı!</div>
 
   <script>
     const CLOUD_NAME = 'yesilay-hatay';
-    const API_KEY = '357192655923719';
+    let allResources = [];
 
     async function loadGallery() {
       const galleryEl = document.getElementById('gallery');
+      const categoriesEl = document.getElementById('categories');
+
       try {
-        // Cloudinary Medya Listesi API İsteği
-        const response = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/v1727500000.json`);
-        
-        if (!response.ok) {
-          galleryEl.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Görseller yüklenirken bir erişim izni hatası oluştu. Lütfen Cloudinary Security > Resource list ayarını kontrol edin.</p>';
+        // Hem görselleri hem videoları çekiyoruz
+        const [imgRes, vidRes] = await Promise.all([
+          fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/v1727500000.json`).catch(() => null),
+          fetch(`https://res.cloudinary.com/${CLOUD_NAME}/video/list/v1727500000.json`).catch(() => null)
+        ]);
+
+        let images = imgRes && imgRes.ok ? (await imgRes.json()).resources.map(r => ({ ...r, resource_type: 'image' })) : [];
+        let videos = vidRes && vidRes.ok ? (await vidRes.json()).resources.map(r => ({ ...r, resource_type: 'video' })) : [];
+
+        allResources = [...images, ...videos];
+
+        if (allResources.length === 0) {
+          galleryEl.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Henüz yüklenmiş medya bulunamadı veya listeleme izinleri bekleniyor.</p>';
           return;
         }
 
-        const data = await response.json();
-        galleryEl.innerHTML = '';
-
-        data.resources.forEach(img => {
-          const imgUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
-          // EXIF/Açıklama alanına yazılan metin veya varsayılan isim
-          const description = img.context?.custom?.caption || img.public_id;
-          
-          // Metin içinde web linki arama regex'i
-          const urlMatch = description.match(/(https?:\/\/[^\s]+)/g);
-          const detectedLink = urlMatch ? urlMatch[0] : imgUrl;
-
-          const card = document.createElement('div');
-          card.className = 'card';
-          card.innerHTML = `
-            <img src="${imgUrl}" alt="${img.public_id}" loading="lazy">
-            <div class="card-body">
-              <div class="card-title">${img.public_id}</div>
-              <div class="card-desc">${description}</div>
-              <div class="link-box">🔗 ${detectedLink}</div>
-              <button class="btn-copy" onclick="copyToClipboard('${detectedLink}')">Bağlantıyı Kopyala & Paylaş</button>
-            </div>
-          `;
-          galleryEl.appendChild(card);
+        // Klasörleri / Kategorileri Otomatik Tespit Et
+        const folders = new Set();
+        allResources.forEach(item => {
+          const parts = item.public_id.split('/');
+          if (parts.length > 1) {
+            folders.add(parts[0]);
+          }
         });
+
+        // Kategori Butonlarını Oluştur
+        categoriesEl.innerHTML = '<button class="cat-btn active" onclick="filterCategory(\'all\', this)">Tümü</button>';
+        folders.forEach(folder => {
+          categoriesEl.innerHTML += `<button class="cat-btn" onclick="filterCategory('${folder}', this)">${folder}</button>`;
+        });
+
+        renderGallery('all');
+
       } catch (err) {
-        galleryEl.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Henüz yüklenmiş görsel bulunamadı veya arayüz hazırlanıyor.</p>';
+        galleryEl.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Medya yüklenirken bir sorun oluştu.</p>';
       }
+    }
+
+    function renderGallery(filterCategoryName) {
+      const galleryEl = document.getElementById('gallery');
+      galleryEl.innerHTML = '';
+
+      const filtered = allResources.filter(item => {
+        if (filterCategoryName === 'all') return true;
+        return item.public_id.startsWith(filterCategoryName + '/');
+      });
+
+      if (filtered.length === 0) {
+        galleryEl.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Bu kategoride henüz içerik bulunmuyor.</p>';
+        return;
+      }
+
+      filtered.forEach(item => {
+        const isVideo = item.resource_type === 'video';
+        const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${item.resource_type}/upload/${item.public_id}.${item.format}`;
+        
+        const parts = item.public_id.split('/');
+        const folderName = parts.length > 1 ? parts[0] : 'Genel';
+        const fileName = parts[parts.length - 1];
+
+        const description = item.context?.custom?.caption || fileName;
+        const urlMatch = description.match(/(https?:\/\/[^\s]+)/g);
+        const detectedLink = urlMatch ? urlMatch[0] : mediaUrl;
+
+        // Medya Elementi (Görsel veya Video)
+        const mediaElement = isVideo 
+          ? `<video src="${mediaUrl}" controls preload="metadata"></video>` 
+          : `<img src="${mediaUrl}" alt="${fileName}" loading="lazy">`;
+
+        const typeBadge = isVideo ? `<span class="card-type">🎥 Video</span>` : `<span class="card-type">🖼️ Görsel</span>`;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          ${mediaElement}
+          <div class="card-body">
+            <div>
+              <span class="card-folder">📁 ${folderName}</span>
+              ${typeBadge}
+            </div>
+            <div class="card-title">${fileName}</div>
+            <div class="card-desc">${description}</div>
+            <div class="link-box">🔗 ${detectedLink}</div>
+            <button class="btn-copy" onclick="copyToClipboard('${detectedLink}')">Bağlantıyı Kopyala & Paylaş</button>
+          </div>
+        `;
+        galleryEl.appendChild(card);
+      });
+    }
+
+    function filterCategory(categoryName, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderGallery(categoryName);
     }
 
     function copyToClipboard(text) {
