@@ -203,6 +203,7 @@
         let mevcutSayfa = 1;
         let gorunurVeriler = [];
         let lightboxMevcutIndex = 0;
+        let aramaDebounceTimer = null;
 
         let currentScale = 1;
         let currentX = 0;
@@ -547,10 +548,93 @@
             mouseWheelZoomBagla();
         });
 
+        // Vercel Serverless API Üzerinden Cloudinary Search API Entegrasyonu
         function aramaYap(deger) {
             aramaMetni = deger.toLowerCase().trim();
             mevcutSayfa = 1;
-            filtreleVeSayfala();
+
+            clearTimeout(aramaDebounceTimer);
+
+            if (aramaMetni === '') {
+                filtreleVeSayfala();
+                return;
+            }
+
+            aramaDebounceTimer = setTimeout(async () => {
+                const grid = document.getElementById("galeriGrid");
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-slate-500 font-semibold">
+                        <i class="fa-solid fa-spinner fa-spin text-3xl text-emerald-700 mb-3 block"></i>
+                        Cloudinary sunucusunda aranıyor...
+                    </div>`;
+
+                try {
+                    const res = await fetch(`https://galeri-rosy.vercel.app/api/search?q=${encodeURIComponent(aramaMetni)}`);
+                    if (!res.ok) throw new Error("Arama API hatası");
+                    const data = await res.json();
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        gorunurVeriler = [];
+                    } else {
+                        gorunurVeriler = data.map((item, idx) => {
+                            const pathParts = item.public_id.split('/');
+                            let kat = "GENEL";
+                            if (pathParts.length > 1) {
+                                kat = pathParts[0].toUpperCase();
+                            } else {
+                                const etiketler = otomatıkEtiketCikar(item.public_id);
+                                if (etiketler.length > 0) {
+                                    kat = etiketler[0].toUpperCase();
+                                }
+                            }
+
+                            const ext = item.format ? item.format.toLowerCase() : '';
+                            const isVid = ['mp4', 'webm', 'mov', 'mkv', 'avi'].includes(ext) || item.resource_type === 'video';
+                            const mediaUrl = item.secure_url || `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`;
+                            
+                            const cloudinaryTags = (item.tags || []).join(' ');
+                            const temizPublicId = item.public_id.replace(/[-_\\/]/g, ' ');
+                            const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
+
+                            const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
+                            const ozellink = ozelLinkBul(aramaMetinHavuzu);
+                            const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
+
+                            return {
+                                idx: idx,
+                                id: uniqueId,
+                                yol: mediaUrl,
+                                kategori: kat,
+                                link: ozellink,
+                                etiketler: etiketler,
+                                is_video: isVid,
+                                aramaHavuzu: aramaMetinHavuzu
+                            };
+                        });
+                    }
+
+                    const slugKat = toSlug(aktifKategori);
+                    const slugTag = toSlug(aktifEtiket);
+
+                    if (aktifKategori !== 'hepsi' || aktifEtiket !== 'hepsi') {
+                        gorunurVeriler = gorunurVeriler.filter(item => {
+                            const katUyum = (aktifKategori === 'hepsi' || toSlug(item.kategori) === slugKat);
+                            const etiketUyum = (aktifEtiket === 'hepsi' || item.etiketler.some(e => toSlug(e) === slugTag));
+                            return katUyum && etiketUyum;
+                        });
+                    }
+
+                    const toplamSayfa = Math.ceil(gorunurVeriler.length / SAYFA_BASI_GORSEL) || 1;
+                    if (mevcutSayfa > toplamSayfa) mevcutSayfa = 1;
+
+                    galeriKartlariniCiz();
+                    sayfalamaButonlariCiz(toplamSayfa);
+
+                } catch (err) {
+                    console.error("Arama hatası:", err);
+                    filtreleVeSayfala();
+                }
+            }, 350);
         }
 
         function sayfalamaButonlariCiz(toplamSayfa) {
@@ -601,7 +685,11 @@
             const tumKonularBtn = document.querySelector('.tag-btn');
             if (tumKonularBtn) tumKonularBtn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
 
-            filtreleVeSayfala();
+            if (aramaMetni !== '') {
+                aramaYap(aramaMetni);
+            } else {
+                filtreleVeSayfala();
+            }
         }
 
         function etiketFiltrele(tag, btn) {
@@ -620,7 +708,11 @@
             const tumKatBtn = document.querySelector('.kat-btn');
             if (tumKatBtn) tumKatBtn.className = "kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
 
-            filtreleVeSayfala();
+            if (aramaMetni !== '') {
+                aramaYap(aramaMetni);
+            } else {
+                filtreleVeSayfala();
+            }
         }
 
         function lightboxAcById(id) {
@@ -709,7 +801,7 @@
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
                 const gorsel = document.getElementById('lightboxGorsel');
-                gorsel.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+                gorsel.style.transformOrigin = `${xPercent}% ${originY}%`;
             }
         }
 
