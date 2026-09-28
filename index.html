@@ -10,7 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Lightbox taşma önleme ve mobil uyum */
         #lightboxModal {
             overflow: hidden !important;
         }
@@ -18,6 +17,7 @@
             max-width: 85vw;
             max-height: 75vh;
             object-fit: contain;
+            transition: transform 0.1s ease-out;
         }
         @media (max-width: 768px) {
             #lightboxGorsel {
@@ -42,13 +42,13 @@
                 <p class="text-slate-500 text-sm mt-1.5 max-w-2xl mx-auto font-medium">Paylaşılmak istenen medyanın detay linki cihazınıza otomatik kopyalanır ve paylaşılacak mecrada link olarak kolayca eklenebilir.</p>
             </header>
 
-            <!-- ARAMA KUTUSU -->
+            <!-- ARAMA KUTUSU (Cloudinary OCR & Tag Entegreli) -->
             <div class="mb-6 max-w-xl mx-auto">
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input type="text" id="aramaKutusu" oninput="aramaYap(this.value)" placeholder="Cloudinary içeriklerinde ara (İsim, etiket...)" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
+                    <input type="text" id="aramaKutusu" oninput="aramaYap(this.value)" placeholder="Cloudinary içeriklerinde ara (OCR, etiket, kelime...)" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
                 </div>
             </div>
 
@@ -109,8 +109,8 @@
     <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex-col justify-between p-4 backdrop-blur-md select-none overflow-hidden" onclick="lightboxKapat(event)">
         <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0 transition-opacity duration-300">
             <div class="flex gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
-                <button onclick="zoomManual(0.15)" title="Yakınlaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                <button onclick="zoomManual(-0.15)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                <button onclick="zoomManual(0.25)" title="Yakınlaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                <button onclick="zoomManual(-0.25)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                 <button onclick="zoomSifirla()" title="Sıfırla" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
 
@@ -131,7 +131,7 @@
             <img id="lightboxGorsel" 
                  src="" 
                  alt="Önizleme"
-                 class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in"
+                 class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-100 ease-out cursor-zoom-in"
                  onclick="gorselTiklama(event)"
                  onmousemove="gorselGezdirme(event)">
             
@@ -231,7 +231,6 @@
         let startY = 0;
         let initialPinchDist = 0;
 
-        // Global Sayaç Fonksiyonları (CounterAPI)
         async function sayacGetirAPI(id, tip) {
             const key = `yesilayhatay_${id}_${tip}`.replace(/[^a-zA-Z0-9_]/g, '_');
             try {
@@ -256,7 +255,7 @@
             }
         }
 
-        // Tek bir kartın sayaçlarını güncelleyen fonksiyon (0 görünmeme kuralı aktif)
+        // Sayaç 0 iken gizlenir, 1 ve üzerindeyse görünür olur
         async function kartSayaciniGuncelle(kart) {
             if (!kart) return;
             const id = kart.dataset.id;
@@ -300,21 +299,16 @@
             for (const kart of kartlar) {
                 if (kart.style.display === 'none') continue;
                 await kartSayaciniGuncelle(kart);
-                await new Promise(r => setTimeout(r, 50));
+                await new Promise(r => setTimeout(r, 40));
             }
         }
 
         function toSlug(str) {
             if (!str) return '';
-            return str.toString().trim()
-                .replace(/Ğ/g, 'G').replace(/ğ/g, 'G')
-                .replace(/Ü/g, 'U').replace(/ü/g, 'U')
-                .replace(/Ş/g, 'S').replace(/ş/g, 'S')
-                .replace(/İ/g, 'I').replace(/ı/g, 'I').replace(/i/g, 'I')
-                .replace(/Ö/g, 'O').replace(/ö/g, 'O')
-                .replace(/Ç/g, 'C').replace(/ç/g, 'C')
-                .toUpperCase()
-                .replace(/[^A-Z0-9]/g, '');
+            return str.toString().trim().toLowerCase()
+                .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
+                .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+                .replace(/[^a-z0-9]/g, '');
         }
 
         function otomatıkEtiketCikar(metin) {
@@ -328,9 +322,9 @@
             return bulunanlar.length > 0 ? bulunanlar.slice(0, 3) : ['Yayın'];
         }
 
-        function ozelLinkBul(publicId) {
+        function ozelLinkBul(searchText) {
             for (const [key, link] of Object.entries(LINK_HARITASI)) {
-                if (publicId.toLowerCase().includes(key.toLowerCase())) {
+                if (searchText.toLowerCase().includes(key.toLowerCase())) {
                     return link;
                 }
             }
@@ -366,8 +360,12 @@
                     const isVid = ['mp4', 'webm', 'mov', 'mkv', 'avi'].includes(ext) || item.resource_type === 'video';
                     const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`;
                     
-                    const etiketler = otomatıkEtiketCikar(item.public_id + " " + kat);
-                    const ozellink = ozelLinkBul(item.public_id);
+                    // Cloudinary meta verilerini, etiketleri ve dosya yolunu arama için birleştiriyoruz (OCR / etiket desteği)
+                    const cloudinaryTags = (item.tags || []).join(' ');
+                    const aramaMetinHavuzu = `${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
+
+                    const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
+                    const ozellink = ozelLinkBul(aramaMetinHavuzu);
                     const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                     return {
@@ -378,7 +376,7 @@
                         link: ozellink,
                         etiketler: etiketler,
                         is_video: isVid,
-                        public_id: item.public_id
+                        aramaHavuzu: aramaMetinHavuzu
                     };
                 });
 
@@ -421,7 +419,7 @@
                      data-id="${item.id}"
                      data-kategori="${item.kategori}"
                      data-etiketler='${JSON.stringify(item.etiketler)}'
-                     data-publicid="${item.public_id.toLowerCase()}"
+                     data-aramahavuzu="${item.aramaHavuzu}"
                      data-yol="${item.yol}"
                      data-link="${item.link}"
                      data-isvideo="${item.is_video ? '1' : '0'}">
@@ -475,39 +473,33 @@
                             `}
                         </div>
 
-                        <!-- İKON VE YANINDA SAYAÇ (0 gizli) -->
+                        <!-- Sayaçlar (0 iken gizli, 1 ve üzeri görünür) -->
                         <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 px-1">
-                            <!-- WhatsApp -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp" class="flex items-center gap-1 hover:text-emerald-600 transition">
                                 <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
                                 <span class="font-medium count-whatsapp"></span>
                             </button>
 
-                            <!-- Instagram -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram', '${item.id}')" title="Instagram" class="flex items-center gap-1 hover:text-pink-600 transition">
                                 <i class="fa-brands fa-instagram text-pink-600 text-sm"></i>
                                 <span class="font-medium count-instagram"></span>
                             </button>
 
-                            <!-- Facebook -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook', '${item.id}')" title="Facebook" class="flex items-center gap-1 hover:text-blue-600 transition">
                                 <i class="fa-brands fa-facebook-f text-blue-600 text-sm"></i>
                                 <span class="font-medium count-facebook"></span>
                             </button>
 
-                            <!-- Twitter / X -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'twitter', '${item.id}')" title="X (Twitter)" class="flex items-center gap-1 hover:text-slate-800 transition">
                                 <svg class="w-3.5 h-3.5 fill-current text-slate-700" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                                 <span class="font-medium count-twitter"></span>
                             </button>
 
-                            <!-- Kalp / Beğeni -->
                             <button onclick="kalpTikla(event, '${item.id}')" title="Beğen" class="flex items-center gap-1 transition">
                                 <i class="icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-sm"></i>
                                 <span class="font-medium text-rose-600 count-heart"></span>
                             </button>
 
-                            <!-- İndir -->
                             <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="Cihaza İndir" class="flex items-center gap-1 hover:text-emerald-700 transition">
                                 <i class="fa-solid fa-download text-slate-600 text-sm"></i>
                                 <span class="font-medium count-download"></span>
@@ -560,7 +552,7 @@
 
             kartlar.forEach(kart => {
                 const itemKat = kart.dataset.kategori;
-                const publicId = kart.dataset.publicid || '';
+                const aramaHavuzu = kart.dataset.aramahavuzu || '';
                 let itemEtiketler = [];
                 try {
                     itemEtiketler = JSON.parse(kart.dataset.etiketler || '[]');
@@ -568,7 +560,7 @@
 
                 const katUyum = (aktifKategori === 'hepsi' || toSlug(itemKat) === slugKat);
                 const etiketUyum = (aktifEtiket === 'hepsi' || itemEtiketler.some(e => toSlug(e) === slugTag));
-                const aramaUyum = (aramaMetni === '' || publicId.includes(aramaMetni) || itemEtiketler.some(e => e.toLowerCase().includes(aramaMetni)));
+                const aramaUyum = (aramaMetni === '' || aramaHavuzu.includes(aramaMetni) || itemEtiketler.some(e => e.toLowerCase().includes(aramaMetni)));
 
                 if (katUyum && etiketUyum && aramaUyum) {
                     gorunurKartlar.push(kart);
@@ -736,7 +728,7 @@
                 const rect = e.target.getBoundingClientRect();
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-                zoomUygula(1.3, xPercent, yPercent);
+                zoomUygula(2.0, xPercent, yPercent); // İlk tıklamada daha güçlü zoom
             } else {
                 zoomSifirla();
             }
@@ -780,7 +772,7 @@
             if (currentScale + miktar <= 1) {
                 zoomSifirla();
             } else {
-                zoomUygula(Math.min(3, currentScale + miktar));
+                zoomUygula(Math.min(4, currentScale + miktar)); // Maksimum 4 kat zoom
             }
         }
 
@@ -822,13 +814,13 @@
                     originY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
                 }
 
-                const delta = e.deltaY < 0 ? 0.1 : -0.1;
+                const delta = e.deltaY < 0 ? 0.2 : -0.2;
                 let newScale = currentScale + delta;
 
                 if (newScale <= 1) {
                     zoomSifirla();
                 } else {
-                    newScale = Math.min(3, newScale);
+                    newScale = Math.min(4, newScale);
                     zoomUygula(newScale, originX, originY);
                 }
             }, { passive: false });
@@ -869,7 +861,7 @@
                     );
                     if (initialPinchDist > 0) {
                         const delta = dist / initialPinchDist;
-                        let newScale = Math.min(Math.max(currentScale * delta, 1), 3);
+                        let newScale = Math.min(Math.max(currentScale * delta, 1), 4);
                         currentScale = newScale;
                         initialPinchDist = dist;
                         zoomUygula(currentScale);
