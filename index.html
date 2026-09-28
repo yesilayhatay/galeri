@@ -27,6 +27,18 @@
                         <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.style.display='none'">
                     </a>
                 </div>
+                <!-- SOSYAL MEDYA İKONLARI -->
+                <div class="flex justify-center items-center gap-4 mb-4">
+                    <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-700 hover:text-emerald-700 hover:border-emerald-300 transition">
+                        <i class="fa-brands fa-instagram text-base"></i>
+                    </a>
+                    <a href="https://twitter.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-700 hover:text-emerald-700 hover:border-emerald-300 transition">
+                        <i class="fa-brands fa-x-twitter text-base"></i>
+                    </a>
+                    <a href="https://www.facebook.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-700 hover:text-emerald-700 hover:border-emerald-300 transition">
+                        <i class="fa-brands fa-facebook-f text-base"></i>
+                    </a>
+                </div>
                 <h1 class="text-3xl font-extrabold text-emerald-800 tracking-tight">Dijital Medya Galerisi</h1>
                 <p class="text-slate-700 font-semibold text-base md:text-lg mt-2">İçerik Arşivleme ve Hızlı Paylaşım Paneli</p>
             </header>
@@ -37,7 +49,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input type="text" id="aramaKutusu" oninput="aramaYap(this.value)" placeholder="Dosya adı, kategori veya etiket ara (örn: alkol, tutun)..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
+                    <input type="text" id="aramaKutusu" oninput="aramaYap(this.value)" placeholder="Dosya adı veya etiket ara (örn: alkol, tütün, etkinlik)..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
                 </div>
             </div>
 
@@ -98,11 +110,13 @@
         </div>
         <div class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800 text-white max-w-xl w-full mx-auto shadow-2xl shrink-0" onclick="event.stopPropagation()">
             <div class="flex justify-center items-center gap-6">
-                <button id="lbHeartBtn" title="Beğen" class="transition text-xl text-slate-300 hover:text-rose-400">
-                    <i class="fa-regular fa-heart"></i>
+                <button id="lbHeartBtn" title="Beğen" onclick="lightboxKalpTikla()" class="transition text-xl text-slate-300 hover:text-rose-400 flex items-center gap-2">
+                    <i id="lbHeartIcon" class="fa-regular fa-heart"></i>
+                    <span id="lbHeartCount" class="text-sm font-bold"></span>
                 </button>
-                <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-xl transition">
+                <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-xl transition flex items-center gap-2">
                     <i class="fa-solid fa-download"></i>
+                    <span id="lbDlCount" class="text-sm font-bold"></span>
                 </button>
             </div>
         </div>
@@ -175,9 +189,9 @@
             
             if (heartIcon) {
                 if (heart > 0) {
-                    heartIcon.className = "icon-heart fa-solid fa-heart text-rose-500 text-sm";
+                    heartIcon.className = "icon-heart fa-solid fa-heart text-rose-500 text-base";
                 } else {
-                    heartIcon.className = "icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-sm";
+                    heartIcon.className = "icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-base";
                 }
             }
         }
@@ -311,7 +325,7 @@
                                 <i class="icon-heart fa-regular fa-heart text-slate-400 text-base"></i>
                                 <span class="font-bold count-heart"></span>
                             </button>
-                            <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="Cihaza İndir" class="flex items-center gap-1.5 hover:text-emerald-700 transition">
+                            <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}', '${item.yol.split('/').pop()}')" title="Cihaza İndir" class="flex items-center gap-1.5 hover:text-emerald-700 transition">
                                 <i class="fa-solid fa-download text-slate-600 text-base"></i>
                                 <span class="font-bold count-download"></span>
                             </button>
@@ -342,7 +356,7 @@
         function kategoriFiltrele(kat, btn) { aktifKategori = kat; aktifEtiket = 'hepsi'; mevcutSayfa = 1; filtreleVeSayfala(); }
         function etiketFiltrele(tag, btn) { aktifEtiket = tag; aktifKategori = 'hepsi'; mevcutSayfa = 1; filtreleVeSayfala(); }
 
-        function lightboxAcById(id) {
+        async function lightboxAcById(id) {
             lightboxMevcutIndex = gorunurVeriler.findIndex(item => item.id === id);
             if (lightboxMevcutIndex === -1) lightboxMevcutIndex = 0;
             const item = gorunurVeriler[lightboxMevcutIndex];
@@ -351,6 +365,20 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
+            
+            // Lightbox içindeki sayaç ve ikonları güncelle
+            const [heart, dl] = await Promise.all([
+                sayacGetirAPI(item.id, 'heart'),
+                sayacGetirAPI(item.id, 'download')
+            ]);
+            document.getElementById('lbHeartCount').textContent = heart > 0 ? heart : '';
+            document.getElementById('lbDlCount').textContent = dl > 0 ? dl : '';
+            const lbIcon = document.getElementById('lbHeartIcon');
+            if (heart > 0) {
+                lbIcon.className = "fa-solid fa-heart text-rose-500";
+            } else {
+                lbIcon.className = "fa-regular fa-heart text-slate-300";
+            }
         }
 
         function lightboxKapat(e) { if (e.target.id === 'lightboxModal') lightboxKapatAjan(); }
@@ -367,12 +395,25 @@
             if (kart) await kartSayaciniGuncelle(kart);
         }
 
-        async function dosyaIndirKartTikla(event, yol, id) {
+        async function lightboxKalpTikla() {
+            const item = gorunurVeriler[lightboxMevcutIndex];
+            if (item) {
+                await sayacArtirAPI(item.id, 'heart');
+                const kart = document.querySelector(`.gorsel-kart[data-id="${item.id}"]`);
+                if (kart) await kartSayaciniGuncelle(kart);
+                
+                const heart = await sayacGetirAPI(item.id, 'heart');
+                document.getElementById('lbHeartCount').textContent = heart > 0 ? heart : '';
+                document.getElementById('lbHeartIcon').className = "fa-solid fa-heart text-rose-500";
+            }
+        }
+
+        async function dosyaIndirKartTikla(event, yol, id, dosyaAdi) {
             event.stopPropagation();
             await sayacArtirAPI(id, 'download');
             const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
             if (kart) await kartSayaciniGuncelle(kart);
-            window.open(yol, '_blank');
+            dosyayiIndir(yol, dosyaAdi);
         }
 
         async function dosyaIndirMevcut() {
@@ -381,8 +422,32 @@
                 await sayacArtirAPI(item.id, 'download');
                 const kart = document.querySelector(`.gorsel-kart[data-id="${item.id}"]`);
                 if (kart) await kartSayaciniGuncelle(kart);
-                window.open(item.yol, '_blank');
+                
+                const dl = await sayacGetirAPI(item.id, 'download');
+                document.getElementById('lbDlCount').textContent = dl > 0 ? dl : '';
+                
+                const dosyaAdi = item.yol.split('/').pop();
+                dosyayiIndir(item.yol, dosyaAdi);
             }
+        }
+
+        function dosyayiIndir(url, filename) {
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = blobUrl;
+                    a.download = filename || 'yesilay-medya';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(blobUrl);
+                    document.body.removeChild(a);
+                })
+                .catch(() => {
+                    window.open(url, '_blank');
+                });
         }
 
         document.addEventListener('DOMContentLoaded', cloudinaryVerileriniCek);
