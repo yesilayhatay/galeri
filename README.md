@@ -1,1 +1,1 @@
-# yesilay-galeri
+# galeri
