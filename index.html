@@ -115,21 +115,21 @@
         <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0 transition-opacity duration-300" onclick="event.stopPropagation()">
             <div id="lightboxLinkContainer" class="text-xs text-blue-400 mb-2.5 truncate font-mono px-2"></div>
             
-            <div class="flex justify-center items-center gap-4">
+            <div class="flex justify-center items-center gap-5">
                 <button onclick="kopyalaVaPaylasLightbox('whatsapp')" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-xl transition flex items-center gap-1">
-                    <i class="fa-brands fa-whatsapp"></i>
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
                 </button>
                 <button onclick="kopyalaVaPaylasLightbox('facebook')" title="Facebook" class="text-blue-400 hover:text-blue-300 text-xl transition flex items-center gap-1">
-                    <i class="fa-brands fa-facebook-f"></i>
+                    <i class="fa-brands fa-facebook-f text-xl"></i>
                 </button>
                 <button onclick="kopyalaVaPaylasLightbox('instagram')" title="Instagram" class="text-pink-400 hover:text-pink-300 text-xl transition flex items-center gap-1">
-                    <i class="fa-brands fa-instagram"></i>
+                    <i class="fa-brands fa-instagram text-xl"></i>
                 </button>
                 <button onclick="kopyalaVaPaylasLightbox('twitter')" title="X (Twitter)" class="text-slate-200 hover:text-white text-xl transition flex items-center gap-1">
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </button>
                 <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-xl transition">
-                    <i class="fa-solid fa-download"></i>
+                    <i class="fa-solid fa-download text-xl"></i>
                 </button>
             </div>
         </div>
@@ -158,7 +158,7 @@
             'Market': ['market', 'yesilaymarket', 'yeşilay market', 'magaza', 'urun', 'ürün']
         };
 
-        // Zenginleştirilmiş örnek veri seti (kategorilerin ve çoklu kartların çalışması için)
+        // Cloudinary kategorileri ve örnek içerikler
         let tumVeriler = [
             {
                 idx: 0,
@@ -185,6 +185,15 @@
                 kategori: "ETKİNLİK",
                 link: "https://instagram.com/yesilayhatay",
                 etiketler: ["Etkinlik", "Gençlik"],
+                is_video: false
+            },
+            {
+                idx: 3,
+                public_id: "afis_tarsin_1",
+                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/v1/afis.jpg",
+                kategori: "AFİŞ",
+                link: "https://yesilay.org.tr",
+                etiketler: ["Tütün", "Yayın"],
                 is_video: false
             }
         ];
@@ -216,7 +225,6 @@
                 .replace(/[^A-Z0-9]/g, '');
         }
 
-        // Sayaçlar 0'dan başlar
         function getSayac(id, tip) {
             const key = `stats_${tip}_${id}`;
             let val = localStorage.getItem(key);
@@ -256,7 +264,10 @@
             }
 
             setSayac(id, 'like', sayi);
-            if (kalpCountSpan) kalpCountSpan.textContent = sayi;
+            if (kalpCountSpan) {
+                kalpCountSpan.textContent = sayi > 0 ? sayi : '';
+                kalpCountSpan.parentElement.style.display = sayi > 0 ? 'flex' : 'none';
+            }
         }
 
         function dosyaIndirVeSayacArttir(dosyaYolu, id) {
@@ -266,7 +277,10 @@
             const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
             if (kart) {
                 const dlSpan = kart.querySelector('.count-indir');
-                if (dlSpan) dlSpan.textContent = indirmeSayisi;
+                if (dlSpan) {
+                    dlSpan.textContent = indirmeSayisi > 0 ? indirmeSayisi : '';
+                    dlSpan.parentElement.style.display = indirmeSayisi > 0 ? 'flex' : 'none';
+                }
             }
 
             dosyaIndir(dosyaYolu);
@@ -403,31 +417,31 @@
                         </div>
 
                         <div>
-                            <!-- Tek Sıra Halinde Paylaşım (Sayaçlı), Kalp ve İndir Butonları -->
-                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-0.5">
-                                <button onclick="kopyalaVePaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-0.5 text-emerald-600 hover:bg-emerald-50 py-1 px-1 rounded transition text-xs">
-                                    <i class="fa-brands fa-whatsapp text-sm"></i>
-                                    <span class="font-bold text-[11px] count-whatsapp">${waCount}</span>
+                            <!-- Tek Sıra Sosyal Medya, Beğeni ve İndir (Sıfır Değerleri Gizli, İkonlar Büyütülmüş) -->
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 px-1">
+                                <button onclick="kopyalaVePaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-1 text-emerald-600 hover:bg-emerald-50 py-1.5 px-1.5 rounded transition text-sm">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                                    <span class="font-bold text-xs count-whatsapp ${waCount > 0 ? '' : 'hidden'}">${waCount > 0 ? waCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'facebook')" title="Facebook" class="flex items-center gap-0.5 text-blue-600 hover:bg-blue-50 py-1 px-1 rounded transition text-xs">
-                                    <i class="fa-brands fa-facebook-f text-sm"></i>
-                                    <span class="font-bold text-[11px] count-facebook">${fbCount}</span>
+                                <button onclick="kopyalaVePaylasByKart(this, 'facebook')" title="Facebook" class="flex items-center gap-1 text-blue-600 hover:bg-blue-50 py-1.5 px-1.5 rounded transition text-sm">
+                                    <i class="fa-brands fa-facebook-f text-base"></i>
+                                    <span class="font-bold text-xs count-facebook ${fbCount > 0 ? '' : 'hidden'}">${fbCount > 0 ? fbCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'instagram')" title="Instagram" class="flex items-center gap-0.5 text-pink-600 hover:bg-pink-50 py-1 px-1 rounded transition text-xs">
-                                    <i class="fa-brands fa-instagram text-sm"></i>
-                                    <span class="font-bold text-[11px] count-instagram">${igCount}</span>
+                                <button onclick="kopyalaVePaylasByKart(this, 'instagram')" title="Instagram" class="flex items-center gap-1 text-pink-600 hover:bg-pink-50 py-1.5 px-1.5 rounded transition text-sm">
+                                    <i class="fa-brands fa-instagram text-lg"></i>
+                                    <span class="font-bold text-xs count-instagram ${igCount > 0 ? '' : 'hidden'}">${igCount > 0 ? igCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'twitter')" title="X (Twitter)" class="flex items-center gap-0.5 text-slate-900 hover:bg-slate-100 py-1 px-1 rounded transition text-xs">
-                                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                    <span class="font-bold text-[11px] count-twitter">${twCount}</span>
+                                <button onclick="kopyalaVePaylasByKart(this, 'twitter')" title="X (Twitter)" class="flex items-center gap-1 text-slate-900 hover:bg-slate-100 py-1.5 px-1.5 rounded transition text-sm">
+                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                                    <span class="font-bold text-xs count-twitter ${twCount > 0 ? '' : 'hidden'}">${twCount > 0 ? twCount : ''}</span>
                                 </button>
-                                <button onclick="begenToggle(this, '${item.public_id}')" class="flex items-center gap-0.5 text-slate-600 hover:text-rose-600 transition group/like py-1 px-1 rounded hover:bg-rose-50" title="Beğen">
-                                    <i class="${isLiked ? 'fa-solid text-rose-500' : 'fa-regular text-slate-500'} fa-heart text-xs transition group-hover/like:scale-110"></i>
-                                    <span class="font-bold text-slate-700 text-[11px] count-kalp">${likeCount}</span>
+                                <button onclick="begenToggle(this, '${item.public_id}')" class="flex items-center gap-1 text-slate-600 hover:text-rose-600 transition group/like py-1.5 px-1.5 rounded hover:bg-rose-50" title="Beğen">
+                                    <i class="${isLiked ? 'fa-solid text-rose-500' : 'fa-regular text-slate-500'} fa-heart text-base transition group-hover/like:scale-110"></i>
+                                    <span class="font-bold text-slate-700 text-xs count-kalp ${likeCount > 0 ? '' : 'hidden'}">${likeCount > 0 ? likeCount : ''}</span>
                                 </button>
-                                <button onclick="dosyaIndirVeSayacArttir('${item.yol}', '${item.public_id}')" class="flex items-center gap-0.5 text-slate-600 hover:text-emerald-700 transition group/dl py-1 px-1 rounded hover:bg-emerald-50" title="İndir">
-                                    <i class="fa-solid fa-download text-xs transition group-hover/dl:scale-110"></i>
-                                    <span class="font-bold text-slate-700 text-[11px] count-indir">${dlCount}</span>
+                                <button onclick="dosyaIndirVeSayacArttir('${item.yol}', '${item.public_id}')" class="flex items-center gap-1 text-slate-600 hover:text-emerald-700 transition group/dl py-1.5 px-1.5 rounded hover:bg-emerald-50" title="İndir">
+                                    <i class="fa-solid fa-download text-base transition group-hover/dl:scale-110"></i>
+                                    <span class="font-bold text-slate-700 text-xs count-indir ${dlCount > 0 ? '' : 'hidden'}">${dlCount > 0 ? dlCount : ''}</span>
                                 </button>
                             </div>
                         </div>
@@ -853,13 +867,15 @@
         }
 
         async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id, kartElement) {
-            // Paylaşım sayacını artır
             let shareCount = getSayac(id, 'share_' + platform) + 1;
             setSayac(id, 'share_' + platform, shareCount);
 
             if (kartElement) {
                 const countSpan = kartElement.querySelector(`.count-${platform === 'twitter' ? 'twitter' : platform}`);
-                if (countSpan) countSpan.textContent = shareCount;
+                if (countSpan) {
+                    countSpan.textContent = shareCount > 0 ? shareCount : '';
+                    countSpan.parentElement.style.display = shareCount > 0 ? 'flex' : 'none';
+                }
             }
 
             try {
