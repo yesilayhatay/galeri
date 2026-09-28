@@ -7,7 +7,6 @@ cloudinary.config({
 });
 
 export default async function handler(req, res) {
-  // CORS İzinleri
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
 
@@ -19,12 +18,13 @@ export default async function handler(req, res) {
 
   try {
     const query = q.trim();
-
-    // Cloudinary kuralına uygun arama ifadesi (Yıldız sadece sonda kullanılabilir)
     const searchExpression = `tags:${query}* OR filename:${query}* OR folder:${query}*`;
 
+    // .with_field eklemeleriyle görselin EXIF ve açıklama verileri çekiliyor
     const result = await cloudinary.search
       .expression(searchExpression)
+      .with_field('context')
+      .with_field('image_metadata')
       .sort_by('created_at', 'desc')
       .max_results(50)
       .execute();
@@ -32,7 +32,6 @@ export default async function handler(req, res) {
     return res.status(200).json(result.resources);
   } catch (error) {
     console.error("Cloudinary Arama Hatası:", error);
-    // Hatanın detayını görebilmemiz için error mesajını da döndürelim
     return res.status(500).json({ 
       error: "Arama yapılırken bir hata oluştu.",
       details: error.message || error 
