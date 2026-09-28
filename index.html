@@ -220,7 +220,7 @@
         let aktifEtiket = 'hepsi';
         let aramaMetni = '';
         let mevcutSayfa = 1;
-        let gorunurKartlar = [];
+        let gorunurVeriler = [];
         let lightboxMevcutIndex = 0;
 
         let currentScale = 1;
@@ -255,7 +255,6 @@
             }
         }
 
-        // Sayaç 0 iken gizlenir, 1 ve üzerindeyse görünür olur
         async function kartSayaciniGuncelle(kart) {
             if (!kart) return;
             const id = kart.dataset.id;
@@ -299,7 +298,7 @@
             for (const kart of kartlar) {
                 if (kart.style.display === 'none') continue;
                 await kartSayaciniGuncelle(kart);
-                await new Promise(r => setTimeout(r, 40));
+                await new Promise(r => setTimeout(r, 30));
             }
         }
 
@@ -360,9 +359,10 @@
                     const isVid = ['mp4', 'webm', 'mov', 'mkv', 'avi'].includes(ext) || item.resource_type === 'video';
                     const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`;
                     
-                    // Cloudinary meta verilerini, etiketleri ve dosya yolunu arama için birleştiriyoruz (OCR / etiket desteği)
+                    // Cloudinary OCR, etiketler, context ve public_id kelime bazlı normalize edilir
                     const cloudinaryTags = (item.tags || []).join(' ');
-                    const aramaMetinHavuzu = `${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
+                    const temizPublicId = item.public_id.replace(/[-_\\/]/g, ' ');
+                    const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
 
                     const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
                     const ozellink = ozelLinkBul(aramaMetinHavuzu);
@@ -381,7 +381,7 @@
                 });
 
                 kategoriButonlariniCiz(Array.from(kategorilerSet));
-                galeriKartlariniEkranaBas();
+                filtreleVeSayfala();
 
             } catch (err) {
                 console.error(err);
@@ -405,27 +405,50 @@
             container.innerHTML = html;
         }
 
-        function galeriKartlariniEkranaBas() {
+        function filtreleVeSayfala() {
+            const slugKat = toSlug(aktifKategori);
+            const slugTag = toSlug(aktifEtiket);
+
+            gorunurVeriler = tumVeriler.filter(item => {
+                const katUyum = (aktifKategori === 'hepsi' || toSlug(item.kategori) === slugKat);
+                const etiketUyum = (aktifEtiket === 'hepsi' || item.etiketler.some(e => toSlug(e) === slugTag));
+                
+                let aramaUyum = true;
+                if (aramaMetni !== '') {
+                    const kelimeler = aramaMetni.split(' ');
+                    aramaUyum = kelimeler.every(kelime => item.aramaHavuzu.includes(kelime) || item.etiketler.some(e => e.toLowerCase().includes(kelime)));
+                }
+
+                return katUyum && etiketUyum && aramaUyum;
+            });
+
+            const toplamSayfa = Math.ceil(gorunurVeriler.length / SAYFA_BASI_GORSEL) || 1;
+            if (mevcutSayfa > toplamSayfa) mevcutSayfa = 1;
+
+            galeriKartlariniCiz();
+            sayfalamaButonlariCiz(toplamSayfa);
+        }
+
+        function galeriKartlariniCiz() {
             const grid = document.getElementById('galeriGrid');
-            if (tumVeriler.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-semibold">Henüz galeriye içerik eklenmedi.</div>`;
+            if (gorunurVeriler.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-semibold">Aradığınız kriterlere uygun içerik bulunamadı.</div>`;
+                document.getElementById('sayfalamaContainer').innerHTML = '';
                 return;
             }
 
-            grid.innerHTML = tumVeriler.map(item => {
+            const baslangic = (mevcutSayfa - 1) * SAYFA_BASI_GORSEL;
+            const bitis = baslangic + SAYFA_BASI_GORSEL;
+            const sayfadakiVeriler = gorunurVeriler.slice(baslangic, bitis);
+
+            grid.innerHTML = sayfadakiVeriler.map(item => {
                 return `
                 <div class="gorsel-kart bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg border border-slate-200" 
-                     data-idx="${item.idx}"
                      data-id="${item.id}"
-                     data-kategori="${item.kategori}"
-                     data-etiketler='${JSON.stringify(item.etiketler)}'
-                     data-aramahavuzu="${item.aramaHavuzu}"
-                     data-yol="${item.yol}"
-                     data-link="${item.link}"
-                     data-isvideo="${item.is_video ? '1' : '0'}">
+                     data-yol="${item.yol}">
                     
                     <div class="relative bg-slate-900/5 h-64 flex items-center justify-center p-3 cursor-pointer group"
-                         onclick="lightboxAcByKart(this)">
+                         onclick="lightboxAcById('${item.id}')">
                         
                         ${item.is_video ? `
                             <video src="${item.yol}" class="max-h-full max-w-full object-contain rounded" preload="metadata"></video>
@@ -509,7 +532,6 @@
                 </div>`;
             }).join('');
 
-            filtreleVeSayfala();
             sayaclariGuncelleDOM();
         }
 
@@ -544,51 +566,6 @@
             filtreleVeSayfala();
         }
 
-        function filtreleVeSayfala() {
-            gorunurKartlar = [];
-            const slugKat = toSlug(aktifKategori);
-            const slugTag = toSlug(aktifEtiket);
-            const kartlar = document.querySelectorAll('.gorsel-kart');
-
-            kartlar.forEach(kart => {
-                const itemKat = kart.dataset.kategori;
-                const aramaHavuzu = kart.dataset.aramahavuzu || '';
-                let itemEtiketler = [];
-                try {
-                    itemEtiketler = JSON.parse(kart.dataset.etiketler || '[]');
-                } catch(e){}
-
-                const katUyum = (aktifKategori === 'hepsi' || toSlug(itemKat) === slugKat);
-                const etiketUyum = (aktifEtiket === 'hepsi' || itemEtiketler.some(e => toSlug(e) === slugTag));
-                const aramaUyum = (aramaMetni === '' || aramaHavuzu.includes(aramaMetni) || itemEtiketler.some(e => e.toLowerCase().includes(aramaMetni)));
-
-                if (katUyum && etiketUyum && aramaUyum) {
-                    gorunurKartlar.push(kart);
-                } else {
-                    kart.style.display = 'none';
-                }
-            });
-
-            const toplamSayfa = Math.ceil(gorunurKartlar.length / SAYFA_BASI_GORSEL) || 1;
-            if (mevcutSayfa > toplamSayfa) mevcutSayfa = 1;
-
-            gorunurlukGuncelle();
-            sayfalamaButonlariCiz(toplamSayfa);
-        }
-
-        function gorunurlukGuncelle() {
-            const baslangic = (mevcutSayfa - 1) * SAYFA_BASI_GORSEL;
-            const bitis = baslangic + SAYFA_BASI_GORSEL;
-
-            gorunurKartlar.forEach((kart, i) => {
-                if (i >= baslangic && i < bitis) {
-                    kart.style.display = 'flex';
-                } else {
-                    kart.style.display = 'none';
-                }
-            });
-        }
-
         function sayfalamaButonlariCiz(toplamSayfa) {
             const container = document.getElementById('sayfalamaContainer');
             if (!container) return;
@@ -615,8 +592,8 @@
 
         function sayfaDegistir(yeniSayfa) {
             mevcutSayfa = yeniSayfa;
-            gorunurlukGuncelle();
-            const toplamSayfa = Math.ceil(gorunurKartlar.length / SAYFA_BASI_GORSEL);
+            galeriKartlariniCiz();
+            const toplamSayfa = Math.ceil(gorunurVeriler.length / SAYFA_BASI_GORSEL);
             sayfalamaButonlariCiz(toplamSayfa);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -660,9 +637,8 @@
         }
 
         // LIGHTBOX
-        function lightboxAcByKart(element) {
-            const kart = element.closest('.gorsel-kart');
-            lightboxMevcutIndex = gorunurKartlar.indexOf(kart);
+        function lightboxAcById(id) {
+            lightboxMevcutIndex = gorunurVeriler.findIndex(item => item.id === id);
             if (lightboxMevcutIndex === -1) lightboxMevcutIndex = 0;
 
             lightboxIcerikGuncelle();
@@ -675,48 +651,44 @@
 
         async function lightboxIcerikGuncelle() {
             zoomSifirla();
-            const kart = gorunurKartlar[lightboxMevcutIndex];
-            if (!kart) return;
-
-            const yol = kart.dataset.yol;
-            const link = kart.dataset.link;
-            const id = kart.dataset.id;
-            const isVid = kart.dataset.isvideo === '1';
+            const item = gorunurVeriler[lightboxMevcutIndex];
+            if (!item) return;
 
             const gorsel = document.getElementById('lightboxGorsel');
             const video = document.getElementById('lightboxVideo');
             const linkContainer = document.getElementById('lightboxLinkContainer');
 
-            if (isVid) {
+            if (item.is_video) {
                 gorsel.classList.add('hidden');
                 video.classList.remove('hidden');
-                video.src = yol;
+                video.src = item.yol;
                 video.play();
             } else {
                 video.pause();
                 video.classList.add('hidden');
                 gorsel.classList.remove('hidden');
-                gorsel.src = yol;
+                gorsel.src = item.yol;
             }
 
-            if (link && link.trim() !== '') {
-                linkContainer.innerHTML = `<i class="fa-solid fa-link mr-1"></i><a href="${link}" target="_blank" class="hover:underline" title="${link}">${link}</a>`;
+            if (item.link && item.link.trim() !== '') {
+                linkContainer.innerHTML = `<i class="fa-solid fa-link mr-1"></i><a href="${item.link}" target="_blank" class="hover:underline" title="${item.link}">${item.link}</a>`;
             } else {
                 linkContainer.innerHTML = `<span class="text-slate-400 italic">⚠️ İçerikte bağlantı yok.</span>`;
             }
 
-            document.getElementById('lbWaBtn').onclick = () => kopyalaVePaylas(yol, link, 'whatsapp', id);
-            document.getElementById('lbFbBtn').onclick = () => kopyalaVePaylas(yol, link, 'facebook', id);
-            document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(yol, link, 'instagram', id);
-            document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(yol, link, 'twitter', id);
+            document.getElementById('lbWaBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'whatsapp', item.id);
+            document.getElementById('lbFbBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'facebook', item.id);
+            document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'instagram', item.id);
+            document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'twitter', item.id);
 
-            const heartCount = await sayacGetirAPI(id, 'heart');
+            const heartCount = await sayacGetirAPI(item.id, 'heart');
             const heartBtn = document.getElementById('lbHeartBtn');
             const lbHeartIconClass = heartCount > 0 ? "fa-solid fa-heart text-rose-500" : "fa-regular fa-heart text-white hover:text-rose-400";
             heartBtn.innerHTML = `<i class="${lbHeartIconClass}"></i>`;
             heartBtn.onclick = async () => {
-                await sayacArtirAPI(id, 'heart');
-                await kartSayaciniGuncelle(kart);
+                await sayacArtirAPI(item.id, 'heart');
+                const kart = document.querySelector(`.gorsel-kart[data-id="${item.id}"]`);
+                if (kart) await kartSayaciniGuncelle(kart);
                 await lightboxIcerikGuncelle();
                 showToast('❤️ İçerik beğenildi!');
             };
@@ -728,7 +700,7 @@
                 const rect = e.target.getBoundingClientRect();
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-                zoomUygula(2.0, xPercent, yPercent); // İlk tıklamada daha güçlü zoom
+                zoomUygula(2.2, xPercent, yPercent);
             } else {
                 zoomSifirla();
             }
@@ -772,7 +744,7 @@
             if (currentScale + miktar <= 1) {
                 zoomSifirla();
             } else {
-                zoomUygula(Math.min(4, currentScale + miktar)); // Maksimum 4 kat zoom
+                zoomUygula(Math.min(5, currentScale + miktar));
             }
         }
 
@@ -814,13 +786,13 @@
                     originY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
                 }
 
-                const delta = e.deltaY < 0 ? 0.2 : -0.2;
+                const delta = e.deltaY < 0 ? 0.25 : -0.25;
                 let newScale = currentScale + delta;
 
                 if (newScale <= 1) {
                     zoomSifirla();
                 } else {
-                    newScale = Math.min(4, newScale);
+                    newScale = Math.min(5, newScale);
                     zoomUygula(newScale, originX, originY);
                 }
             }, { passive: false });
@@ -861,7 +833,7 @@
                     );
                     if (initialPinchDist > 0) {
                         const delta = dist / initialPinchDist;
-                        let newScale = Math.min(Math.max(currentScale * delta, 1), 4);
+                        let newScale = Math.min(Math.max(currentScale * delta, 1), 5);
                         currentScale = newScale;
                         initialPinchDist = dist;
                         zoomUygula(currentScale);
@@ -881,15 +853,15 @@
 
         function oncekiGorsel(e) {
             if (e) e.stopPropagation();
-            if (gorunurKartlar.length === 0) return;
-            lightboxMevcutIndex = (lightboxMevcutIndex - 1 + gorunurKartlar.length) % gorunurKartlar.length;
+            if (gorunurVeriler.length === 0) return;
+            lightboxMevcutIndex = (lightboxMevcutIndex - 1 + gorunurVeriler.length) % gorunurVeriler.length;
             lightboxIcerikGuncelle();
         }
 
         function sonrakiGorsel(e) {
             if (e) e.stopPropagation();
-            if (gorunurKartlar.length === 0) return;
-            lightboxMevcutIndex = (lightboxMevcutIndex + 1) % gorunurKartlar.length;
+            if (gorunurVeriler.length === 0) return;
+            lightboxMevcutIndex = (lightboxMevcutIndex + 1) % gorunurVeriler.length;
             lightboxIcerikGuncelle();
         }
 
@@ -968,11 +940,12 @@
         }
 
         async function dosyaIndirMevcut() {
-            const kart = gorunurKartlar[lightboxMevcutIndex];
-            if (kart && kart.dataset.yol) {
-                await sayacArtirAPI(kart.dataset.id, 'download');
-                await kartSayaciniGuncelle(kart);
-                dosyaIndir(kart.dataset.yol);
+            const item = gorunurVeriler[lightboxMevcutIndex];
+            if (item && item.yol) {
+                await sayacArtirAPI(item.id, 'download');
+                const kart = document.querySelector(`.gorsel-kart[data-id="${item.id}"]`);
+                if (kart) await kartSayaciniGuncelle(kart);
+                dosyaIndir(item.yol);
             }
         }
 
