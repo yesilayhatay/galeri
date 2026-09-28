@@ -7,7 +7,6 @@
     <title>Dijital Medya Galerisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
 
@@ -16,7 +15,7 @@
             <header class="mb-8 text-center">
                 <div class="flex justify-center mb-4">
                     <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90">
-                        <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.style.display='none'">
+                        <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg'">
                     </a>
                 </div>
                 <h1 class="text-3xl font-extrabold text-emerald-800 tracking-tight">Dijital Medya Galerisi</h1>
@@ -79,7 +78,7 @@
 
     <!-- LIGHTBOX MODAL -->
     <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex-col justify-between p-4 backdrop-blur-md select-none overflow-hidden" onclick="lightboxKapat(event)">
-        <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0 transition-opacity duration-300">
+        <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0">
             <div class="flex gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
                 <button onclick="zoomManual(0.3)" title="Yakınlaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
                 <button onclick="zoomManual(-0.3)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
@@ -99,11 +98,11 @@
         </button>
 
         <div id="lightboxViewport" class="relative flex-1 w-full flex items-center justify-center p-2 z-10 overflow-hidden my-2" onclick="lightboxKapat(event)">
-            <img id="lightboxGorsel" src="" alt="Önizleme" class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in" onclick="gorselTiklama(event)" onmousemove="gorselGezdirme(event)">
+            <img id="lightboxGorsel" src="" alt="Önizleme" class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in">
             <video id="lightboxVideo" controls autoplay class="max-h-full max-w-full object-contain rounded-lg shadow-2xl hidden"></video>
         </div>
         
-        <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0 transition-opacity duration-300" onclick="event.stopPropagation()">
+        <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0" onclick="event.stopPropagation()">
             <div id="lightboxLinkContainer" class="text-xs text-blue-400 mb-2.5 truncate font-mono px-2"></div>
             <div class="flex justify-center items-center gap-5">
                 <button onclick="kopyalaVaPaylasLightbox('whatsapp')" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-xl transition flex items-center gap-1">
@@ -126,10 +125,9 @@
     </div>
 
     <script>
-        const CLOUD_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
-        // BURAYA KENDİ CLOUDINARY GÖRSEL LİNKLERİNİZİ EKLEYEBİLİRSİNİZ
+        // Güncellenmiş Cloudinary Bağlantıları ve Veri Yapısı
         let tumVeriler = [
             {
                 idx: 0,
@@ -157,14 +155,6 @@
         let gorunurKartlar = [];
         let lightboxMevcutIndex = 0;
 
-        let currentScale = 1;
-        let currentX = 0;
-        let currentY = 0;
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
-        let initialPinchDist = 0;
-
         function toSlug(str) {
             if (!str) return '';
             return str.toString().trim()
@@ -181,16 +171,11 @@
         function getSayac(id, tip) {
             const key = `stats_${tip}_${id}`;
             let val = localStorage.getItem(key);
-            if (val === null) {
-                val = 0;
-                localStorage.setItem(key, 0);
-            }
-            return parseInt(val);
+            return val !== null ? parseInt(val) : 0;
         }
 
         function setSayac(id, tip, yeniDeger) {
-            const key = `stats_${tip}_${id}`;
-            localStorage.setItem(key, yeniDeger);
+            localStorage.setItem(`stats_${tip}_${id}`, yeniDeger);
         }
 
         function begenmisMi(id) {
@@ -207,12 +192,10 @@
                 sayi = Math.max(0, sayi - 1);
                 localStorage.setItem(`liked_${id}`, 'false');
                 icon.className = "fa-regular fa-heart text-slate-500 transition group-hover/like:scale-110";
-                btn.classList.remove('text-rose-600');
             } else {
                 sayi += 1;
                 localStorage.setItem(`liked_${id}`, 'true');
                 icon.className = "fa-solid fa-heart text-rose-500 transition group-hover/like:scale-110";
-                btn.classList.add('text-rose-600');
                 showToast('❤️ İçerik beğenildi');
             }
 
@@ -241,7 +224,6 @@
         function verileriBaslat() {
             const kategorilerSet = new Set();
             tumVeriler.forEach(item => kategorilerSet.add(item.kategori));
-
             kategoriButonlariniCiz(Array.from(kategorilerSet));
             galeriKartlariniEkranaBas();
         }
@@ -249,11 +231,9 @@
         function kategoriButonlariniCiz(kategoriler) {
             const container = document.getElementById('kategoriContainer');
             let html = `<button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition">TÜM KATEGORİLER</button>`;
-
             kategoriler.forEach(kat => {
                 html += `<button onclick="kategoriFiltrele('${kat}', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition">${kat}</button>`;
             });
-
             container.innerHTML = html;
         }
 
@@ -293,7 +273,7 @@
                                 </span>
                             </div>
                         ` : `
-                            <img src="${item.yol}" alt="Görsel" class="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-102" loading="lazy" onerror="this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg'">
+                            <img src="${item.yol}" alt="Görsel" class="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-102" loading="lazy" onerror="this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg'">
                         `}
                         
                         <span class="absolute top-3 left-3 bg-emerald-800/90 text-white text-xs px-2.5 py-1 rounded-md font-bold backdrop-blur-sm">
@@ -331,7 +311,6 @@
                         </div>
 
                         <div>
-                            <!-- SOSYAL MEDYA İKONLARI (Boyutlar büyütüldü, boşluklar optimize edildi, sıfırlar gizlendi) -->
                             <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 px-1">
                                 <button onclick="kopyalaVePaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-1 text-emerald-600 hover:bg-emerald-50 py-1.5 px-1.5 rounded transition text-base">
                                     <i class="fa-brands fa-whatsapp text-lg"></i>
@@ -618,8 +597,6 @@
 
         function zoomSifirla() {}
         function zoomManual() {}
-        function gorselTiklama() {}
-        function gorselGezdirme() {}
     </script>
 </body>
 </html>
