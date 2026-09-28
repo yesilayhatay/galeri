@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>Yeşilay Hatay - Dijital Medya Galerisi</title>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Dijital Medya Galerisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -15,7 +17,7 @@
             <header class="mb-8 text-center">
                 <div class="flex justify-center mb-4">
                     <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90">
-                        <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg'">
+                        <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.style.display='none'">
                     </a>
                 </div>
                 <h1 class="text-3xl font-extrabold text-emerald-800 tracking-tight">Dijital Medya Galerisi</h1>
@@ -25,7 +27,7 @@
 
             <!-- KATEGORİ FİLTRELERİ -->
             <div class="mb-4">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Kategoriler (6 Klasör Yapısı)</div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Kategoriler</div>
                 <div class="flex flex-wrap justify-center gap-2" id="kategoriContainer">
                     <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition">
                         TÜM KATEGORİLER
@@ -33,7 +35,7 @@
                 </div>
             </div>
 
-            <!-- SABİT ETİKET FİLTRESİ -->
+            <!-- SABİT 16 ETİKET FİLTRESİ -->
             <div class="mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele (Konu Etiketleri)</div>
                 <div class="flex flex-wrap justify-center gap-1.5">
@@ -45,7 +47,17 @@
                     <button onclick="etiketFiltrele('Madde', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Madde</button>
                     <button onclick="etiketFiltrele('Kumar', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Kumar</button>
                     <button onclick="etiketFiltrele('Teknolojik/Dijital', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Teknolojik/Dijital</button>
+                    <button onclick="etiketFiltrele('Aile', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Aile</button>
+                    <button onclick="etiketFiltrele('Çocuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Çocuk</button>
+                    <button onclick="etiketFiltrele('Gençlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Gençlik</button>
+                    <button onclick="etiketFiltrele('Eğitim', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Eğitim</button>
+                    <button onclick="etiketFiltrele('Etkinlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Etkinlik</button>
+                    <button onclick="etiketFiltrele('Gönüllülük', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Gönüllülük</button>
+                    <button onclick="etiketFiltrele('Savunuculuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Savunuculuk</button>
+                    <button onclick="etiketFiltrele('Sanat', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Sanat</button>
+                    <button onclick="etiketFiltrele('Yayın', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Yayın</button>
                     <button onclick="etiketFiltrele('YEDAM', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#YEDAM</button>
+                    <button onclick="etiketFiltrele('Market', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Market</button>
                 </div>
             </div>
 
@@ -53,7 +65,7 @@
             <div id="galeriGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <div class="col-span-full text-center py-12 text-slate-500 font-semibold">
                     <i class="fa-solid fa-spinner fa-spin text-3xl text-emerald-700 mb-3 block"></i>
-                    Görseller yükleniyor...
+                    Görseller Cloudinary sunucusundan yükleniyor...
                 </div>
             </div>
 
@@ -63,17 +75,18 @@
 
     <!-- ALT BİLGİ ŞERİDİ -->
     <footer class="mt-16 bg-emerald-950 text-white text-center py-4 px-4 text-xs font-medium border-t border-emerald-900">
-        Bu sayfa Yeşilay Hatay Şubesi Tanıtım ve Medya Komisyonu B. / <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından hazırlanmıştır.
+        Bu sayfa Yeşilay Hatay Şubesi Tanıtım ve Medya Komisyonu B. / <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından Gemini ile hazırlanmıştır.
     </footer>
 
     <!-- LIGHTBOX MODAL -->
     <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex-col justify-between p-4 backdrop-blur-md select-none overflow-hidden" onclick="lightboxKapat(event)">
-        <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0">
+        <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0 transition-opacity duration-300">
             <div class="flex gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
                 <button onclick="zoomManual(0.3)" title="Yakınlaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
                 <button onclick="zoomManual(-0.3)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                 <button onclick="zoomSifirla()" title="Sıfırla" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
+
             <button onclick="lightboxKapatAjan()" class="text-white/80 hover:text-white bg-slate-900/80 border border-slate-700/80 p-2.5 rounded-xl text-xl z-40 transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -88,52 +101,79 @@
         </button>
 
         <div id="lightboxViewport" class="relative flex-1 w-full flex items-center justify-center p-2 z-10 overflow-hidden my-2" onclick="lightboxKapat(event)">
-            <img id="lightboxGorsel" src="" alt="Önizleme" class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in">
+            <img id="lightboxGorsel" 
+                 src="" 
+                 alt="Önizleme"
+                 class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in"
+                 onclick="gorselTiklama(event)"
+                 onmousemove="gorselGezdirme(event)">
+            
             <video id="lightboxVideo" controls autoplay class="max-h-full max-w-full object-contain rounded-lg shadow-2xl hidden"></video>
         </div>
         
-        <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0" onclick="event.stopPropagation()">
+        <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0 transition-opacity duration-300" onclick="event.stopPropagation()">
             <div id="lightboxLinkContainer" class="text-xs text-blue-400 mb-2.5 truncate font-mono px-2"></div>
-            <div class="flex justify-center items-center gap-5">
-                <button onclick="kopyalaVaPaylasLightbox('whatsapp')" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-xl transition flex items-center gap-1">
-                    <i class="fa-brands fa-whatsapp text-xl"></i>
+            
+            <div class="flex justify-center items-center gap-4">
+                <button id="lbWaBtn" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-2xl transition p-1">
+                    <i class="fa-brands fa-whatsapp"></i>
                 </button>
-                <button onclick="kopyalaVaPaylasLightbox('facebook')" title="Facebook" class="text-blue-400 hover:text-blue-300 text-xl transition flex items-center gap-1">
-                    <i class="fa-brands fa-facebook-f text-xl"></i>
+                <button id="lbFbBtn" title="Facebook" class="text-blue-400 hover:text-blue-300 text-2xl transition p-1">
+                    <i class="fa-brands fa-facebook-f"></i>
                 </button>
-                <button onclick="kopyalaVaPaylasLightbox('instagram')" title="Instagram" class="text-pink-400 hover:text-pink-300 text-xl transition flex items-center gap-1">
-                    <i class="fa-brands fa-instagram text-xl"></i>
+                <button id="lbIgBtn" title="Instagram" class="text-pink-400 hover:text-pink-300 text-2xl transition p-1">
+                    <i class="fa-brands fa-instagram"></i>
                 </button>
-                <button onclick="kopyalaVaPaylasLightbox('twitter')" title="X (Twitter)" class="text-slate-200 hover:text-white text-xl transition flex items-center gap-1">
+                <button id="lbTwBtn" title="X (Twitter)" class="text-slate-200 hover:text-white text-2xl transition p-1 flex items-center justify-center">
                     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </button>
-                <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-xl transition">
-                    <i class="fa-solid fa-download text-xl"></i>
+                <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-2xl transition p-1">
+                    <i class="fa-solid fa-download"></i>
                 </button>
             </div>
         </div>
     </div>
 
     <script>
+        const CLOUD_NAME = "yesilay-hatay";
+        const TAG_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
-        let tumVeriler = [
-            {
-                idx: 0,
-                public_id: "ornek_gorsel_1",
-                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg",
-                kategori: "GENEL",
-                link: "",
-                etiketler: ["Tütün"],
-                is_video: false
-            }
-        ];
+        const LINK_HARITASI = {};
 
+        const SABIT_ETIKETLER = {
+            'Tütün': ['tutun', 'tütün', 'sigara', 'nikotin', 'nargile', 'puf', 'vape', 'duman'],
+            'Alkol': ['alkol', 'icki', 'içki', 'bira', 'sarap', 'şarap', 'raki', 'rakı', 'kadeh'],
+            'Madde': ['madde', 'uyusturucu', 'uyuşturucu', 'sentetik', 'eroin', 'esrar', 'kokain'],
+            'Kumar': ['kumar', 'bahis', 'casino', 'kasino', 'iskambil', 'rulet', 'slot', 'zar'],
+            'Teknolojik/Dijital': ['teknoloji', 'dijital', 'ekran', 'siber', 'internet', 'telefon', 'sosyal medya'],
+            'Aile': ['aile', 'ebeveyn', 'veli', 'anne', 'baba', 'evlilik'],
+            'Çocuk': ['cocuk', 'çocuk', 'evlat', 'minik', 'ilkokul', 'anaokulu', 'kres', 'kreş'],
+            'Gençlik': ['genclik', 'gençlik', 'akran', 'kampus', 'kampüs', 'lise', 'universite'],
+            'Eğitim': ['egitim', 'eğitim', 'tbm', 'mufredat', 'okul', 'seminer', 'ders', 'kurs'],
+            'Etkinlik': ['etkinlik', 'organizasyon', 'kutlama', 'bulusma', 'festival', 'zirve', 'panel'],
+            'Gönüllülük': ['gonullu', 'gönüllü', 'gonulluluk', 'gönüllülük', 'saha', 'stant'],
+            'Savunuculuk': ['savunuculuk', 'mevzuat', 'politika', 'hak', 'yasa', 'kanun', 'deklarasyon'],
+            'Sanat': ['sanat', 'tiyatro', 'resim', 'sergi', 'muzik', 'müzik', 'sinema', 'film'],
+            'Yayın': ['yayin', 'yayın', 'dergi', 'brosur', 'broşür', 'bulten', 'kitap', 'afis', 'afiş'],
+            'YEDAM': ['yedam', 'danismanlik', 'danışmanlık', 'rehab', '115', 'terapi', 'psikolog'],
+            'Market': ['market', 'yesilaymarket', 'yeşilay market', 'magaza', 'urun', 'ürün']
+        };
+
+        let tumVeriler = [];
         let aktifKategori = 'hepsi';
         let aktifEtiket = 'hepsi';
         let mevcutSayfa = 1;
         let gorunurKartlar = [];
         let lightboxMevcutIndex = 0;
+
+        let currentScale = 1;
+        let currentX = 0;
+        let currentY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let initialPinchDist = 0;
 
         function toSlug(str) {
             if (!str) return '';
@@ -148,72 +188,90 @@
                 .replace(/[^A-Z0-9]/g, '');
         }
 
-        function getSayac(id, tip) {
-            const key = `stats_${tip}_${id}`;
-            let val = localStorage.getItem(key);
-            return val !== null ? parseInt(val) : 0;
-        }
-
-        function setSayac(id, tip, yeniDeger) {
-            localStorage.setItem(`stats_${tip}_${id}`, yeniDeger);
-        }
-
-        function begenmisMi(id) {
-            return localStorage.getItem(`liked_${id}`) === 'true';
-        }
-
-        function begenToggle(btn, id) {
-            let kalpCountSpan = btn.querySelector('.count-kalp');
-            let icon = btn.querySelector('i');
-            let mevcutBegen = begenmisMi(id);
-            let sayi = getSayac(id, 'like');
-
-            if (mevcutBegen) {
-                sayi = Math.max(0, sayi - 1);
-                localStorage.setItem(`liked_${id}`, 'false');
-                icon.className = "fa-regular fa-heart text-slate-500 transition group-hover/like:scale-110";
-            } else {
-                sayi += 1;
-                localStorage.setItem(`liked_${id}`, 'true');
-                icon.className = "fa-solid fa-heart text-rose-500 transition group-hover/like:scale-110";
-                showToast('❤️ İçerik beğenildi');
-            }
-
-            setSayac(id, 'like', sayi);
-            if (kalpCountSpan) {
-                kalpCountSpan.textContent = sayi > 0 ? sayi : '';
-                kalpCountSpan.parentElement.style.display = sayi > 0 ? 'flex' : 'none';
-            }
-        }
-
-        function dosyaIndirVeSayacArttir(dosyaYolu, id) {
-            let indirmeSayisi = getSayac(id, 'download') + 1;
-            setSayac(id, 'download', indirmeSayisi);
-            
-            const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
-            if (kart) {
-                const dlSpan = kart.querySelector('.count-indir');
-                if (dlSpan) {
-                    dlSpan.textContent = indirmeSayisi > 0 ? indirmeSayisi : '';
-                    dlSpan.parentElement.style.display = indirmeSayisi > 0 ? 'flex' : 'none';
+        function otomatıkEtiketCikar(metin) {
+            const t = metin.toLowerCase();
+            let bulunanlar = [];
+            for (const [etiket, anahtarlar] of Object.entries(SABIT_ETIKETLER)) {
+                if (anahtarlar.some(k => t.includes(k)) || t.includes(etiket.toLowerCase())) {
+                    bulunanlar.push(etiket);
                 }
             }
-            dosyaIndir(dosyaYolu);
+            return bulunanlar.length > 0 ? bulunanlar.slice(0, 3) : ['Yayın'];
         }
 
-        function verileriBaslat() {
-            const kategorilerSet = new Set();
-            tumVeriler.forEach(item => kategorilerSet.add(item.kategori));
-            kategoriButonlariniCiz(Array.from(kategorilerSet));
-            galeriKartlariniEkranaBas();
+        function ozelLinkBul(publicId) {
+            for (const [key, link] of Object.entries(LINK_HARITASI)) {
+                if (publicId.toLowerCase().includes(key.toLowerCase())) {
+                    return link;
+                }
+            }
+            return '';
+        }
+
+        async function cloudinaryVerileriniCek() {
+            const grid = document.getElementById("galeriGrid");
+            const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG_NAME}.json`;
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("Cloudinary erişim hatası");
+
+                const data = await res.json();
+                const kategorilerSet = new Set();
+
+                tumVeriler = data.resources.map((item, idx) => {
+                    const pathParts = item.public_id.split('/');
+                    
+                    let kat = "GENEL";
+                    if (pathParts.length > 1) {
+                        kat = pathParts[0].toUpperCase();
+                    } else {
+                        const etiketler = otomatıkEtiketCikar(item.public_id);
+                        if (etiketler.length > 0) {
+                            kat = etiketler[0].toUpperCase();
+                        }
+                    }
+                    kategorilerSet.add(kat);
+
+                    const ext = item.format ? item.format.toLowerCase() : '';
+                    const isVid = ['mp4', 'webm', 'mov', 'mkv', 'avi'].includes(ext) || item.resource_type === 'video';
+                    const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`;
+                    
+                    const etiketler = otomatıkEtiketCikar(item.public_id + " " + kat);
+                    const ozellink = ozelLinkBul(item.public_id);
+
+                    return {
+                        idx: idx,
+                        yol: mediaUrl,
+                        kategori: kat,
+                        link: ozellink,
+                        etiketler: etiketler,
+                        is_video: isVid
+                    };
+                });
+
+                kategoriButonlariniCiz(Array.from(kategorilerSet));
+                galeriKartlariniEkranaBas();
+
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = `
+                    <div class="col-span-full bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-xl text-center my-8">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
+                        <p class="font-semibold">İçerikler Yüklenemedi!</p>
+                        <p class="text-xs mt-1">Cloudinary üzerinde <b>${TAG_NAME}</b> etiketinin kaydedildiğinden emin olun.</p>
+                    </div>`;
+            }
         }
 
         function kategoriButonlariniCiz(kategoriler) {
             const container = document.getElementById('kategoriContainer');
             let html = `<button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition">TÜM KATEGORİLER</button>`;
+
             kategoriler.forEach(kat => {
                 html += `<button onclick="kategoriFiltrele('${kat}', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition">${kat}</button>`;
             });
+
             container.innerHTML = html;
         }
 
@@ -224,27 +282,18 @@
                 return;
             }
 
-            grid.innerHTML = tumVeriler.map(item => {
-                const likeCount = getSayac(item.public_id, 'like');
-                const dlCount = getSayac(item.public_id, 'download');
-                const isLiked = begenmisMi(item.public_id);
-                
-                const waCount = getSayac(item.public_id, 'share_whatsapp');
-                const fbCount = getSayac(item.public_id, 'share_facebook');
-                const igCount = getSayac(item.public_id, 'share_instagram');
-                const twCount = getSayac(item.public_id, 'share_twitter');
-
-                return `
+            grid.innerHTML = tumVeriler.map(item => `
                 <div class="gorsel-kart bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg border border-slate-200" 
                      data-idx="${item.idx}"
-                     data-id="${item.public_id}"
                      data-kategori="${item.kategori}"
                      data-etiketler='${JSON.stringify(item.etiketler)}'
                      data-yol="${item.yol}"
-                     data-link="${item.link || ''}"
+                     data-link="${item.link}"
                      data-isvideo="${item.is_video ? '1' : '0'}">
                     
-                    <div class="relative bg-slate-900/5 h-64 flex items-center justify-center p-3 cursor-pointer group" onclick="lightboxAcByKart(this)">
+                    <div class="relative bg-slate-900/5 h-64 flex items-center justify-center p-3 cursor-pointer group"
+                         onclick="lightboxAcByKart(this)">
+                        
                         ${item.is_video ? `
                             <video src="${item.yol}" class="max-h-full max-w-full object-contain rounded" preload="metadata"></video>
                             <div class="absolute inset-0 flex items-center justify-center">
@@ -253,7 +302,7 @@
                                 </span>
                             </div>
                         ` : `
-                            <img src="${item.yol}" alt="Görsel" class="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-102" loading="lazy" onerror="this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg'">
+                            <img src="${item.yol}" alt="Görsel" class="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-102" loading="lazy">
                         `}
                         
                         <span class="absolute top-3 left-3 bg-emerald-800/90 text-white text-xs px-2.5 py-1 rounded-md font-bold backdrop-blur-sm">
@@ -269,7 +318,7 @@
 
                     <div class="p-4 flex-1 flex flex-col justify-between bg-white">
                         <div>
-                            <div class="flex flex-wrap gap-1 mb-2">
+                            <div class="flex flex-wrap gap-1 mb-3">
                                 ${item.etiketler.map(e => `
                                     <span class="bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded border border-emerald-100 font-medium">
                                         #${e}
@@ -277,50 +326,38 @@
                                 `).join('')}
                             </div>
 
-                            <div class="link-container text-xs text-slate-400 italic mb-3 bg-slate-50 p-2 rounded border border-slate-100 truncate flex items-center gap-1.5">
-                                ${item.link ? `
+                            ${item.link ? `
+                                <div class="text-xs text-blue-600 mb-4 bg-blue-50 p-2 rounded-lg border border-blue-100 flex items-center gap-1.5 overflow-hidden">
                                     <i class="fa-solid fa-link text-blue-500 shrink-0"></i>
-                                    <a href="${item.link}" target="_blank" class="hover:underline font-mono truncate block w-full text-blue-600 font-medium" title="${item.link}">
+                                    <a href="${item.link}" target="_blank" class="hover:underline font-mono truncate block w-full" title="${item.link}">
                                         ${item.link}
                                     </a>
-                                ` : `
-                                    <i class="fa-solid fa-link text-slate-400 shrink-0"></i>
-                                    <span class="truncate">Bağlantı bulunmuyor</span>
-                                `}
-                            </div>
+                                </div>
+                            ` : `
+                                <div class="text-xs text-slate-400 italic mb-4 bg-slate-50 p-2 rounded border border-slate-100 truncate">
+                                    ⚠️ Bağlantı bulunmuyor
+                                </div>
+                            `}
                         </div>
 
-                        <div>
-                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 px-1">
-                                <button onclick="kopyalaVisaPaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-1 text-emerald-600 hover:bg-emerald-50 py-1.5 px-1.5 rounded transition text-base">
-                                    <i class="fa-brands fa-whatsapp text-lg"></i>
-                                    <span class="font-bold text-xs count-whatsapp ${waCount > 0 ? '' : 'hidden'}">${waCount > 0 ? waCount : ''}</span>
-                                </button>
-                                <button onclick="kopyalaVisaPaylasByKart(this, 'facebook')" title="Facebook" class="flex items-center gap-1 text-blue-600 hover:bg-blue-50 py-1.5 px-1.5 rounded transition text-base">
-                                    <i class="fa-brands fa-facebook-f text-base"></i>
-                                    <span class="font-bold text-xs count-facebook ${fbCount > 0 ? '' : 'hidden'}">${fbCount > 0 ? fbCount : ''}</span>
-                                </button>
-                                <button onclick="kopyalaVisaPaylasByKart(this, 'instagram')" title="Instagram" class="flex items-center gap-1 text-pink-600 hover:bg-pink-50 py-1.5 px-1.5 rounded transition text-base">
-                                    <i class="fa-brands fa-instagram text-lg"></i>
-                                    <span class="font-bold text-xs count-instagram ${igCount > 0 ? '' : 'hidden'}">${igCount > 0 ? igCount : ''}</span>
-                                </button>
-                                <button onclick="kopyalaVisaPaylasByKart(this, 'twitter')" title="X (Twitter)" class="flex items-center gap-1 text-slate-900 hover:bg-slate-100 py-1.5 px-1.5 rounded transition text-base">
-                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                    <span class="font-bold text-xs count-twitter ${twCount > 0 ? '' : 'hidden'}">${twCount > 0 ? twCount : ''}</span>
-                                </button>
-                                <button onclick="begenToggle(this, '${item.public_id}')" class="flex items-center gap-1 text-slate-600 hover:text-rose-600 transition group/like py-1.5 px-1.5 rounded hover:bg-rose-50" title="Beğen">
-                                    <i class="${isLiked ? 'fa-solid text-rose-500' : 'fa-regular text-slate-500'} fa-heart text-lg transition group-hover/like:scale-110"></i>
-                                    <span class="font-bold text-slate-700 text-xs count-kalp ${likeCount > 0 ? '' : 'hidden'}">${likeCount > 0 ? likeCount : ''}</span>
-                                </button>
-                                <button onclick="dosyaIndirVeSayacArttir('${item.yol}', '${item.public_id}')" class="flex items-center gap-1 text-slate-600 hover:text-emerald-700 transition group/dl py-1.5 px-1.5 rounded hover:bg-emerald-50" title="İndir">
-                                    <i class="fa-solid fa-download text-lg transition group-hover/dl:scale-110"></i>
-                                    <span class="font-bold text-slate-700 text-xs count-indir ${dlCount > 0 ? '' : 'hidden'}">${dlCount > 0 ? dlCount : ''}</span>
-                                </button>
-                            </div>
+                        <!-- GÜNCELLENMİŞ SOSYAL MEDYA İKONLARI VE AKSİYONLAR -->
+                        <div class="pt-3 border-t border-slate-100 grid grid-cols-4 gap-2">
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp')" title="WhatsApp'ta Paylaş" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-2 rounded-lg text-base flex items-center justify-center transition">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </button>
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram')" title="Instagram'da Paylaş" class="bg-pink-50 hover:bg-pink-100 text-pink-600 py-2 rounded-lg text-base flex items-center justify-center transition">
+                                <i class="fa-brands fa-instagram"></i>
+                            </button>
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook')" title="Facebook'ta Paylaş" class="bg-blue-50 hover:bg-blue-100 text-blue-600 py-2 rounded-lg text-base flex items-center justify-center transition">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </button>
+                            <button onclick="dosyaIndir('${item.yol}')" title="Cihaza İndir" class="bg-slate-100 hover:bg-emerald-700 hover:text-white text-slate-700 py-2 rounded-lg text-base flex items-center justify-center transition">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
                         </div>
                     </div>
-                </div>`;
-            }).join('');
+                </div>
+            `).join('');
 
             filtreleVeSayfala();
         }
@@ -345,7 +382,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            verileriBaslat();
+            cloudinaryVerileriniCek();
+            touchOlaylariniBagla();
+            mouseWheelZoomBagla();
         });
 
         function filtreleVeSayfala() {
@@ -433,6 +472,12 @@
             });
             btn.className = "kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
 
+            document.querySelectorAll('.tag-btn').forEach(b => {
+                b.className = "tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200";
+            });
+            const tumKonularBtn = document.querySelector('.tag-btn');
+            if (tumKonularBtn) tumKonularBtn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
+
             filtreleVeSayfala();
         }
 
@@ -446,15 +491,23 @@
             });
             btn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
 
+            document.querySelectorAll('.kat-btn').forEach(b => {
+                b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
+            });
+            const tumKatBtn = document.querySelector('.kat-btn');
+            if (tumKatBtn) tumKatBtn.className = "kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
+
             filtreleVeSayfala();
         }
 
+        // LIGHTBOX
         function lightboxAcByKart(element) {
             const kart = element.closest('.gorsel-kart');
             lightboxMevcutIndex = gorunurKartlar.indexOf(kart);
             if (lightboxMevcutIndex === -1) lightboxMevcutIndex = 0;
 
             lightboxIcerikGuncelle();
+
             const modal = document.getElementById('lightboxModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -462,6 +515,7 @@
         }
 
         function lightboxIcerikGuncelle() {
+            zoomSifirla();
             const kart = gorunurKartlar[lightboxMevcutIndex];
             if (!kart) return;
 
@@ -488,77 +542,170 @@
             if (link && link.trim() !== '') {
                 linkContainer.innerHTML = `<i class="fa-solid fa-link mr-1"></i><a href="${link}" target="_blank" class="hover:underline" title="${link}">${link}</a>`;
             } else {
-                linkContainer.innerHTML = `<span class="text-slate-400 italic">⚠️ İçerikte bağlantı bulunmuyor</span>`;
+                linkContainer.innerHTML = `<span class="text-slate-400 italic">⚠️ İçerikte bağlantı yok.</span>`;
+            }
+
+            document.getElementById('lbWaBtn').onclick = () => kopyalaVePaylas(yol, link, 'whatsapp');
+            document.getElementById('lbFbBtn').onclick = () => kopyalaVePaylas(yol, link, 'facebook');
+            document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(yol, link, 'instagram');
+            document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(yol, link, 'twitter');
+        }
+
+        function gorselTiklama(e) {
+            e.stopPropagation();
+            if (currentScale === 1) {
+                const rect = e.target.getBoundingClientRect();
+                const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+                const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+                zoomUygula(1.8, xPercent, yPercent);
+            } else {
+                zoomSifirla();
             }
         }
 
-        function kopyalaVaPaylasLightbox(platform) {
-            const kart = gorunurKartlar[lightboxMevcutIndex];
-            if (!kart) return;
-            kopyalaVePaylas(kart.dataset.yol, kart.dataset.link, platform, kart.dataset.id, kart);
+        function gorselGezdirme(e) {
+            if (currentScale > 1) {
+                const rect = e.target.getBoundingClientRect();
+                const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+                const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+                const gorsel = document.getElementById('lightboxGorsel');
+                gorsel.style.transformOrigin = `${xPercent}% ${originY}%`;
+            }
         }
 
-        function kopyalaVisaPaylasByKart(btn, platform) {
-            const kart = btn.closest('.gorsel-kart');
-            kopyalaVePaylas(kart.dataset.yol, kart.dataset.link, platform, kart.dataset.id, kart);
-        }
+        function zoomUygula(seviye, originX = 50, originY = 50) {
+            currentScale = seviye;
+            const gorsel = document.getElementById('lightboxGorsel');
+            const infoBar = document.getElementById('lightboxInfoBar');
+            const navPrev = document.getElementById('lbNavPrev');
+            const navNext = document.getElementById('lbNavNext');
 
-        async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id, kartElement) {
-            let shareCount = getSayac(id, 'share_' + platform) + 1;
-            setSayac(id, 'share_' + platform, shareCount);
+            if (gorsel) {
+                gorsel.style.transformOrigin = `${originX}% ${originY}%`;
+                gorsel.style.transform = `scale(${currentScale})`;
 
-            if (kartElement) {
-                const countSpan = kartElement.querySelector(`.count-${platform === 'twitter' ? 'twitter' : platform}`);
-                if (countSpan) {
-                    countSpan.textContent = shareCount > 0 ? shareCount : '';
-                    countSpan.parentElement.style.display = shareCount > 0 ? 'flex' : 'none';
+                if (currentScale > 1.05) {
+                    gorsel.classList.remove('max-h-full', 'max-w-full', 'cursor-zoom-in');
+                    gorsel.classList.add('max-h-none', 'max-w-none', 'cursor-zoom-out');
+                    
+                    if (infoBar) { infoBar.classList.add('opacity-0', 'pointer-events-none'); }
+                    if (navPrev) { navPrev.classList.add('opacity-0', 'pointer-events-none'); }
+                    if (navNext) { navNext.classList.add('opacity-0', 'pointer-events-none'); }
+                } else {
+                    zoomSifirla();
                 }
             }
+        }
 
-            if (ozelLink && ozelLink.trim() !== '') {
-                try {
-                    await navigator.clipboard.writeText(ozelLink);
-                    showToast('🔗 Bağlantı panoya kopyalandı');
-                } catch (e) {}
+        function zoomManual(miktar) {
+            if (currentScale + miktar <= 1) {
+                zoomSifirla();
+            } else {
+                zoomUygula(Math.min(4, currentScale + miktar));
+            }
+        }
+
+        function zoomSifirla() {
+            currentScale = 1;
+            currentX = 0;
+            currentY = 0;
+            const gorsel = document.getElementById('lightboxGorsel');
+            const infoBar = document.getElementById('lightboxInfoBar');
+            const navPrev = document.getElementById('lbNavPrev');
+            const navNext = document.getElementById('lbNavNext');
+
+            if (gorsel) {
+                gorsel.style.transformOrigin = 'center center';
+                gorsel.style.transform = 'scale(1) translate(0px, 0px)';
+                gorsel.classList.add('max-h-full', 'max-w-full', 'cursor-zoom-in');
+                gorsel.classList.remove('max-h-none', 'max-w-none', 'cursor-zoom-out');
             }
 
-            if (platform === 'facebook' && ozelLink) {
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ozelLink)}`, '_blank');
-                return;
-            }
-            if (platform === 'twitter') {
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(ozelLink || '')}`, '_blank');
-                return;
-            }
-
-            dosyaIndir(dosyaUrl);
+            if (infoBar) { infoBar.classList.remove('opacity-0', 'pointer-events-none'); }
+            if (navPrev) { navPrev.classList.remove('opacity-0', 'pointer-events-none'); }
+            if (navNext) { navNext.classList.remove('opacity-0', 'pointer-events-none'); }
         }
 
-        function dosyaIndir(dosyaYolu) {
-            const a = document.createElement('a');
-            a.href = dosyaYolu;
-            a.download = dosyaYolu.split('/').pop() || 'dosya';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        function mouseWheelZoomBagla() {
+            const viewport = document.getElementById('lightboxViewport');
+            const gorsel = document.getElementById('lightboxGorsel');
+
+            viewport.addEventListener('wheel', (e) => {
+                if (gorsel.classList.contains('hidden')) return;
+                e.preventDefault();
+                
+                const rect = gorsel.getBoundingClientRect();
+                let originX = 50;
+                let originY = 50;
+
+                if (rect.width > 0 && rect.height > 0) {
+                    originX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+                    originY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+                }
+
+                const delta = e.deltaY < 0 ? 0.2 : -0.2;
+                let newScale = currentScale + delta;
+
+                if (newScale <= 1) {
+                    zoomSifirla();
+                } else {
+                    newScale = Math.min(4, newScale);
+                    zoomUygula(newScale, originX, originY);
+                }
+            }, { passive: false });
         }
 
-        function dosyaIndirMevcut() {
-            const kart = gorunurKartlar[lightboxMevcutIndex];
-            if (kart && kart.dataset.yol) dosyaIndir(kart.dataset.yol);
-        }
+        function touchOlaylariniBagla() {
+            const viewport = document.getElementById('lightboxViewport');
+            const gorsel = document.getElementById('lightboxGorsel');
 
-        function lightboxKapat(e) {
-            if (e.target.id === 'lightboxModal' || e.target.id === 'lightboxViewport') lightboxKapatAjan();
-        }
+            viewport.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 2) {
+                    initialPinchDist = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
 
-        function lightboxKapatAjan() {
-            const modal = document.getElementById('lightboxModal');
-            const video = document.getElementById('lightboxVideo');
-            if (video) video.pause();
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
+                    const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    const rect = gorsel.getBoundingClientRect();
+
+                    if (rect.width > 0 && rect.height > 0) {
+                        let originX = Math.max(0, Math.min(100, ((midX - rect.left) / rect.width) * 100));
+                        let originY = Math.max(0, Math.min(100, ((midY - rect.top) / rect.height) * 100));
+                        gorsel.style.transformOrigin = `${originX}% ${originY}%`;
+                    }
+                } else if (e.touches.length === 1 && currentScale > 1) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX - currentX;
+                    startY = e.touches[0].clientY - currentY;
+                }
+            }, { passive: true });
+
+            viewport.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 2) {
+                    const dist = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                    if (initialPinchDist > 0) {
+                        const delta = dist / initialPinchDist;
+                        let newScale = Math.min(Math.max(currentScale * delta, 1), 4);
+                        currentScale = newScale;
+                        initialPinchDist = dist;
+                        zoomUygula(currentScale);
+                    }
+                } else if (e.touches.length === 1 && isDragging && currentScale > 1) {
+                    currentX = e.touches[0].clientX - startX;
+                    currentY = e.touches[0].clientY - startY;
+                    gorsel.style.transform = `scale(${currentScale}) translate(${currentX / currentScale}px, ${currentY / currentScale}px)`;
+                }
+            }, { passive: true });
+
+            viewport.addEventListener('touchend', (e) => {
+                if (e.touches.length < 2) initialPinchDist = 0;
+                if (e.touches.length === 0) isDragging = false;
+            });
         }
 
         function oncekiGorsel(e) {
@@ -575,8 +722,123 @@
             lightboxIcerikGuncelle();
         }
 
-        function zoomSifirla() {}
-        function zoomManual() {}
+        function lightboxKapat(event) {
+            if (event.target.id === 'lightboxModal' || event.target.id === 'lightboxViewport') {
+                lightboxKapatAjan();
+            }
+        }
+
+        function lightboxKapatAjan() {
+            const modal = document.getElementById('lightboxModal');
+            const video = document.getElementById('lightboxVideo');
+            if (video) video.pause();
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+            zoomSifirla();
+        }
+
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('lightboxModal');
+            if (!modal.classList.contains('hidden')) {
+                if (e.key === 'Escape') lightboxKapatAjan();
+                if (e.key === 'ArrowLeft') oncekiGorsel();
+                if (e.key === 'ArrowRight') sonrakiGorsel();
+            }
+        });
+
+        // GÜNCELLENMİŞ İNDİRME FONKSİYONU (Blob kullanarak otomatik indirme tetikleme)
+        async function dosyaIndir(dosyaYolu) {
+            try {
+                showToast('📥 Dosya indirilmeye başlanıyor...');
+                const response = await fetch(dosyaYolu);
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                
+                // Dosya adını URL'den al veya varsayılan ver
+                const filename = dosyaYolu.split('/').pop().split('?')[0] || 'yesilay_medya';
+                a.download = filename;
+                
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(blobUrl);
+                }, 100);
+            } catch (err) {
+                console.error("İndirme hatası:", err);
+                // Alternatif fallback yönlendirme
+                const a = document.createElement('a');
+                a.href = dosyaYolu;
+                a.target = '_blank';
+                a.download = dosyaYolu.split('/').pop() || 'yesilay_icerik';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        }
+
+        function dosyaIndirMevcut() {
+            const kart = gorunurKartlar[lightboxMevcutIndex];
+            if (kart && kart.dataset.yol) {
+                dosyaIndir(kart.dataset.yol);
+            }
+        }
+
+        async function kopyalaVePaylas(dosyaUrl, ozelLink, platform) {
+            try {
+                if (ozelLink && ozelLink.trim() !== '') {
+                    try {
+                        await navigator.clipboard.writeText(ozelLink);
+                        showToast('🔗 Bağlantı panoya kopyalandı');
+                    } catch (e) {
+                        console.log('Panoya kopyalama hatası:', e);
+                    }
+                }
+
+                if (platform === 'facebook') {
+                    if (ozelLink) {
+                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ozelLink)}`, '_blank');
+                    } else {
+                        showToast('⚠️ İçerik bağlantısı bulunamadı.');
+                    }
+                    return;
+                }
+
+                if (platform === 'instagram') {
+                    dosyaIndir(dosyaUrl);
+                    showToast('📥 Görsel indirildi. Instagram uygulamasından paylaşabilirsiniz.');
+                    return;
+                }
+
+                if (platform === 'whatsapp') {
+                    if (navigator.canShare) {
+                        try {
+                            const response = await fetch(dosyaUrl);
+                            const blob = await response.blob();
+                            const ext = dosyaUrl.split('.').pop().toLowerCase();
+                            const file = new File([blob], 'paylasim.' + ext, { type: blob.type });
+                            if (navigator.canShare({ files: [file] })) {
+                                await navigator.share({ files: [file] });
+                                return;
+                            }
+                        } catch (e) {
+                            console.log("Paylaşım API hatası:", e);
+                        }
+                    }
+                    dosyaIndir(dosyaUrl);
+                    showToast('📥 Görsel indirildi. WhatsApp üzerinden paylaşabilirsiniz.');
+                    return;
+                }
+            } catch (err) {
+                console.error("Hata:", err);
+            }
+        }
     </script>
 </body>
 </html>
