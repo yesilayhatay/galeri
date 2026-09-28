@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>Dijital Medya Galerisi</title>
+    <title>Yeşilay Hatay - Dijital Medya Galerisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -15,7 +15,7 @@
             <header class="mb-8 text-center">
                 <div class="flex justify-center mb-4">
                     <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90">
-                        <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg'">
+                        <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/sample.jpg'">
                     </a>
                 </div>
                 <h1 class="text-3xl font-extrabold text-emerald-800 tracking-tight">Dijital Medya Galerisi</h1>
@@ -25,7 +25,7 @@
 
             <!-- KATEGORİ FİLTRELERİ -->
             <div class="mb-4">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Kategoriler</div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Kategoriler (6 Klasör Yapısı)</div>
                 <div class="flex flex-wrap justify-center gap-2" id="kategoriContainer">
                     <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition">
                         TÜM KATEGORİLER
@@ -45,17 +45,7 @@
                     <button onclick="etiketFiltrele('Madde', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Madde</button>
                     <button onclick="etiketFiltrele('Kumar', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Kumar</button>
                     <button onclick="etiketFiltrele('Teknolojik/Dijital', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Teknolojik/Dijital</button>
-                    <button onclick="etiketFiltrele('Aile', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Aile</button>
-                    <button onclick="etiketFiltrele('Çocuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Çocuk</button>
-                    <button onclick="etiketFiltrele('Gençlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Gençlik</button>
-                    <button onclick="etiketFiltrele('Eğitim', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Eğitim</button>
-                    <button onclick="etiketFiltrele('Etkinlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Etkinlik</button>
-                    <button onclick="etiketFiltrele('Gönüllülük', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Gönüllülük</button>
-                    <button onclick="etiketFiltrele('Savunuculuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Savunuculuk</button>
-                    <button onclick="etiketFiltrele('Sanat', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Sanat</button>
-                    <button onclick="etiketFiltrele('Yayın', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Yayın</button>
                     <button onclick="etiketFiltrele('YEDAM', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#YEDAM</button>
-                    <button onclick="etiketFiltrele('Market', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Market</button>
                 </div>
             </div>
 
@@ -127,21 +117,21 @@
     <script>
         const SAYFA_BASI_GORSEL = 20;
 
-        // Güncellenmiş Cloudinary Bağlantıları ve Veri Yapısı
+        // Python ile 6 klasöre aktardığınız Cloudinary yapılandırmanıza uygun veriler
         let tumVeriler = [
             {
                 idx: 0,
-                public_id: "yesilay_ornek_1",
-                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg",
+                public_id: "ornek_gorsel_1",
+                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/klasor1/ornek1.jpg",
                 kategori: "GENEL",
                 link: "https://yesilay.org.tr",
-                etiketler: ["Gönüllülük", "Savunuculuk"],
+                etiketler: ["Tütün", "Savunuculuk"],
                 is_video: false
             },
             {
                 idx: 1,
-                public_id: "yedam_ornek_2",
-                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yedam.jpg",
+                public_id: "ornek_gorsel_2",
+                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/klasor2/ornek2.jpg",
                 kategori: "YEDAM",
                 link: "https://yedam.org.tr",
                 etiketler: ["YEDAM", "Eğitim"],
