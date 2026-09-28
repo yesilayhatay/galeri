@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeşilay Hatay - Dijital Medya Galerisi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <div>
+        <div class="max-w-7xl mx-auto p-4 md:p-8">
+            <!-- HEADER -->
+            <header class="mb-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90">
+                        <img src="galeri/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.style.display='none'">
+                    </a>
+                </div>
+                <h1 class="text-3xl font-extrabold text-emerald-800 tracking-tight">Dijital Medya Galerisi</h1>
+                <p class="text-slate-700 font-semibold text-base md:text-lg mt-2">İçerik Arşivleme, Etiketleme ve Hızlı Paylaşım Paneli</p>
+                <p class="text-slate-500 text-sm mt-1.5 max-w-2xl mx-auto font-medium">Paylaşılmak istenen medyanın detay linki cihazınıza otomatik kopyalanır ve sosyal mecralarda kolayca kullanılabilir.</p>
+            </header>
+
+            <!-- ARAMA KUTUSU (YENİ EKLENDİ) -->
+            <div class="max-w-md mx-auto mb-6">
+                <div class="relative flex items-center">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 text-slate-400"></i>
+                    <input type="text" id="aramaKutusu" oninput="canliArama()" placeholder="Etiket, kategori veya bağlantı ara..." 
+                           class="w-full pl-11 pr-10 py-2.5 bg-white border border-slate-300 rounded-full text-sm font-medium focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100 shadow-sm transition">
+                    <button id="aramaTemizle" onclick="aramaSifirla()" class="hidden absolute right-3 text-slate-400 hover:text-slate-600 p-1">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KATEGORİ FİLTRELERİ -->
+            <div class="mb-4">
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Kategoriler</div>
+                <div id="kategoriContainer" class="flex flex-wrap justify-center gap-2">
+                    <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition">
+                        TÜM KATEGORİLER
+                    </button>
+                </div>
+            </div>
+
+            <!-- KONU ETİKETLERİ FİLTRESİ -->
+            <div class="mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele (Konu Etiketleri)</div>
+                <div id="etiketContainer" class="flex flex-wrap justify-center gap-1.5">
+                    <button onclick="etiketFiltrele('hepsi', this)" class="tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition">
+                        Tüm Konular
+                    </button>
+                </div>
+            </div>
+
+            <!-- GALERİ GRID -->
+            <div id="galeriGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+
+            <!-- BOŞ DURUM MESAJI -->
+            <div id="bosMesaj" class="hidden bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-xl text-center my-8">
+                <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
+                <p class="font-semibold">Aramanıza veya filtrenize uygun içerik bulunamadı.</p>
+            </div>
+
+            <!-- SAYFALAMA -->
+            <div id="sayfalamaContainer" class="mt-10 flex justify-center items-center gap-2"></div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 bg-emerald-950 text-white text-center py-4 px-4 text-xs font-medium border-t border-emerald-900">
+        Bu sayfa Yeşilay Hatay Şubesi Tanıtım ve Medya Komisyonu B. / <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından Gemini ile hazırlanmıştır.
+    </footer>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex-col justify-between p-4 backdrop-blur-md select-none overflow-hidden" onclick="lightboxKapat(event)">
+        <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0 transition-opacity duration-300">
+            <div class="flex gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
+                <button onclick="zoomManual(0.3)" title="Yakınlaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                <button onclick="zoomManual(-0.3)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                <button onclick="zoomSifirla()" title="Sıfırla" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-rotate-left"></i></button>
+            </div>
+
+            <button onclick="lightboxKapatAjan()" class="text-white/80 hover:text-white bg-slate-900/80 border border-slate-700/80 p-2.5 rounded-xl text-xl z-40 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <button id="lbNavPrev" onclick="oncekiGorsel(event)" class="fixed left-4 top-1/2 -translate-y-1/2 text-white/90 hover:text-white text-2xl md:text-3xl bg-slate-900/70 hover:bg-slate-900 p-4 rounded-full z-40 transition border border-slate-700 backdrop-blur-md shadow-2xl">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <button id="lbNavNext" onclick="sonrakiGorsel(event)" class="fixed right-4 top-1/2 -translate-y-1/2 text-white/90 hover:text-white text-2xl md:text-3xl bg-slate-900/70 hover:bg-slate-900 p-4 rounded-full z-40 transition border border-slate-700 backdrop-blur-md shadow-2xl">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <div id="lightboxViewport" class="relative flex-1 w-full flex items-center justify-center p-2 z-10 overflow-hidden my-2" onclick="lightboxKapat(event)">
+            <img id="lightboxGorsel" src="" alt="Önizleme" class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in" onclick="gorselTiklama(event)" onmousemove="gorselGezdirme(event)">
+            <video id="lightboxVideo" controls autoplay class="max-h-full max-w-full object-contain rounded-lg shadow-2xl hidden"></video>
+        </div>
+        
+        <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0 transition-opacity duration-300" onclick="event.stopPropagation()">
+            <div id="lightboxLinkContainer" class="text-xs text-blue-400 mb-2.5 truncate font-mono px-2"></div>
+            <div class="flex justify-center items-center gap-4">
+                <button id="lbWaBtn" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-2xl transition p-1"><i class="fa-brands fa-whatsapp"></i></button>
+                <button id="lbFbBtn" title="Facebook" class="text-blue-400 hover:text-blue-300 text-2xl transition p-1"><i class="fa-brands fa-facebook-f"></i></button>
+                <button id="lbIgBtn" title="Instagram" class="text-pink-400 hover:text-pink-300 text-2xl transition p-1"><i class="fa-brands fa-instagram"></i></button>
+                <button id="lbTwBtn" title="X (Twitter)" class="text-slate-200 hover:text-white text-2xl transition p-1 flex items-center justify-center">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </button>
+                <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-2xl transition p-1"><i class="fa-solid fa-download"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SKRİPT VE VERİ YÖNETİMİ -->
+    <script>
+        const SAYFA_BASI_GORSEL = 20;
+
+        // SABİT ETİKET LİSTESİ
+        const sabitEtiketler = [
+            'Tütün', 'Alkol', 'Madde', 'Kumar', 'Teknolojik/Dijital',
+            'Aile', 'Çocuk', 'Gençlik', 'Eğitim', 'Etkinlik',
+            'Gönüllülük', 'Savunuculuk', 'Sanat', 'Yayın', 'YEDAM', 'Market'
+        ];
+
+        // VERİ LİSTESİ (Cloudinary / GitHub Medya Verileri)
+        // Cloudinary URL'lerinizi veya 'galeri/...' dizinindeki dosyalarınızı buraya ekleyebilirsiniz.
+        const tumIcerikler = [
+            {
+                yol: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+                kategori: "ETKİNLİK",
+                link: "https://www.yesilay.org.tr",
+                etiketler: ["Etkinlik", "Gönüllülük"],
+                is_video: false
+            },
+            {
+                yol: "https://res.cloudinary.com/demo/video/upload/dog.mp4",
+                kategori: "EĞİTİM",
+                link: "",
+                etiketler: ["Eğitim", "Teknolojik/Dijital"],
+                is_video: true
+            }
+        ];
+
+        let aktifKategori = 'hepsi';
+        let aktifEtiket = 'hepsi';
+        let aramaMetni = '';
+        let mevcutSayfa = 1;
+        let gorunurVeri = [];
+        let lightboxMevcutIndex = 0;
+
+        let currentScale = 1;
+
+        function toSlug(str) {
+            if (!str) return '';
+            return str.toString().trim()
+                .replace(/Ğ/g, 'G').replace(/ğ/g, 'g')
+                .replace(/Ü/g, 'U').replace(/ü/g, 'u')
+                .replace(/Ş/g, 'S').replace(/ş/g, 's')
+                .replace(/İ/g, 'I').replace(/ı/g, 'i').replace(/i/g, 'i')
+                .replace(/Ö/g, 'O').replace(/ö/g, 'o')
+                .replace(/Ç/g, 'C').replace(/ç/g, 'c')
+                .toLowerCase();
+        }
+
+        function showToast(message) {
+            let toast = document.getElementById('toastNotification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toastNotification';
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white px-5 py-2.5 rounded-xl shadow-2xl text-xs font-semibold z-50 transition-all duration-300 pointer-events-none border border-slate-700 backdrop-blur-md flex items-center gap-2 opacity-0 translate-y-4';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = message;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-4');
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            kategorileriVeEtiketleriBas();
+            filtreleVeCiz();
+        });
+
+        function kategorileriVeEtiketleriBas() {
+            // Kategorileri dinamik çek
+            const kategoriler = [...new Set(tumIcerikler.map(i => i.kategori))];
+            const katContainer = document.getElementById('kategoriContainer');
+            kategoriler.forEach(kat => {
+                const btn = document.createElement('button');
+                btn.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
+                btn.innerText = kat;
+                btn.onclick = () => kategoriFiltrele(kat, btn);
+                katContainer.appendChild(btn);
+            });
+
+            // Sabit etiketleri bas
+            const tagContainer = document.getElementById('etiketContainer');
+            sabitEtiketler.forEach(tag => {
+                const btn = document.createElement('button');
+                btn.className = "tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200";
+                btn.innerText = "#" + tag;
+                btn.onclick = () => etiketFiltrele(tag, btn);
+                tagContainer.appendChild(btn);
+            });
+        }
+
+        function canliArama() {
+            const input = document.getElementById('aramaKutusu');
+            const temizleBtn = document.getElementById('aramaTemizle');
+            aramaMetni = toSlug(input.value);
+            
+            if (aramaMetni.length > 0) {
+                temizleBtn.classList.remove('hidden');
+            } else {
+                temizleBtn.classList.add('hidden');
+            }
+
+            mevcutSayfa = 1;
+            filtreleVeCiz();
+        }
+
+        function aramaSifirla() {
+            document.getElementById('aramaKutusu').value = '';
+            document.getElementById('aramaTemizle').classList.add('hidden');
+            aramaMetni = '';
+            mevcutSayfa = 1;
+            filtreleVeCiz();
+        }
+
+        function filtreleVeCiz() {
+            const slugKat = toSlug(aktifKategori);
+            const slugTag = toSlug(aktifEtiket);
+
+            gorunurVeri = tumIcerikler.filter(item => {
+                const katUyum = (aktifKategori === 'hepsi' || toSlug(item.kategori) === slugKat);
+                const etiketUyum = (aktifEtiket === 'hepsi' || item.etiketler.some(e => toSlug(e) === slugTag));
+                
+                let aramaUyum = true;
+                if (aramaMetni !== '') {
+                    const icerikMetin = toSlug(item.kategori + " " + item.link + " " + item.etiketler.join(" "));
+                    aramaUyum = icerikMetin.includes(aramaMetni);
+                }
+
+                return katUyum && etiketUyum && aramaUyum;
+            });
+
+            const grid = document.getElementById('galeriGrid');
+            const bosMesaj = document.getElementById('bosMesaj');
+
+            if (gorunurVeri.length === 0) {
+                grid.innerHTML = '';
+                bosMesaj.classList.remove('hidden');
+                document.getElementById('sayfalamaContainer').innerHTML = '';
+                return;
+            } else {
+                bosMesaj.classList.add('hidden');
+            }
+
+            const toplamSayfa = Math.ceil(gorunurVeri.length / SAYFA_BASI_GORSEL) || 1;
+            if (mevcutSayfa > toplamSayfa) mevcutSayfa = 1;
+
+            const baslangic = (mevcutSayfa - 1) * SAYFA_BASI_GORSEL;
+            const sayfaVerisi = gorunurVeri.slice(baslangic, baslangic + SAYFA_BASI_GORSEL);
+
+            grid.innerHTML = sayfaVerisi.map((item, idx) => {
+                const globalIdx = baslangic + idx;
+                return `
+                <div class="gorsel-kart bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg border border-slate-200">
+                    <div class="relative bg-slate-900/5 h-64 flex items-center justify-center p-3 cursor-pointer group" onclick="lightboxAc(${globalIdx})">
+                        ${item.is_video ? `
+                            <video src="${item.yol}" class="max-h-full max-w-full object-contain rounded" preload="metadata"></video>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="bg-slate-900/70 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition"><i class="fa-solid fa-play ml-0.5"></i></span>
+                            </div>
+                        ` : `
+                            <img src="${item.yol}" alt="Görsel" class="max-h-full max-w-full object-contain rounded transition duration-300 group-hover:scale-102" loading="lazy">
+                        `}
+                        <span class="absolute top-3 left-3 bg-emerald-800/90 text-white text-xs px-2.5 py-1 rounded-md font-bold backdrop-blur-sm">${item.kategori}</span>
+                        <div class="absolute inset-0 bg-slate-900/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                            <span class="bg-slate-900/80 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-lg"><i class="fa-solid fa-magnifying-glass-plus"></i> Büyüt</span>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between bg-white">
+                        <div>
+                            <div class="flex flex-wrap gap-1 mb-3">
+                                ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-xs px-2 py-0.5 rounded border border-emerald-100 font-medium">#${e}</span>`).join('')}
+                            </div>
+                            ${item.link ? `
+                                <div class="text-xs text-blue-600 mb-4 bg-blue-50 p-2 rounded-lg border border-blue-100 flex items-center gap-1.5 overflow-hidden">
+                                    <i class="fa-solid fa-link text-blue-500 shrink-0"></i>
+                                    <a href="${item.link}" target="_blank" class="hover:underline font-mono truncate block w-full" title="${item.link}">${item.link}</a>
+                                </div>
+                            ` : `<div class="text-xs text-slate-400 italic mb-4 bg-slate-50 p-2 rounded border border-slate-100 truncate">⚠️ Açıklamada bağlantı yok.</div>`}
+                        </div>
+                        <div class="pt-3 border-t border-slate-100 grid grid-cols-5 gap-1">
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp')" title="WhatsApp'ta Paylaş" class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 text-lg flex items-center justify-center transition"><i class="fa-brands fa-whatsapp"></i></button>
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook')" title="Facebook'ta Paylaş" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50 text-lg flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></button>
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram')" title="Instagram'da Paylaş" class="p-2 rounded-lg text-pink-600 hover:bg-pink-50 text-lg flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></button>
+                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'twitter')" title="X (Twitter)'da Paylaş" class="p-2 rounded-lg text-slate-900 hover:bg-slate-100 text-lg flex items-center justify-center transition">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            </button>
+                            <button onclick="dosyaIndir('${item.yol}')" title="Cihaza İndir" class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 text-lg flex items-center justify-center transition"><i class="fa-solid fa-download"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            sayfalamaButonlariCiz(toplamSayfa);
+        }
+
+        function sayfalamaButonlariCiz(toplamSayfa) {
+            const container = document.getElementById('sayfalamaContainer');
+            if (toplamSayfa <= 1) { container.innerHTML = ''; return; }
+
+            let html = `<button onclick="sayfaDegistir(${mevcutSayfa - 1})" ${mevcutSayfa === 1 ? 'disabled class="opacity-40 cursor-not-allowed bg-white text-slate-400 px-3 py-1.5 rounded-lg border text-xs"' : 'class="bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border text-xs font-semibold"'}>Önceki</button>`;
+            for (let i = 1; i <= toplamSayfa; i++) {
+                html += `<button onclick="sayfaDegistir(${i})" class="${i === mevcutSayfa ? 'bg-emerald-700 text-white font-bold' : 'bg-white text-slate-700 border'} px-3.5 py-1.5 rounded-lg text-xs transition">${i}</button>`;
+            }
+            html += `<button onclick="sayfaDegistir(${mevcutSayfa + 1})" ${mevcutSayfa === toplamSayfa ? 'disabled class="opacity-40 cursor-not-allowed bg-white text-slate-400 px-3 py-1.5 rounded-lg border text-xs"' : 'class="bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border text-xs font-semibold"'}>Sonraki</button>`;
+            container.innerHTML = html;
+        }
+
+        function sayfaDegistir(yeniSayfa) {
+            mevcutSayfa = yeniSayfa;
+            filtreleVeCiz();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function kategoriFiltrele(kat, btn) {
+            aktifKategori = kat;
+            aktifEtiket = 'hepsi';
+            mevcutSayfa = 1;
+            document.querySelectorAll('.kat-btn').forEach(b => b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition");
+            btn.className = "kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
+            filtreleVeCiz();
+        }
+
+        function etiketFiltrele(tag, btn) {
+            aktifEtiket = tag;
+            aktifKategori = 'hepsi';
+            mevcutSayfa = 1;
+            document.querySelectorAll('.tag-btn').forEach(b => b.className = "tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200");
+            btn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
+            filtreleVeCiz();
+        }
+
+        // LIGHTBOX İŞLEMLERİ
+        function lightboxAc(index) {
+            lightboxMevcutIndex = index;
+            lightboxIcerikGuncelle();
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function lightboxIcerikGuncelle() {
+            zoomSifirla();
+            const item = gorunurVeri[lightboxMevcutIndex];
+            if (!item) return;
+
+            const gorsel = document.getElementById('lightboxGorsel');
+            const video = document.getElementById('lightboxVideo');
+            const linkContainer = document.getElementById('lightboxLinkContainer');
+
+            if (item.is_video) {
+                gorsel.classList.add('hidden');
+                video.classList.remove('hidden');
+                video.src = item.yol;
+                video.play();
+            } else {
+                video.pause();
+                video.classList.add('hidden');
+                gorsel.classList.remove('hidden');
+                gorsel.src = item.yol;
+            }
+
+            linkContainer.innerHTML = item.link ? `<i class="fa-solid fa-link mr-1"></i><a href="${item.link}" target="_blank" class="hover:underline">${item.link}</a>` : `<span class="text-slate-400 italic">⚠️ İçerikte bağlantı yok.</span>`;
+
+            document.getElementById('lbWaBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'whatsapp');
+            document.getElementById('lbFbBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'facebook');
+            document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'instagram');
+            document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(item.yol, item.link, 'twitter');
+        }
+
+        function oncekiGorsel(e) {
+            if (e) e.stopPropagation();
+            if (gorunurVeri.length === 0) return;
+            lightboxMevcutIndex = (lightboxMevcutIndex - 1 + gorunurVeri.length) % gorunurVeri.length;
+            lightboxIcerikGuncelle();
+        }
+
+        function sonrakiGorsel(e) {
+            if (e) e.stopPropagation();
+            if (gorunurVeri.length === 0) return;
+            lightboxMevcutIndex = (lightboxMevcutIndex + 1) % gorunurVeri.length;
+            lightboxIcerikGuncelle();
+        }
+
+        function lightboxKapat(event) {
+            if (event.target.id === 'lightboxModal' || event.target.id === 'lightboxViewport') {
+                lightboxKapatAjan();
+            }
+        }
+
+        function lightboxKapatAjan() {
+            const modal = document.getElementById('lightboxModal');
+            const video = document.getElementById('lightboxVideo');
+            if (video) video.pause();
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
+            zoomSifirla();
+        }
+
+        function zoomUygula(seviye) {
+            currentScale = seviye;
+            const gorsel = document.getElementById('lightboxGorsel');
+            if (gorsel) gorsel.style.transform = `scale(${currentScale})`;
+        }
+
+        function zoomManual(miktar) {
+            if (currentScale + miktar <= 1) zoomSifirla();
+            else zoomUygula(Math.min(4, currentScale + miktar));
+        }
+
+        function zoomSifirla() {
+            currentScale = 1;
+            const gorsel = document.getElementById('lightboxGorsel');
+            if (gorsel) gorsel.style.transform = 'scale(1)';
+        }
+
+        function gorselTiklama(e) {
+            e.stopPropagation();
+            if (currentScale === 1) zoomUygula(1.8);
+            else zoomSifirla();
+        }
+
+        function dosyaIndir(dosyaYolu) {
+            const a = document.createElement('a');
+            a.href = dosyaYolu;
+            a.download = dosyaYolu.split('/').pop() || 'yesilay_icerik';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function dosyaIndirMevcut() {
+            const item = gorunurVeri[lightboxMevcutIndex];
+            if (item && item.yol) dosyaIndir(item.yol);
+        }
+
+        async function kopyalaVePaylas(dosyaUrl, ozelLink, platform) {
+            try {
+                if (ozelLink && ozelLink.trim() !== '') {
+                    await navigator.clipboard.writeText(ozelLink);
+                    showToast('🔗 Bağlantı panoya kopyalandı');
+                }
+
+                if (platform === 'facebook') {
+                    if (ozelLink) window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ozelLink)}`, '_blank');
+                    else showToast('⚠️ İçerik bağlantısı bulunamadı.');
+                    return;
+                }
+
+                if (platform === 'twitter') {
+                    const metin = ozelLink ? encodeURIComponent(ozelLink) : '';
+                    window.open(`https://twitter.com/intent/tweet?text=${metin}`, '_blank');
+                    return;
+                }
+
+                dosyaIndir(dosyaUrl);
+                showToast('📥 İçerik cihazınıza indirildi.');
+            } catch (err) {
+                console.error("Hata:", err);
+            }
+        }
+    </script>
+</body>
+</html>
