@@ -139,7 +139,14 @@
         const TAG_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
-        const LINK_HARITASI = {};
+        // Görsel veya klasör adlarına göre detay linklerinin eşleştirildiği harita
+        const LINK_HARITASI = {
+            'yedam': 'https://yedam.yesilay.org.tr/',
+            'tbm': 'https://tbm.org.tr/',
+            'saglik': 'https://www.yesilay.org.tr/',
+            'market': 'https://yesilaymarket.com/',
+            'etkinlik': 'https://www.instagram.com/yesilayhatay'
+        };
 
         const SABIT_ETIKETLER = {
             'Tütün': ['tutun', 'tütün', 'sigara', 'nikotin', 'nargile', 'puf', 'vape', 'duman'],
@@ -205,7 +212,7 @@
                     return link;
                 }
             }
-            return '';
+            return 'https://www.yesilay.org.tr/'; // Varsayılan genel bağlantı
         }
 
         async function cloudinaryVerileriniCek() {
@@ -340,7 +347,7 @@
                             `}
                         </div>
 
-                        <!-- GÜNCELLENMİŞ SOSYAL MEDYA İKONLARI VE AKSİYONLAR -->
+                        <!-- SOSYAL MEDYA İKONLARI VE AKSİYONLAR -->
                         <div class="pt-3 border-t border-slate-100 grid grid-cols-4 gap-2">
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp')" title="WhatsApp'ta Paylaş" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 py-2 rounded-lg text-base flex items-center justify-center transition">
                                 <i class="fa-brands fa-whatsapp"></i>
@@ -747,7 +754,6 @@
             }
         });
 
-        // GÜNCELLENMİŞ İNDİRME FONKSİYONU (Blob kullanarak otomatik indirme tetikleme)
         async function dosyaIndir(dosyaYolu) {
             try {
                 showToast('📥 Dosya indirilmeye başlanıyor...');
@@ -759,7 +765,6 @@
                 a.style.display = 'none';
                 a.href = blobUrl;
                 
-                // Dosya adını URL'den al veya varsayılan ver
                 const filename = dosyaYolu.split('/').pop().split('?')[0] || 'yesilay_medya';
                 a.download = filename;
                 
@@ -772,7 +777,6 @@
                 }, 100);
             } catch (err) {
                 console.error("İndirme hatası:", err);
-                // Alternatif fallback yönlendirme
                 const a = document.createElement('a');
                 a.href = dosyaYolu;
                 a.target = '_blank';
