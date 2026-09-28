@@ -175,6 +175,12 @@
         const TAG_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
+        // BURAYA ÖZEL LİNK TANIMLAMALARINIZI YAPABİLİRSİNİZ
+        // Örnek: '26-01-s08': 'https://www.yesilay.org.tr/medya/makaleler/...'
+        const OZEL_DOSYA_LINKLERI = {
+            '26-01-s08': 'https://www.yesilay.org.tr/medya/makaleler/ornek-baglanti'
+        };
+
         const LINK_HARITASI = {
             'yedam': 'https://yedam.yesilay.org.tr/',
             'tbm': 'https://tbm.org.tr/',
@@ -314,28 +320,22 @@
             return bulunanlar.length > 0 ? bulunanlar.slice(0, 3) : ['Yayın'];
         }
 
-        function ozgunLinkBul(item, aramaText) {
-            if (item) {
-                if (item.context && item.context.caption && item.context.caption.startsWith('http')) {
-                    return item.context.caption;
-                }
-                if (item.context && item.context.custom && item.context.custom.caption && item.context.custom.caption.startsWith('http')) {
-                    return item.context.custom.caption;
-                }
-                if (item.image_metadata) {
-                    const foundUrl = Object.values(item.image_metadata).find(v => typeof v === 'string' && v.includes('http'));
-                    if (foundUrl) {
-                        const match = foundUrl.match(/(https?:\/\/[^\s]+)/);
-                        if (match) return match[0];
-                    }
+        function ozgunLinkBul(publicId, aramaText) {
+            // 1. Doğrudan dosya adı haritasında var mı kontrol et
+            for (const [dosyaAdi, link] of Object.entries(OZEL_DOSYA_LINKLERI)) {
+                if (publicId.toLowerCase().includes(dosyaAdi.toLowerCase())) {
+                    return link;
                 }
             }
 
+            // 2. Genel anahtar kelime haritasında var mı kontrol et
             for (const [key, link] of Object.entries(LINK_HARITASI)) {
                 if (aramaText.toLowerCase().includes(key.toLowerCase())) {
                     return link;
                 }
             }
+
+            // 3. Hiçbiri yoksa varsayılan ana site
             return 'https://www.yesilay.org.tr/';
         }
 
@@ -373,7 +373,7 @@
                     const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
 
                     const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
-                    const ozellink = ozgunLinkBul(item, aramaMetinHavuzu);
+                    const ozellink = ozgunLinkBul(item.public_id, aramaMetinHavuzu);
                     const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                     return {
@@ -615,7 +615,7 @@
                             const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
 
                             const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
-                            const ozellink = ozgunLinkBul(item, aramaMetinHavuzu);
+                            const ozellink = ozgunLinkBul(item.public_id, aramaMetinHavuzu);
                             const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                             return {
