@@ -7,6 +7,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Dijital Medya Galerisi</title>
+    
+    <!-- GitHub Ana Dizin Favicon Bağlantıları -->
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="icon" type="image/png" href="./favicon.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -32,14 +38,15 @@
     <div>
         <div class="max-w-7xl mx-auto p-4 md:p-8">
             <header class="mb-8 text-center">
+                <!-- GitHub Ana Dizin Logo Görseli -->
                 <div class="flex justify-center mb-4">
                     <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90">
-                        <img src="https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg" alt="Yeşilay Hatay" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.style.display='none'">
+                        <img src="./logo.png" alt="Yeşilay Hatay Logo" class="h-20 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.onerror=null; this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg';">
                     </a>
                 </div>
                 <h1 class="text-3xl font-extrabold text-emerald-800 tracking-tight">Dijital Medya Galerisi</h1>
-                <p class="text-slate-700 font-semibold text-base md:text-lg mt-2">İçerik Arşivleme, Otomatik Etiketleme ve Hızlı Paylaşım Paneli</p>
-                <p class="text-slate-500 text-sm mt-1.5 max-w-2xl mx-auto font-medium">Paylaşılmak istenen medyanın detay linki cihazınıza otomatik kopyalanır ve paylaşılacak mecrada link olarak kolayca eklenebilir.</p>
+                <p class="text-slate-700 font-semibold text-base md:text-lg mt-2">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
+                <p class="text-slate-500 text-sm mt-1.5 max-w-2xl mx-auto font-medium">Paylaşılmak istenen medyanın hedef linki cihazınıza otomatik olarak kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
             </header>
 
             <div class="mb-6 max-w-xl mx-auto">
@@ -61,7 +68,7 @@
             </div>
 
             <div class="mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele (Konu Etiketleri)</div>
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele</div>
                 <div class="flex flex-wrap justify-center gap-1.5">
                     <button onclick="etiketFiltrele('hepsi', this)" class="tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition">Tüm Konular</button>
                     <button onclick="etiketFiltrele('Tütün', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200">#Tütün</button>
@@ -137,7 +144,7 @@
         </div>
     </div>
 
-    <!-- Gerçek Firebase Veritabanı (Firestore) Modül Yüklemesi -->
+    <!-- Firebase Veritabanı (Firestore) Modül Yüklemesi -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
@@ -156,7 +163,6 @@
         const app = initializeApp(firebaseConfig);
         getAnalytics(app);
         
-        // Veritabanı fonksiyonlarını diğer scriptlerin kullanabilmesi için dışa açıyoruz
         window.firebaseDB = getFirestore(app);
         window.fbDoc = doc;
         window.fbGetDoc = getDoc;
@@ -213,11 +219,9 @@
         let startY = 0;
         let initialPinchDist = 0;
 
-        // Firebase Firestore Sayaç Okuma
         async function sayacGetirAPI(id, tip) {
             const key = `sayac_${id}_${tip}`.replace(/[^a-zA-Z0-9_]/g, '_');
             try {
-                // Firebase modülünün yüklenmesini çok kısa bekleyelim
                 for(let i=0; i<20; i++) {
                     if(window.firebaseDB) break;
                     await new Promise(r => setTimeout(r, 100));
@@ -233,7 +237,6 @@
             }
         }
 
-        // Firebase Firestore Sayaç Artırma (Arka planda sessiz çalışır)
         async function sayacArtirAPI(id, tip) {
             const key = `sayac_${id}_${tip}`.replace(/[^a-zA-Z0-9_]/g, '_');
             try {
@@ -288,7 +291,7 @@
             for (const kart of kartlar) {
                 if (kart.style.display === 'none') continue;
                 await kartSayaciniGuncelle(kart);
-                await new Promise(r => setTimeout(r, 10)); // Yükü dağıtmak için ufak gecikme
+                await new Promise(r => setTimeout(r, 10));
             }
         }
 
@@ -311,9 +314,25 @@
             return bulunanlar.length > 0 ? bulunanlar.slice(0, 3) : ['Yayın'];
         }
 
-        function ozelLinkBul(searchText) {
+        function ozgunLinkBul(item, aramaText) {
+            if (item) {
+                if (item.context && item.context.caption && item.context.caption.startsWith('http')) {
+                    return item.context.caption;
+                }
+                if (item.context && item.context.custom && item.context.custom.caption && item.context.custom.caption.startsWith('http')) {
+                    return item.context.custom.caption;
+                }
+                if (item.image_metadata) {
+                    const foundUrl = Object.values(item.image_metadata).find(v => typeof v === 'string' && v.includes('http'));
+                    if (foundUrl) {
+                        const match = foundUrl.match(/(https?:\/\/[^\s]+)/);
+                        if (match) return match[0];
+                    }
+                }
+            }
+
             for (const [key, link] of Object.entries(LINK_HARITASI)) {
-                if (searchText.toLowerCase().includes(key.toLowerCase())) {
+                if (aramaText.toLowerCase().includes(key.toLowerCase())) {
                     return link;
                 }
             }
@@ -354,7 +373,7 @@
                     const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
 
                     const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
-                    const ozellink = ozelLinkBul(aramaMetinHavuzu);
+                    const ozellink = ozgunLinkBul(item, aramaMetinHavuzu);
                     const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                     return {
@@ -548,7 +567,6 @@
             mouseWheelZoomBagla();
         });
 
-        // Vercel Serverless API Üzerinden Cloudinary Search API Entegrasyonu
         function aramaYap(deger) {
             aramaMetni = deger.toLowerCase().trim();
             mevcutSayfa = 1;
@@ -597,7 +615,7 @@
                             const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
 
                             const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
-                            const ozellink = ozelLinkBul(aramaMetinHavuzu);
+                            const ozellink = ozgunLinkBul(item, aramaMetinHavuzu);
                             const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                             return {
@@ -613,7 +631,6 @@
                         });
                     }
 
-                    // Kategori seçildiyse kategorisine göre süz
                     if (aktifKategori !== 'hepsi') {
                         const slugKat = toSlug(aktifKategori);
                         gorunurVeriler = gorunurVeriler.filter(item => toSlug(item.kategori) === slugKat);
@@ -759,7 +776,6 @@
             heartBtn.innerHTML = `<i class="${lbHeartIconClass}"></i>`;
             
             heartBtn.onclick = () => {
-                // Anında güncelleyelim (Optimistik)
                 heartBtn.innerHTML = `<i class="fa-solid fa-heart text-rose-500"></i>`;
                 const kart = document.querySelector(`.gorsel-kart[data-id="${item.id}"]`);
                 if (kart) {
@@ -773,7 +789,7 @@
                     }
                 }
                 showToast('❤️ İçerik beğenildi!');
-                sayacArtirAPI(item.id, 'heart'); // Arka planda Firebase'e yaz
+                sayacArtirAPI(item.id, 'heart');
             };
         }
 
@@ -971,11 +987,8 @@
             }
         });
 
-        // Hızlı (Optimistik) Kalp Tıklama
         function kalpTikla(event, id) {
             event.stopPropagation();
-            
-            // 1. Ekrandaki kalbi ve sayıyı ANINDA değiştir (Kullanıcı beklemez)
             const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
             if (kart) {
                 const heartIcon = kart.querySelector('.icon-heart');
@@ -991,15 +1004,11 @@
                 }
             }
             showToast('❤️ İçerik beğenildi!');
-
-            // 2. Arka planda Firebase'e yaz
             sayacArtirAPI(id, 'heart');
         }
 
         function dosyaIndirKartTikla(event, dosyaYolu, id) {
             event.stopPropagation();
-            
-            // İndirme sayısını ekranda anında artır
             const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
             if (kart) {
                 const span = kart.querySelector('.count-download');
@@ -1058,14 +1067,13 @@
 
         async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id) {
             try {
-                // Ekranda sayıyı anında artır
                 const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
                 if (kart) {
                     const span = kart.querySelector(`.count-${platform}`);
                     if (span) span.textContent = (parseInt(span.textContent) || 0) + 1;
                 }
                 
-                sayacArtirAPI(id, platform); // Arka planda Firebase'e gönder
+                sayacArtirAPI(id, platform);
 
                 if (ozelLink && ozelLink.trim() !== '') {
                     try {
