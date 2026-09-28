@@ -9,8 +9,25 @@
     <title>Dijital Medya Galerisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Lightbox taşma önleme ve mobil uyum */
+        #lightboxModal {
+            overflow: hidden !important;
+        }
+        #lightboxGorsel {
+            max-width: 85vw;
+            max-height: 75vh;
+            object-fit: contain;
+        }
+        @media (max-width: 768px) {
+            #lightboxGorsel {
+                max-width: 90vw;
+                max-height: 62vh;
+            }
+        }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden">
 
     <div>
         <div class="max-w-7xl mx-auto p-4 md:p-8">
@@ -35,7 +52,7 @@
                 </div>
             </div>
 
-            <!-- SABİT 16 ETİKET FİLTRESİ -->
+            <!-- SABİT 17 ETİKET FİLTRESİ -->
             <div class="mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele (Konu Etiketleri)</div>
                 <div class="flex flex-wrap justify-center gap-1.5">
@@ -82,8 +99,8 @@
     <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex-col justify-between p-4 backdrop-blur-md select-none overflow-hidden" onclick="lightboxKapat(event)">
         <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0 transition-opacity duration-300">
             <div class="flex gap-2 bg-slate-900/80 p-1.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
-                <button onclick="zoomManual(0.3)" title="Yakınlaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                <button onclick="zoomManual(-0.3)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                <button onclick="zoomManual(0.15)" title="Yakınlaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                <button onclick="zoomManual(-0.15)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                 <button onclick="zoomSifirla()" title="Sıfırla" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
 
@@ -128,7 +145,7 @@
                     <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                 </button>
                 <button id="lbHeartBtn" title="Beğen" class="transition text-xl">
-                    <!-- Dinamik Kalp (Boş / Dolu) -->
+                    <!-- Dinamik Kalp -->
                 </button>
                 <button onclick="dosyaIndirMevcut()" title="Cihaza İndir" class="text-emerald-400 hover:text-emerald-300 text-xl transition">
                     <i class="fa-solid fa-download"></i>
@@ -184,16 +201,69 @@
         let startY = 0;
         let initialPinchDist = 0;
 
-        function sayacGetir(id, tip) {
-            const key = `yesilay_stats_${id}_${tip}`;
-            return parseInt(localStorage.getItem(key) || '0', 10);
+        // Global Sayaç Fonksiyonları (CounterAPI - Tüm ziyaretçiler için ortak)
+        async function sayacGetirAPI(id, tip) {
+            const key = `yesilayhatay_${id}_${tip}`.replace(/[^a-zA-Z0-9_]/g, '_');
+            try {
+                const res = await fetch(`https://api.counterapi.dev/v1/yesilayhatay_galeri/${key}`);
+                if (!res.ok) return 0;
+                const data = await res.json();
+                return data.count || 0;
+            } catch (err) {
+                return 0;
+            }
         }
 
-        function sayacArtir(id, tip) {
-            const key = `yesilay_stats_${id}_${tip}`;
-            let val = sayacGetir(id, tip) + 1;
-            localStorage.setItem(key, val);
-            return val;
+        async function sayacArtirAPI(id, tip) {
+            const key = `yesilayhatay_${id}_${tip}`.replace(/[^a-zA-Z0-9_]/g, '_');
+            try {
+                const res = await fetch(`https://api.counterapi.dev/v1/yesilayhatay_galeri/${key}/up`);
+                if (!res.ok) return 1;
+                const data = await res.json();
+                return data.count || 1;
+            } catch (err) {
+                return 1;
+            }
+        }
+
+        async function sayaclariGuncelleDOM() {
+            const kartlar = document.querySelectorAll('.gorsel-kart');
+            for (const kart of kartlar) {
+                const id = kart.dataset.id;
+                const waSpan = kart.querySelector('.count-whatsapp');
+                const igSpan = kart.querySelector('.count-instagram');
+                const fbSpan = kart.querySelector('.count-facebook');
+                const twSpan = kart.querySelector('.count-twitter');
+                const heartSpan = kart.querySelector('.count-heart');
+                const dlSpan = kart.querySelector('.count-download');
+                const heartIcon = kart.querySelector('.icon-heart');
+
+                const [wa, ig, fb, tw, heart, dl] = await Promise.all([
+                    sayacGetirAPI(id, 'whatsapp'),
+                    sayacGetirAPI(id, 'instagram'),
+                    sayacGetirAPI(id, 'facebook'),
+                    sayacGetirAPI(id, 'twitter'),
+                    sayacGetirAPI(id, 'heart'),
+                    sayacGetirAPI(id, 'download')
+                ]);
+
+                if (waSpan) waSpan.textContent = wa > 0 ? wa : '';
+                if (igSpan) igSpan.textContent = ig > 0 ? ig : '';
+                if (fbSpan) fbSpan.textContent = fb > 0 ? fb : '';
+                if (twSpan) twSpan.textContent = tw > 0 ? tw : '';
+                if (dlSpan) dlSpan.textContent = dl > 0 ? dl : '';
+                
+                if (heartSpan) {
+                    heartSpan.textContent = heart > 0 ? heart : '';
+                }
+                if (heartIcon) {
+                    if (heart > 0) {
+                        heartIcon.className = "icon-heart fa-solid fa-heart text-rose-500 text-sm";
+                    } else {
+                        heartIcon.className = "icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-sm";
+                    }
+                }
+            }
         }
 
         function toSlug(str) {
@@ -306,16 +376,6 @@
             }
 
             grid.innerHTML = tumVeriler.map(item => {
-                const waCount = sayacGetir(item.id, 'whatsapp');
-                const igCount = sayacGetir(item.id, 'instagram');
-                const fbCount = sayacGetir(item.id, 'facebook');
-                const twCount = sayacGetir(item.id, 'twitter');
-                const heartCount = sayacGetir(item.id, 'heart');
-                const dlCount = sayacGetir(item.id, 'download');
-
-                // Kalp ikonunun durumunu belirleme (0 iken boş ve gri, >0 iken kırmızı ve dolu)
-                const heartIconClass = heartCount > 0 ? "fa-solid fa-heart text-rose-500" : "fa-regular fa-heart text-slate-400 hover:text-rose-500";
-
                 return `
                 <div class="gorsel-kart bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg border border-slate-200" 
                      data-idx="${item.idx}"
@@ -375,42 +435,42 @@
                             `}
                         </div>
 
-                        <!-- KUTUSUZ İKON VE YANINDA SAYAÇ YAPISI -->
+                        <!-- KUTUSUZ İKON VE YANINDA GLOBAL SAYAÇ -->
                         <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 px-1">
                             <!-- WhatsApp -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp" class="flex items-center gap-1 hover:text-emerald-600 transition">
                                 <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
-                                <span class="font-medium">${waCount > 0 ? waCount : ''}</span>
+                                <span class="font-medium count-whatsapp"></span>
                             </button>
 
                             <!-- Instagram -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram', '${item.id}')" title="Instagram" class="flex items-center gap-1 hover:text-pink-600 transition">
                                 <i class="fa-brands fa-instagram text-pink-600 text-sm"></i>
-                                <span class="font-medium">${igCount > 0 ? igCount : ''}</span>
+                                <span class="font-medium count-instagram"></span>
                             </button>
 
                             <!-- Facebook -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook', '${item.id}')" title="Facebook" class="flex items-center gap-1 hover:text-blue-600 transition">
                                 <i class="fa-brands fa-facebook-f text-blue-600 text-sm"></i>
-                                <span class="font-medium">${fbCount > 0 ? fbCount : ''}</span>
+                                <span class="font-medium count-facebook"></span>
                             </button>
 
                             <!-- Twitter / X -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'twitter', '${item.id}')" title="X (Twitter)" class="flex items-center gap-1 hover:text-slate-800 transition">
                                 <svg class="w-3.5 h-3.5 fill-current text-slate-700" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                                <span class="font-medium">${twCount > 0 ? twCount : ''}</span>
+                                <span class="font-medium count-twitter"></span>
                             </button>
 
                             <!-- Kalp / Beğeni -->
                             <button onclick="kalpTikla(event, '${item.id}')" title="Beğen" class="flex items-center gap-1 transition">
-                                <i class="${heartIconClass} text-sm"></i>
-                                <span class="font-medium text-rose-600">${heartCount > 0 ? heartCount : ''}</span>
+                                <i class="icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-sm"></i>
+                                <span class="font-medium text-rose-600 count-heart"></span>
                             </button>
 
                             <!-- İndir -->
                             <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="Cihaza İndir" class="flex items-center gap-1 hover:text-emerald-700 transition">
                                 <i class="fa-solid fa-download text-slate-600 text-sm"></i>
-                                <span class="font-medium">${dlCount > 0 ? dlCount : ''}</span>
+                                <span class="font-medium count-download"></span>
                             </button>
                         </div>
                     </div>
@@ -418,6 +478,7 @@
             }).join('');
 
             filtreleVeSayfala();
+            sayaclariGuncelleDOM();
         }
 
         function showToast(message) {
@@ -572,7 +633,7 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function lightboxIcerikGuncelle() {
+        async function lightboxIcerikGuncelle() {
             zoomSifirla();
             const kart = gorunurKartlar[lightboxMevcutIndex];
             if (!kart) return;
@@ -609,14 +670,14 @@
             document.getElementById('lbIgBtn').onclick = () => kopyalaVePaylas(yol, link, 'instagram', id);
             document.getElementById('lbTwBtn').onclick = () => kopyalaVePaylas(yol, link, 'twitter', id);
 
-            const heartCount = sayacGetir(id, 'heart');
+            const heartCount = await sayacGetirAPI(id, 'heart');
             const heartBtn = document.getElementById('lbHeartBtn');
             const lbHeartIconClass = heartCount > 0 ? "fa-solid fa-heart text-rose-500" : "fa-regular fa-heart text-white hover:text-rose-400";
             heartBtn.innerHTML = `<i class="${lbHeartIconClass}"></i>`;
-            heartBtn.onclick = () => {
-                sayacArtir(id, 'heart');
-                galeriKartlariniEkranaBas();
-                lightboxIcerikGuncelle();
+            heartBtn.onclick = async () => {
+                await sayacArtirAPI(id, 'heart');
+                await sayaclariGuncelleDOM();
+                await lightboxIcerikGuncelle();
                 showToast('❤️ İçerik beğenildi!');
             };
         }
@@ -627,7 +688,7 @@
                 const rect = e.target.getBoundingClientRect();
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-                zoomUygula(1.8, xPercent, yPercent);
+                zoomUygula(1.3, xPercent, yPercent); // Azaltılmış tıklama zoom oranı
             } else {
                 zoomSifirla();
             }
@@ -671,7 +732,7 @@
             if (currentScale + miktar <= 1) {
                 zoomSifirla();
             } else {
-                zoomUygula(Math.min(4, currentScale + miktar));
+                zoomUygula(Math.min(3, currentScale + miktar));
             }
         }
 
@@ -713,13 +774,13 @@
                     originY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
                 }
 
-                const delta = e.deltaY < 0 ? 0.2 : -0.2;
+                const delta = e.deltaY < 0 ? 0.1 : -0.1; // Hassaslaştırılmış zoom adımı
                 let newScale = currentScale + delta;
 
                 if (newScale <= 1) {
                     zoomSifirla();
                 } else {
-                    newScale = Math.min(4, newScale);
+                    newScale = Math.min(3, newScale);
                     zoomUygula(newScale, originX, originY);
                 }
             }, { passive: false });
@@ -760,7 +821,7 @@
                     );
                     if (initialPinchDist > 0) {
                         const delta = dist / initialPinchDist;
-                        let newScale = Math.min(Math.max(currentScale * delta, 1), 4);
+                        let newScale = Math.min(Math.max(currentScale * delta, 1), 3);
                         currentScale = newScale;
                         initialPinchDist = dist;
                         zoomUygula(currentScale);
@@ -817,17 +878,17 @@
             }
         });
 
-        function kalpTikla(event, id) {
+        async function kalpTikla(event, id) {
             event.stopPropagation();
-            sayacArtir(id, 'heart');
-            galeriKartlariniEkranaBas();
+            await sayacArtirAPI(id, 'heart');
+            await sayaclariGuncelleDOM();
             showToast('❤️ İçerik beğenildi!');
         }
 
-        function dosyaIndirKartTikla(event, dosyaYolu, id) {
+        async function dosyaIndirKartTikla(event, dosyaYolu, id) {
             event.stopPropagation();
-            sayacArtir(id, 'download');
-            galeriKartlariniEkranaBas();
+            await sayacArtirAPI(id, 'download');
+            await sayaclariGuncelleDOM();
             dosyaIndir(dosyaYolu);
         }
 
@@ -864,19 +925,19 @@
             }
         }
 
-        function dosyaIndirMevcut() {
+        async function dosyaIndirMevcut() {
             const kart = gorunurKartlar[lightboxMevcutIndex];
             if (kart && kart.dataset.yol) {
-                sayacArtir(kart.dataset.id, 'download');
-                galeriKartlariniEkranaBas();
+                await sayacArtirAPI(kart.dataset.id, 'download');
+                await sayaclariGuncelleDOM();
                 dosyaIndir(kart.dataset.yol);
             }
         }
 
         async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id) {
             try {
-                sayacArtir(id, platform);
-                galeriKartlariniEkranaBas();
+                await sayacArtirAPI(id, platform);
+                await sayaclariGuncelleDOM();
 
                 if (ozelLink && ozelLink.trim() !== '') {
                     try {
