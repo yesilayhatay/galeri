@@ -42,6 +42,16 @@
                 <p class="text-slate-500 text-sm mt-1.5 max-w-2xl mx-auto font-medium">Paylaşılmak istenen medyanın detay linki cihazınıza otomatik kopyalanır ve paylaşılacak mecrada link olarak kolayca eklenebilir.</p>
             </header>
 
+            <!-- ARAMA KUTUSU -->
+            <div class="mb-6 max-w-xl mx-auto">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="aramaKutusu" oninput="aramaYap(this.value)" placeholder="Cloudinary içeriklerinde ara (İsim, etiket...)" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
+                </div>
+            </div>
+
             <!-- KATEGORİ FİLTRELERİ -->
             <div class="mb-4">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Kategoriler</div>
@@ -154,6 +164,25 @@
         </div>
     </div>
 
+    <!-- Firebase SDK Entegrasyonu -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA5co_J4TE_vy8Fx6XmqRyYIWsQDrTJwKU",
+            authDomain: "yesilay-hatay.firebaseapp.com",
+            projectId: "yesilay-hatay",
+            storageBucket: "yesilay-hatay.firebasestorage.app",
+            messagingSenderId: "342541035082",
+            appId: "1:342541035082:web:14b88405cb613b17f368b3",
+            measurementId: "G-XVCVM8BXWZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
+
     <script>
         const CLOUD_NAME = "yesilay-hatay";
         const TAG_NAME = "yesilay-hatay";
@@ -189,6 +218,7 @@
         let tumVeriler = [];
         let aktifKategori = 'hepsi';
         let aktifEtiket = 'hepsi';
+        let aramaMetni = '';
         let mevcutSayfa = 1;
         let gorunurKartlar = [];
         let lightboxMevcutIndex = 0;
@@ -201,7 +231,7 @@
         let startY = 0;
         let initialPinchDist = 0;
 
-        // Global Sayaç Fonksiyonları (CounterAPI - Tüm ziyaretçiler için ortak)
+        // Global Sayaç Fonksiyonları (CounterAPI)
         async function sayacGetirAPI(id, tip) {
             const key = `yesilayhatay_${id}_${tip}`.replace(/[^a-zA-Z0-9_]/g, '_');
             try {
@@ -226,7 +256,7 @@
             }
         }
 
-        // Tek bir kartın sayaçlarını güncelleyen optimize fonksiyon
+        // Tek bir kartın sayaçlarını güncelleyen fonksiyon (0 görünmeme kuralı aktif)
         async function kartSayaciniGuncelle(kart) {
             if (!kart) return;
             const id = kart.dataset.id;
@@ -265,13 +295,12 @@
             }
         }
 
-        // Tüm görünür kartların sayaçlarını API yüklenmesini rahatlatarak sırayla güncelle
         async function sayaclariGuncelleDOM() {
             const kartlar = document.querySelectorAll('.gorsel-kart');
             for (const kart of kartlar) {
                 if (kart.style.display === 'none') continue;
                 await kartSayaciniGuncelle(kart);
-                await new Promise(r => setTimeout(r, 50)); // API rate-limit koruması
+                await new Promise(r => setTimeout(r, 50));
             }
         }
 
@@ -348,7 +377,8 @@
                         kategori: kat,
                         link: ozellink,
                         etiketler: etiketler,
-                        is_video: isVid
+                        is_video: isVid,
+                        public_id: item.public_id
                     };
                 });
 
@@ -391,6 +421,7 @@
                      data-id="${item.id}"
                      data-kategori="${item.kategori}"
                      data-etiketler='${JSON.stringify(item.etiketler)}'
+                     data-publicid="${item.public_id.toLowerCase()}"
                      data-yol="${item.yol}"
                      data-link="${item.link}"
                      data-isvideo="${item.is_video ? '1' : '0'}">
@@ -444,7 +475,7 @@
                             `}
                         </div>
 
-                        <!-- KUTUSUZ İKON VE YANINDA GLOBAL SAYAÇ -->
+                        <!-- İKON VE YANINDA SAYAÇ (0 gizli) -->
                         <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 px-1">
                             <!-- WhatsApp -->
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp" class="flex items-center gap-1 hover:text-emerald-600 transition">
@@ -515,6 +546,12 @@
             mouseWheelZoomBagla();
         });
 
+        function aramaYap(deger) {
+            aramaMetni = deger.toLowerCase().trim();
+            mevcutSayfa = 1;
+            filtreleVeSayfala();
+        }
+
         function filtreleVeSayfala() {
             gorunurKartlar = [];
             const slugKat = toSlug(aktifKategori);
@@ -523,6 +560,7 @@
 
             kartlar.forEach(kart => {
                 const itemKat = kart.dataset.kategori;
+                const publicId = kart.dataset.publicid || '';
                 let itemEtiketler = [];
                 try {
                     itemEtiketler = JSON.parse(kart.dataset.etiketler || '[]');
@@ -530,8 +568,9 @@
 
                 const katUyum = (aktifKategori === 'hepsi' || toSlug(itemKat) === slugKat);
                 const etiketUyum = (aktifEtiket === 'hepsi' || itemEtiketler.some(e => toSlug(e) === slugTag));
+                const aramaUyum = (aramaMetni === '' || publicId.includes(aramaMetni) || itemEtiketler.some(e => e.toLowerCase().includes(aramaMetni)));
 
-                if (katUyum && etiketUyum) {
+                if (katUyum && etiketUyum && aramaUyum) {
                     gorunurKartlar.push(kart);
                 } else {
                     kart.style.display = 'none';
