@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Dijital Medya Galerisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -87,7 +85,6 @@
                 <button onclick="zoomManual(-0.3)" title="Uzaklaştır" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                 <button onclick="zoomSifirla()" title="Sıfırla" class="text-white px-3 py-1.5 hover:bg-slate-700 rounded-lg text-sm transition"><i class="fa-solid fa-rotate-left"></i></button>
             </div>
-
             <button onclick="lightboxKapatAjan()" class="text-white/80 hover:text-white bg-slate-900/80 border border-slate-700/80 p-2.5 rounded-xl text-xl z-40 transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -102,19 +99,12 @@
         </button>
 
         <div id="lightboxViewport" class="relative flex-1 w-full flex items-center justify-center p-2 z-10 overflow-hidden my-2" onclick="lightboxKapat(event)">
-            <img id="lightboxGorsel" 
-                 src="" 
-                 alt="Önizleme"
-                 class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in"
-                 onclick="gorselTiklama(event)"
-                 onmousemove="gorselGezdirme(event)">
-            
+            <img id="lightboxGorsel" src="" alt="Önizleme" class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-150 ease-out cursor-zoom-in" onclick="gorselTiklama(event)" onmousemove="gorselGezdirme(event)">
             <video id="lightboxVideo" controls autoplay class="max-h-full max-w-full object-contain rounded-lg shadow-2xl hidden"></video>
         </div>
         
         <div id="lightboxInfoBar" class="z-40 text-center bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800/80 text-white max-w-xl w-full mx-auto backdrop-blur-md shadow-2xl shrink-0 transition-opacity duration-300" onclick="event.stopPropagation()">
             <div id="lightboxLinkContainer" class="text-xs text-blue-400 mb-2.5 truncate font-mono px-2"></div>
-            
             <div class="flex justify-center items-center gap-5">
                 <button onclick="kopyalaVaPaylasLightbox('whatsapp')" title="WhatsApp" class="text-emerald-400 hover:text-emerald-300 text-xl transition flex items-center gap-1">
                     <i class="fa-brands fa-whatsapp text-xl"></i>
@@ -139,30 +129,11 @@
         const CLOUD_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
-        const SABIT_ETIKETLER = {
-            'Tütün': ['tutun', 'tütün', 'sigara', 'nikotin', 'nargile', 'puf', 'vape', 'duman'],
-            'Alkol': ['alkol', 'icki', 'içki', 'bira', 'sarap', 'şarap', 'raki', 'rakı', 'kadeh'],
-            'Madde': ['madde', 'uyusturucu', 'uyuşturucu', 'sentetik', 'eroin', 'esrar', 'kokain'],
-            'Kumar': ['kumar', 'bahis', 'casino', 'kasino', 'iskambil', 'rulet', 'slot', 'zar'],
-            'Teknolojik/Dijital': ['teknoloji', 'dijital', 'ekran', 'siber', 'internet', 'telefon', 'sosyal medya'],
-            'Aile': ['aile', 'ebeveyn', 'veli', 'anne', 'baba', 'evlilik'],
-            'Çocuk': ['cocuk', 'çocuk', 'evlat', 'minik', 'ilkokul', 'anaokulu', 'kres', 'kreş'],
-            'Gençlik': ['genclik', 'gençlik', 'akran', 'kampus', 'kampüs', 'lise', 'universite'],
-            'Eğitim': ['egitim', 'eğitim', 'tbm', 'mufredat', 'okul', 'seminer', 'ders', 'kurs'],
-            'Etkinlik': ['etkinlik', 'organizasyon', 'kutlama', 'bulusma', 'festival', 'zirve', 'panel'],
-            'Gönüllülük': ['gonullu', 'gönüllü', 'gonulluluk', 'gönüllülük', 'saha', 'stant'],
-            'Savunuculuk': ['savunuculuk', 'mevzuat', 'politika', 'hak', 'yasa', 'kanun', 'deklarasyon'],
-            'Sanat': ['sanat', 'tiyatro', 'resim', 'sergi', 'muzik', 'müzik', 'sinema', 'film'],
-            'Yayın': ['yayin', 'yayın', 'dergi', 'brosur', 'broşür', 'bulten', 'kitap', 'afis', 'afiş'],
-            'YEDAM': ['yedam', 'danismanlik', 'danışmanlık', 'rehab', '115', 'terapi', 'psikolog'],
-            'Market': ['market', 'yesilaymarket', 'yeşilay market', 'magaza', 'urun', 'ürün']
-        };
-
-        // Cloudinary kategorileri ve örnek içerikler
+        // BURAYA KENDİ CLOUDINARY GÖRSEL LİNKLERİNİZİ EKLEYEBİLİRSİNİZ
         let tumVeriler = [
             {
                 idx: 0,
-                public_id: "yesilay_hatay_logo",
+                public_id: "yesilay_ornek_1",
                 yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg",
                 kategori: "GENEL",
                 link: "https://yesilay.org.tr",
@@ -171,29 +142,11 @@
             },
             {
                 idx: 1,
-                public_id: "yedam_danismanlik_afis",
+                public_id: "yedam_ornek_2",
                 yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yedam.jpg",
                 kategori: "YEDAM",
                 link: "https://yedam.org.tr",
                 etiketler: ["YEDAM", "Eğitim"],
-                is_video: false
-            },
-            {
-                idx: 2,
-                public_id: "etkinlik_kare_1",
-                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/v1/etkinlik.jpg",
-                kategori: "ETKİNLİK",
-                link: "https://instagram.com/yesilayhatay",
-                etiketler: ["Etkinlik", "Gençlik"],
-                is_video: false
-            },
-            {
-                idx: 3,
-                public_id: "afis_tarsin_1",
-                yol: "https://res.cloudinary.com/yesilay-hatay/image/upload/v1/afis.jpg",
-                kategori: "AFİŞ",
-                link: "https://yesilay.org.tr",
-                etiketler: ["Tütün", "Yayın"],
                 is_video: false
             }
         ];
@@ -282,7 +235,6 @@
                     dlSpan.parentElement.style.display = indirmeSayisi > 0 ? 'flex' : 'none';
                 }
             }
-
             dosyaIndir(dosyaYolu);
         }
 
@@ -292,42 +244,6 @@
 
             kategoriButonlariniCiz(Array.from(kategorilerSet));
             galeriKartlariniEkranaBas();
-            exifLinkleriniTarat();
-        }
-
-        async function exifLinkleriniTarat() {
-            for (let item of tumVeriler) {
-                if (item.is_video || (item.link && item.link.trim() !== '')) continue;
-                try {
-                    const exifData = await exifr.parse(item.yol, ['XPComment', 'UserComment', 'ImageDescription', 'iptc']);
-                    if (exifData) {
-                        let hamMetin = exifData.XPComment || exifData.UserComment || exifData.ImageDescription || '';
-                        if (typeof hamMetin === 'string' && hamMetin.trim().length > 0) {
-                            let okunanLink = hamMetin.trim();
-                            if (!okunanLink.startsWith('http://') && !okunanLink.startsWith('https://')) {
-                                if (okunanLink.includes('www.') || okunanLink.includes('.')) {
-                                    okunanLink = 'https://' + okunanLink;
-                                }
-                            }
-                            item.link = okunanLink;
-                        }
-                    }
-                } catch (e) {}
-
-                const kart = document.querySelector(`.gorsel-kart[data-id="${item.public_id}"]`);
-                if (kart && item.link) {
-                    kart.dataset.link = item.link;
-                    const linkAlani = kart.querySelector('.link-container');
-                    if (linkAlani) {
-                        linkAlani.innerHTML = `
-                            <i class="fa-solid fa-link text-blue-500 shrink-0"></i>
-                            <a href="${item.link}" target="_blank" class="hover:underline font-mono truncate block w-full text-blue-600 font-medium" title="${item.link}">
-                                ${item.link}
-                            </a>`;
-                        linkAlani.className = "text-xs mb-3 bg-blue-50 p-2 rounded-lg border border-blue-100 flex items-center gap-1.5 overflow-hidden";
-                    }
-                }
-            }
         }
 
         function kategoriButonlariniCiz(kategoriler) {
@@ -368,9 +284,7 @@
                      data-link="${item.link || ''}"
                      data-isvideo="${item.is_video ? '1' : '0'}">
                     
-                    <div class="relative bg-slate-900/5 h-64 flex items-center justify-center p-3 cursor-pointer group"
-                         onclick="lightboxAcByKart(this)">
-                        
+                    <div class="relative bg-slate-900/5 h-64 flex items-center justify-center p-3 cursor-pointer group" onclick="lightboxAcByKart(this)">
                         ${item.is_video ? `
                             <video src="${item.yol}" class="max-h-full max-w-full object-contain rounded" preload="metadata"></video>
                             <div class="absolute inset-0 flex items-center justify-center">
@@ -417,30 +331,30 @@
                         </div>
 
                         <div>
-                            <!-- Tek Sıra Sosyal Medya, Beğeni ve İndir (Sıfır Değerleri Gizli, İkonlar Büyütülmüş) -->
-                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1 px-1">
-                                <button onclick="kopyalaVePaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-1 text-emerald-600 hover:bg-emerald-50 py-1.5 px-1.5 rounded transition text-sm">
+                            <!-- SOSYAL MEDYA İKONLARI (Boyutlar büyütüldü, boşluklar optimize edildi, sıfırlar gizlendi) -->
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5 px-1">
+                                <button onclick="kopyalaVePaylasByKart(this, 'whatsapp')" title="WhatsApp" class="flex items-center gap-1 text-emerald-600 hover:bg-emerald-50 py-1.5 px-1.5 rounded transition text-base">
                                     <i class="fa-brands fa-whatsapp text-lg"></i>
                                     <span class="font-bold text-xs count-whatsapp ${waCount > 0 ? '' : 'hidden'}">${waCount > 0 ? waCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'facebook')" title="Facebook" class="flex items-center gap-1 text-blue-600 hover:bg-blue-50 py-1.5 px-1.5 rounded transition text-sm">
+                                <button onclick="kopyalaVePaylasByKart(this, 'facebook')" title="Facebook" class="flex items-center gap-1 text-blue-600 hover:bg-blue-50 py-1.5 px-1.5 rounded transition text-base">
                                     <i class="fa-brands fa-facebook-f text-base"></i>
                                     <span class="font-bold text-xs count-facebook ${fbCount > 0 ? '' : 'hidden'}">${fbCount > 0 ? fbCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'instagram')" title="Instagram" class="flex items-center gap-1 text-pink-600 hover:bg-pink-50 py-1.5 px-1.5 rounded transition text-sm">
+                                <button onclick="kopyalaVePaylasByKart(this, 'instagram')" title="Instagram" class="flex items-center gap-1 text-pink-600 hover:bg-pink-50 py-1.5 px-1.5 rounded transition text-base">
                                     <i class="fa-brands fa-instagram text-lg"></i>
                                     <span class="font-bold text-xs count-instagram ${igCount > 0 ? '' : 'hidden'}">${igCount > 0 ? igCount : ''}</span>
                                 </button>
-                                <button onclick="kopyalaVePaylasByKart(this, 'twitter')" title="X (Twitter)" class="flex items-center gap-1 text-slate-900 hover:bg-slate-100 py-1.5 px-1.5 rounded transition text-sm">
+                                <button onclick="kopyalaVePaylasByKart(this, 'twitter')" title="X (Twitter)" class="flex items-center gap-1 text-slate-900 hover:bg-slate-100 py-1.5 px-1.5 rounded transition text-base">
                                     <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                                     <span class="font-bold text-xs count-twitter ${twCount > 0 ? '' : 'hidden'}">${twCount > 0 ? twCount : ''}</span>
                                 </button>
                                 <button onclick="begenToggle(this, '${item.public_id}')" class="flex items-center gap-1 text-slate-600 hover:text-rose-600 transition group/like py-1.5 px-1.5 rounded hover:bg-rose-50" title="Beğen">
-                                    <i class="${isLiked ? 'fa-solid text-rose-500' : 'fa-regular text-slate-500'} fa-heart text-base transition group-hover/like:scale-110"></i>
+                                    <i class="${isLiked ? 'fa-solid text-rose-500' : 'fa-regular text-slate-500'} fa-heart text-lg transition group-hover/like:scale-110"></i>
                                     <span class="font-bold text-slate-700 text-xs count-kalp ${likeCount > 0 ? '' : 'hidden'}">${likeCount > 0 ? likeCount : ''}</span>
                                 </button>
                                 <button onclick="dosyaIndirVeSayacArttir('${item.yol}', '${item.public_id}')" class="flex items-center gap-1 text-slate-600 hover:text-emerald-700 transition group/dl py-1.5 px-1.5 rounded hover:bg-emerald-50" title="İndir">
-                                    <i class="fa-solid fa-download text-base transition group-hover/dl:scale-110"></i>
+                                    <i class="fa-solid fa-download text-lg transition group-hover/dl:scale-110"></i>
                                     <span class="font-bold text-slate-700 text-xs count-indir ${dlCount > 0 ? '' : 'hidden'}">${dlCount > 0 ? dlCount : ''}</span>
                                 </button>
                             </div>
@@ -473,8 +387,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             verileriBaslat();
-            touchOlaylariniBagla();
-            mouseWheelZoomBagla();
         });
 
         function filtreleVeSayfala() {
@@ -562,12 +474,6 @@
             });
             btn.className = "kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
 
-            document.querySelectorAll('.tag-btn').forEach(b => {
-                b.className = "tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200";
-            });
-            const tumKonularBtn = document.querySelector('.tag-btn');
-            if (tumKonularBtn) tumKonularBtn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
-
             filtreleVeSayfala();
         }
 
@@ -581,23 +487,15 @@
             });
             btn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
 
-            document.querySelectorAll('.kat-btn').forEach(b => {
-                b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
-            });
-            const tumKatBtn = document.querySelector('.kat-btn');
-            if (tumKatBtn) tumKatBtn.className = "kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
-
             filtreleVeSayfala();
         }
 
-        // LIGHTBOX
         function lightboxAcByKart(element) {
             const kart = element.closest('.gorsel-kart');
             lightboxMevcutIndex = gorunurKartlar.indexOf(kart);
             if (lightboxMevcutIndex === -1) lightboxMevcutIndex = 0;
 
             lightboxIcerikGuncelle();
-
             const modal = document.getElementById('lightboxModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -605,7 +503,6 @@
         }
 
         function lightboxIcerikGuncelle() {
-            zoomSifirla();
             const kart = gorunurKartlar[lightboxMevcutIndex];
             if (!kart) return;
 
@@ -639,167 +536,70 @@
         function kopyalaVaPaylasLightbox(platform) {
             const kart = gorunurKartlar[lightboxMevcutIndex];
             if (!kart) return;
-            const dosyaUrl = kart.dataset.yol;
-            const ozelLink = kart.dataset.link;
-            const id = kart.dataset.id;
-            kopyalaVePaylas(dosyaUrl, ozelLink, platform, id, kart);
+            kopyalaVePaylas(kart.dataset.yol, kart.dataset.link, platform, kart.dataset.id, kart);
         }
 
-        function gorselTiklama(e) {
-            e.stopPropagation();
-            if (currentScale === 1) {
-                const rect = e.target.getBoundingClientRect();
-                const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-                const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-                zoomUygula(1.8, xPercent, yPercent);
-            } else {
-                zoomSifirla();
-            }
+        function kopyalaVePaylasByKart(btn, platform) {
+            const kart = btn.closest('.gorsel-kart');
+            kopyalaVePaylas(kart.dataset.yol, kart.dataset.link, platform, kart.dataset.id, kart);
         }
 
-        function gorselGezdirme(e) {
-            if (currentScale > 1) {
-                const rect = e.target.getBoundingClientRect();
-                const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-                const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-                const gorsel = document.getElementById('lightboxGorsel');
-                gorsel.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-            }
-        }
+        async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id, kartElement) {
+            let shareCount = getSayac(id, 'share_' + platform) + 1;
+            setSayac(id, 'share_' + platform, shareCount);
 
-        function zoomUygula(seviye, originX = 50, originY = 50) {
-            currentScale = seviye;
-            const gorsel = document.getElementById('lightboxGorsel');
-            const infoBar = document.getElementById('lightboxInfoBar');
-            const navPrev = document.getElementById('lbNavPrev');
-            const navNext = document.getElementById('lbNavNext');
-
-            if (gorsel) {
-                gorsel.style.transformOrigin = `${originX}% ${originY}%`;
-                gorsel.style.transform = `scale(${currentScale})`;
-
-                if (currentScale > 1.05) {
-                    gorsel.classList.remove('max-h-full', 'max-w-full', 'cursor-zoom-in');
-                    gorsel.classList.add('max-h-none', 'max-w-none', 'cursor-zoom-out');
-                    
-                    if (infoBar) { infoBar.classList.add('opacity-0', 'pointer-events-none'); }
-                    if (navPrev) { navPrev.classList.add('opacity-0', 'pointer-events-none'); }
-                    if (navNext) { navNext.classList.add('opacity-0', 'pointer-events-none'); }
-                } else {
-                    zoomSifirla();
+            if (kartElement) {
+                const countSpan = kartElement.querySelector(`.count-${platform === 'twitter' ? 'twitter' : platform}`);
+                if (countSpan) {
+                    countSpan.textContent = shareCount > 0 ? shareCount : '';
+                    countSpan.parentElement.style.display = shareCount > 0 ? 'flex' : 'none';
                 }
             }
-        }
 
-        function zoomManual(miktar) {
-            if (currentScale + miktar <= 1) {
-                zoomSifirla();
-            } else {
-                zoomUygula(Math.min(4, currentScale + miktar));
-            }
-        }
-
-        function zoomSifirla() {
-            currentScale = 1;
-            currentX = 0;
-            currentY = 0;
-            const gorsel = document.getElementById('lightboxGorsel');
-            const infoBar = document.getElementById('lightboxInfoBar');
-            const navPrev = document.getElementById('lbNavPrev');
-            const navNext = document.getElementById('lbNavNext');
-
-            if (gorsel) {
-                gorsel.style.transformOrigin = 'center center';
-                gorsel.style.transform = 'scale(1) translate(0px, 0px)';
-                gorsel.classList.add('max-h-full', 'max-w-full', 'cursor-zoom-in');
-                gorsel.classList.remove('max-h-none', 'max-w-none', 'cursor-zoom-out');
+            if (ozelLink && ozelLink.trim() !== '') {
+                try {
+                    await navigator.clipboard.writeText(ozelLink);
+                    showToast('🔗 Bağlantı panoya kopyalandı');
+                } catch (e) {}
             }
 
-            if (infoBar) { infoBar.classList.remove('opacity-0', 'pointer-events-none'); }
-            if (navPrev) { navPrev.classList.remove('opacity-0', 'pointer-events-none'); }
-            if (navNext) { navNext.classList.remove('opacity-0', 'pointer-events-none'); }
+            if (platform === 'facebook' && ozelLink) {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ozelLink)}`, '_blank');
+                return;
+            }
+            if (platform === 'twitter') {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(ozelLink || '')}`, '_blank');
+                return;
+            }
+
+            dosyaIndir(dosyaUrl);
         }
 
-        function mouseWheelZoomBagla() {
-            const viewport = document.getElementById('lightboxViewport');
-            const gorsel = document.getElementById('lightboxGorsel');
-
-            viewport.addEventListener('wheel', (e) => {
-                if (gorsel.classList.contains('hidden')) return;
-                e.preventDefault();
-                
-                const rect = gorsel.getBoundingClientRect();
-                let originX = 50;
-                let originY = 50;
-
-                if (rect.width > 0 && rect.height > 0) {
-                    originX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-                    originY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-                }
-
-                const delta = e.deltaY < 0 ? 0.2 : -0.2;
-                let newScale = currentScale + delta;
-
-                if (newScale <= 1) {
-                    zoomSifirla();
-                } else {
-                    newScale = Math.min(4, newScale);
-                    zoomUygula(newScale, originX, originY);
-                }
-            }, { passive: false });
+        function dosyaIndir(dosyaYolu) {
+            const a = document.createElement('a');
+            a.href = dosyaYolu;
+            a.download = dosyaYolu.split('/').pop() || 'dosya';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
-        function touchOlaylariniBagla() {
-            const viewport = document.getElementById('lightboxViewport');
-            const gorsel = document.getElementById('lightboxGorsel');
+        function dosyaIndirMevcut() {
+            const kart = gorunurKartlar[lightboxMevcutIndex];
+            if (kart && kart.dataset.yol) dosyaIndir(kart.dataset.yol);
+        }
 
-            viewport.addEventListener('touchstart', (e) => {
-                if (e.touches.length === 2) {
-                    initialPinchDist = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
+        function lightboxKapat(e) {
+            if (e.target.id === 'lightboxModal' || e.target.id === 'lightboxViewport') lightboxKapatAjan();
+        }
 
-                    const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                    const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                    const rect = gorsel.getBoundingClientRect();
-
-                    if (rect.width > 0 && rect.height > 0) {
-                        let originX = Math.max(0, Math.min(100, ((midX - rect.left) / rect.width) * 100));
-                        let originY = Math.max(0, Math.min(100, ((midY - rect.top) / rect.height) * 100));
-                        gorsel.style.transformOrigin = `${originX}% ${originY}%`;
-                    }
-                } else if (e.touches.length === 1 && currentScale > 1) {
-                    isDragging = true;
-                    startX = e.touches[0].clientX - currentX;
-                    startY = e.touches[0].clientY - currentY;
-                }
-            }, { passive: true });
-
-            viewport.addEventListener('touchmove', (e) => {
-                if (e.touches.length === 2) {
-                    const dist = Math.hypot(
-                        e.touches[0].clientX - e.touches[1].clientX,
-                        e.touches[0].clientY - e.touches[1].clientY
-                    );
-                    if (initialPinchDist > 0) {
-                        const delta = dist / initialPinchDist;
-                        let newScale = Math.min(Math.max(currentScale * delta, 1), 4);
-                        currentScale = newScale;
-                        initialPinchDist = dist;
-                        zoomUygula(currentScale);
-                    }
-                } else if (e.touches.length === 1 && isDragging && currentScale > 1) {
-                    currentX = e.touches[0].clientX - startX;
-                    currentY = e.touches[0].clientY - startY;
-                    gorsel.style.transform = `scale(${currentScale}) translate(${currentX / currentScale}px, ${currentY / currentScale}px)`;
-                }
-            }, { passive: true });
-
-            viewport.addEventListener('touchend', (e) => {
-                if (e.touches.length < 2) initialPinchDist = 0;
-                if (e.touches.length === 0) isDragging = false;
-            });
+        function lightboxKapatAjan() {
+            const modal = document.getElementById('lightboxModal');
+            const video = document.getElementById('lightboxVideo');
+            if (video) video.pause();
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = 'auto';
         }
 
         function oncekiGorsel(e) {
@@ -816,133 +616,10 @@
             lightboxIcerikGuncelle();
         }
 
-        function lightboxKapat(event) {
-            if (event.target.id === 'lightboxModal' || event.target.id === 'lightboxViewport') {
-                lightboxKapatAjan();
-            }
-        }
-
-        function lightboxKapatAjan() {
-            const modal = document.getElementById('lightboxModal');
-            const video = document.getElementById('lightboxVideo');
-            if (video) video.pause();
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            document.body.style.overflow = 'auto';
-            zoomSifirla();
-        }
-
-        document.addEventListener('keydown', function(e) {
-            const modal = document.getElementById('lightboxModal');
-            if (!modal.classList.contains('hidden')) {
-                if (e.key === 'Escape') lightboxKapatAjan();
-                if (e.key === 'ArrowLeft') oncekiGorsel();
-                if (e.key === 'ArrowRight') sonrakiGorsel();
-            }
-        });
-
-        // İNDİRME VE PAYLAŞIM
-        function dosyaIndir(dosyaYolu) {
-            const a = document.createElement('a');
-            a.href = dosyaYolu;
-            a.download = dosyaYolu.split('/').pop() || 'yesilay_icerik';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        function dosyaIndirMevcut() {
-            const kart = gorunurKartlar[lightboxMevcutIndex];
-            if (kart && kart.dataset.yol) {
-                dosyaIndir(kart.dataset.yol);
-            }
-        }
-
-        function kopyalaVePaylasByKart(btn, platform) {
-            const kart = btn.closest('.gorsel-kart');
-            const dosyaUrl = kart.dataset.yol;
-            const ozelLink = kart.dataset.link;
-            const id = kart.dataset.id;
-            kopyalaVePaylas(dosyaUrl, ozelLink, platform, id, kart);
-        }
-
-        async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id, kartElement) {
-            let shareCount = getSayac(id, 'share_' + platform) + 1;
-            setSayac(id, 'share_' + platform, shareCount);
-
-            if (kartElement) {
-                const countSpan = kartElement.querySelector(`.count-${platform === 'twitter' ? 'twitter' : platform}`);
-                if (countSpan) {
-                    countSpan.textContent = shareCount > 0 ? shareCount : '';
-                    countSpan.parentElement.style.display = shareCount > 0 ? 'flex' : 'none';
-                }
-            }
-
-            try {
-                if (ozelLink && ozelLink.trim() !== '') {
-                    try {
-                        await navigator.clipboard.writeText(ozelLink);
-                        showToast('🔗 Bağlantı panoya kopyalandı');
-                    } catch (e) {
-                        console.log('Panoya kopyalama hatası:', e);
-                    }
-                }
-
-                if (platform === 'facebook') {
-                    if (ozelLink) {
-                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ozelLink)}`, '_blank');
-                    } else {
-                        showToast('⚠️ İçerik bağlantısı bulunamadı.');
-                    }
-                    return;
-                }
-
-                if (platform === 'twitter') {
-                    const metin = ozelLink ? encodeURIComponent(ozelLink) : '';
-                    window.open(`https://twitter.com/intent/tweet?text=${metin}`, '_blank');
-                    return;
-                }
-
-                const ext = dosyaUrl.split('.').pop().toLowerCase();
-                const isVid = ['mp4', 'webm', 'mov', 'mkv', 'avi'].includes(ext);
-                const fileName = isVid ? 'paylasim.' + ext : 'paylasim.png';
-                const mimeType = isVid ? 'video/' + (ext === 'mov' ? 'quicktime' : ext) : 'image/png';
-
-                if (isVid) {
-                    if (navigator.canShare) {
-                        try {
-                            const response = await fetch(dosyaUrl);
-                            const blob = await response.blob();
-                            const file = new File([blob], fileName, { type: mimeType });
-                            if (navigator.canShare({ files: [file] })) {
-                                await navigator.share({ files: [file] });
-                                return;
-                            }
-                        } catch (e) {}
-                    }
-                    dosyaIndir(dosyaUrl);
-                    showToast('📥 Video indirildi.');
-                    return;
-                }
-
-                if (navigator.canShare) {
-                    try {
-                        const response = await fetch(dosyaUrl);
-                        const blob = await response.blob();
-                        const file = new File([blob], fileName, { type: mimeType });
-                        if (navigator.canShare({ files: [file] })) {
-                            await navigator.share({ files: [file] });
-                            return;
-                        }
-                    } catch(e) {}
-                }
-
-                dosyaIndir(dosyaUrl);
-                showToast('📥 Görsel cihazınıza indirildi.');
-            } catch (err) {
-                console.error("Hata:", err);
-            }
-        }
+        function zoomSifirla() {}
+        function zoomManual() {}
+        function gorselTiklama() {}
+        function gorselGezdirme() {}
     </script>
 </body>
 </html>
