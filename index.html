@@ -5,66 +5,272 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yeşilay Hatay - Medya Galerisi</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f8f9fa; color: #333; padding: 20px; }
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { color: #006a35; margin-bottom: 10px; }
-        
-        .filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; }
-        .filter-btn { background: #fff; border: 1px solid #006a35; color: #006a35; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-        .filter-btn.active, .filter-btn:hover { background: #006a35; color: #fff; }
-        
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.08); transition: transform 0.2s; }
-        .card:hover { transform:Cloudinary'nin sunduğu **Admin API** ve **Search API** tam olarak bu iş içindir. Görsellerinizi Cloudinary panelinde tek tek düzenlemek yerine, bir Node.js veya Python betiği (script) yazarak birkaç saniye içinde tüm klasör yapınızı otomatik olarak kategoriye dönüştürebilir ve toplu etiketleme yapabilirsiniz.
+        :root {
+            --primary-color: #006a35;
+            --primary-hover: #004d26;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+        }
 
-İhtiyacınıza yönelik en pratik çözüm yolları ve kullanabileceğiniz hazır otomasyon kodları şunlardır:
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
----
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
 
-### 1. Klasör Adlarını Otomatik "Category" Yapma ve Etiket Ekleme (Node.js)
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
 
-Cloudinary’deki klasör yolunu (`folder`) okuyup bunu bir `context` parametresi (örneğin `category`) olarak atayan ve aynı zamanda toplu etiket (`tags`) ekleyen örnek betik:
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
 
-```javascript
-const cloudinary = require('cloudinary').v2;
+        p.subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
 
-cloudinary.config({
-  cloud_name: 'yesilay-hatay',
-  api_key: 'API_KEY',
-  api_secret: 'API_SECRET'
-});
+        .filters-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
 
-async function autoCategorizeAndTag() {
-  try {
-    // 1. Belirtilen ana klasör altındaki tüm görselleri listele
-    const result = await cloudinary.api.resources({
-      type: 'upload',
-      prefix: 'urunler/', // Görsellerinizin bulunduğu ana klasör veya boş bırakın ''
-      max_results: 500
-    });
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
 
-    for (const asset of result.resources) {
-      // Klasör yolunu parçala (Örn: "urunler/ayakkabi/foto.jpg" -> "ayakkabi")
-      const pathParts = asset.public_id.split('/');
-      
-      if (pathParts.length > 1) {
-        const categoryName = pathParts[pathParts.length - 2]; // Bir üst klasör adı
-        
-        // Klasör adını kategori (context) olarak ata ve etiketleri ekle
-        await cloudinary.uploader.explicit(asset.public_id, {
-          type: 'upload',
-          context: `category=${categoryName}|status=active`,
-          tags: [categoryName, 'toplu_yukleme', '2026_katalog'] // İlettiğiniz etiketler
-        });
+        .filter-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
 
-        console.log(`Güncellendi: ${asset.public_id} -> Kategori: ${categoryName}`);
-      }
-    }
-    console.log('Tüm görseller başarıyla kategorize edildi ve etiketlendi.');
-  } catch (error) {
-    console.error('Hata:', error);
-  }
-}
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary-color);
+            color: #ffffff;
+        }
 
-autoCategorizeAndTag();
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .media-container {
+            width: 100%;
+            height: 220px;
+            background-color: #e9ecef;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .media-container img, .media-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-badge {
+            align-self: flex-start;
+            background-color: #e6f0eb;
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .tag-item {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            background: #f0f3f6;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .loading-text, .error-text {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .error-text {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Yeşilay Hatay Şubesi</h1>
+        <p class="subtitle">Etkinlik ve Çalışma Medya Galerisi</p>
+    </header>
+
+    <div class="filters-container">
+        <div class="filter-group" id="categoryFilters">
+            <button class="filter-btn active" onclick="filtrele('hepsi')">Tümü</button>
+        </div>
+    </div>
+
+    <main class="gallery-grid" id="galleryGrid">
+        <div class="loading-text">Görseller yükleniyor, lütfen bekleyin...</div>
+    </main>
+
+    <script>
+        const CLOUD_NAME = "yesilay-hatay";
+        const TAG_NAME = "yesilay_galeri";
+
+        let tumMedyaVerileri = [];
+
+        async function cloudinaryVerileriniCek() {
+            const galleryGrid = document.getElementById("galleryGrid");
+            const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG_NAME}.json`;
+
+            try {
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Bağlantı Başarısız! Cloudinary Security ayarlarından 'Resource list' iznini açtığınızdan emin olun.`);
+                }
+
+                const data = await response.json();
+                
+                tumMedyaVerileri = data.resources.map(item => {
+                    const pathParts = item.public_id.split('/');
+                    const kategori = pathParts.length > 1 ? pathParts[0].toUpperCase() : "GENEL";
+                    const isVideo = item.format === 'mp4' || item.resource_type === 'video';
+
+                    return {
+                        url: `https://res.cloudinary.com/${CLOUD_NAME}/${isVideo ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`,
+                        kategori: kategori,
+                        isVideo: isVideo,
+                        publicId: item.public_id
+                    };
+                });
+
+                kategoriFiltreleriniOlustur();
+                galeriyiEkranaBas(tumMedyaVerileri);
+
+            } catch (error) {
+                console.error("Hata:", error);
+                galleryGrid.innerHTML = `
+                    <div class="error-text">
+                        <p><strong>Görseller Yüklenemedi!</strong></p>
+                        <p style="font-size: 0.9rem; margin-top: 8px;">Lütfen Cloudinary panelinde <strong>Settings > Security > Resource list</strong> seçeneğindeki işareti kaldırdığınızdan ve görsellerinize <code>${TAG_NAME}</code> etiketini eklediğinizden emin olun.</p>
+                    </div>`;
+            }
+        }
+
+        function kategoriFiltreleriniOlustur() {
+            const categoryFiltersContainer = document.getElementById("categoryFilters");
+            const kategoriler = ["hepsi", ...new Set(tumMedyaVerileri.map(item => item.kategori))];
+
+            categoryFiltersContainer.innerHTML = kategoriler.map(kat => `
+                <button class="filter-btn ${kat === 'hepsi' ? 'active' : ''}" onclick="filtrele('${kat}', this)">
+                    ${kat === 'hepsi' ? 'Tümü' : kat}
+                </button>
+            `).join('');
+        }
+
+        function galeriyiEkranaBas(liste) {
+            const galleryGrid = document.getElementById("galleryGrid");
+
+            if (liste.length === 0) {
+                galleryGrid.innerHTML = `<div class="loading-text">Bu kategoride içerik bulunamadı.</div>`;
+                return;
+            }
+
+            galleryGrid.innerHTML = liste.map(item => `
+                <div class="card">
+                    <div class="media-container">
+                        ${item.isVideo 
+                            ? `<video src="${item.url}" controls preload="metadata"></video>` 
+                            : `<img src="${item.url}" alt="${item.kategori}" loading="lazy">`
+                        }
+                    </div>
+                    <div class="card-body">
+                        <span class="category-badge">${item.kategori}</span>
+                        <div class="tags-list">
+                            <span class="tag-item">#${item.kategori.toLowerCase()}</span>
+                            <span class="tag-item">#yesilay</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filtrele(kategori, btn = null) {
+            if (btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            if (kategori === 'hepsi') {
+                galeriyiEkranaBas(tumMedyaVerileri);
+            } else {
+                const filtrelenmis = tumMedyaVerileri.filter(item => item.kategori === kategori);
+                galeriyiEkranaBas(filtrelenmis);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", cloudinaryVerileriniCek);
+    </script>
+</body>
+</html>
