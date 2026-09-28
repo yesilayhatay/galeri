@@ -9,6 +9,8 @@
     <title>Dijital Medya Galerisi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- EXIF OKUYUCU KÜTÜPHANE (Windows Açıklama Linkleri İçin) -->
+    <script src="https://cdn.jsdelivr.net/npm/exifr/dist/full.umd.js"></script>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between">
 
@@ -35,7 +37,7 @@
                 </div>
             </div>
 
-            <!-- SABİT 16 ETİKET FİLTRESİ -->
+            <!-- SABİT ETİKET FİLTRESİ -->
             <div class="mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele (Konu Etiketleri)</div>
                 <div class="flex flex-wrap justify-center gap-1.5">
@@ -139,15 +141,6 @@
         const TAG_NAME = "yesilay-hatay";
         const SAYFA_BASI_GORSEL = 20;
 
-        // GÖRSELLERİN PAYLAŞIM LİNKLERİ HARİTASI
-        // Cloudinary Public ID'si veya dosya adının bir parçası ile eşleşen yönlendirme linklerini buraya yazabilirsiniz.
-        const LINK_HARITASI = {
-            // "dosya_adi_veya_public_id": "https://www.yesilay.org.tr/...",
-            // Örnek:
-            // "yedam_poster": "https://www.yedam.org.tr",
-            // "tutun_afis": "https://www.yesilay.org.tr/tr/bagimliliklar/tutun-bagimliligi"
-        };
-
         const SABIT_ETIKETLER = {
             'Tütün': ['tutun', 'tütün', 'sigara', 'nikotin', 'nargile', 'puf', 'vape', 'duman'],
             'Alkol': ['alkol', 'icki', 'içki', 'bira', 'sarap', 'şarap', 'raki', 'rakı', 'kadeh'],
@@ -206,15 +199,6 @@
             return bulunanlar.length > 0 ? bulunanlar.slice(0, 3) : ['Yayın'];
         }
 
-        function ozelLinkBul(publicId) {
-            for (const [key, link] of Object.entries(LINK_HARITASI)) {
-                if (publicId.toLowerCase().includes(key.toLowerCase())) {
-                    return link;
-                }
-            }
-            return '';
-        }
-
         async function cloudinaryVerileriniCek() {
             const grid = document.getElementById("galeriGrid");
             const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${TAG_NAME}.json`;
@@ -228,31 +212,28 @@
 
                 tumVeriler = data.resources.map((item, idx) => {
                     const pathParts = item.public_id.split('/');
-                    
                     let kat = "GENEL";
                     if (pathParts.length > 1) {
                         kat = pathParts[0].toUpperCase();
                     } else {
-                        // Dosya adından otomatik kategori türetme
                         const etiketler = otomatıkEtiketCikar(item.public_id);
-                        if (etiketler.length > 0) {
-                            kat = etiketler[0].toUpperCase();
-                        }
+                        if (etiketler.length > 0) kat = etiketler[0].toUpperCase();
                     }
                     kategorilerSet.add(kat);
 
                     const ext = item.format ? item.format.toLowerCase() : '';
                     const isVid = ['mp4', 'webm', 'mov', 'mkv', 'avi'].includes(ext) || item.resource_type === 'video';
-                    const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`;
                     
+                    // EXIF verilerinin silinmemesi için fl_keep_iptc,fl_keep_exif parametresi eklendi
+                    const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/fl_keep_iptc,fl_keep_exif/v${item.version}/${item.public_id}.${item.format}`;
                     const etiketler = otomatıkEtiketCikar(item.public_id + " " + kat);
-                    const ozellink = ozelLinkBul(item.public_id);
 
                     return {
                         idx: idx,
+                        public_id: item.public_id,
                         yol: mediaUrl,
                         kategori: kat,
-                        link: ozellink,
+                        link: '',
                         etiketler: etiketler,
                         is_video: isVid
                     };
@@ -260,6 +241,9 @@
 
                 kategoriButonlariniCiz(Array.from(kategorilerSet));
                 galeriKartlariniEkranaBas();
+                
+                // Arka planda EXIF/Windows Açıklama linklerini tarama fonksiyonu
+                exifLinkleriniTarat();
 
             } catch (err) {
                 console.error(err);
@@ -269,6 +253,46 @@
                         <p class="font-semibold">İçerikler Yüklenemedi!</p>
                         <p class="text-xs mt-1">Cloudinary üzerinde <b>${TAG_NAME}</b> etiketinin kaydedildiğinden emin olun.</p>
                     </div>`;
+            }
+        }
+
+        // Görsellerin EXIF başlığından Windows Açıklama linklerini otomatik tarar
+        async function exifLinkleriniTarat() {
+            for (let item of tumVeriler) {
+                if (item.is_video) continue;
+                try {
+                    const exifData = await exifr.parse(item.yol, ['XPComment', 'UserComment', 'ImageDescription', 'iptc']);
+                    if (exifData) {
+                        let hamMetin = exifData.XPComment || exifData.UserComment || exifData.ImageDescription || '';
+                        if (typeof hamMetin === 'string' && hamMetin.trim().length > 0) {
+                            let okunanLink = hamMetin.trim();
+                            if (!okunanLink.startsWith('http://') && !okunanLink.startsWith('https://')) {
+                                if (okunanLink.includes('www.') || okunanLink.includes('.')) {
+                                    okunanLink = 'https://' + okunanLink;
+                                }
+                            }
+                            
+                            item.link = okunanLink;
+                            
+                            // İlgili görsel kartının arayüzünü günceller
+                            const kart = document.querySelector(`.gorsel-kart[data-idx="${item.idx}"]`);
+                            if (kart) {
+                                kart.dataset.link = okunanLink;
+                                const linkAlani = kart.querySelector('.link-container');
+                                if (linkAlani) {
+                                    linkAlani.innerHTML = `
+                                        <i class="fa-solid fa-link text-blue-500 shrink-0"></i>
+                                        <a href="${okunanLink}" target="_blank" class="hover:underline font-mono truncate block w-full text-blue-600 font-medium" title="${okunanLink}">
+                                            ${okunanLink}
+                                        </a>`;
+                                    linkAlani.className = "text-xs mb-4 bg-blue-50 p-2 rounded-lg border border-blue-100 flex items-center gap-1.5 overflow-hidden";
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.log("EXIF okunamadı:", item.public_id);
+                }
             }
         }
 
@@ -334,31 +358,23 @@
                                 `).join('')}
                             </div>
 
-                            ${item.link ? `
-                                <div class="text-xs text-blue-600 mb-4 bg-blue-50 p-2 rounded-lg border border-blue-100 flex items-center gap-1.5 overflow-hidden">
-                                    <i class="fa-solid fa-link text-blue-500 shrink-0"></i>
-                                    <a href="${item.link}" target="_blank" class="hover:underline font-mono truncate block w-full" title="${item.link}">
-                                        ${item.link}
-                                    </a>
-                                </div>
-                            ` : `
-                                <div class="text-xs text-slate-400 italic mb-4 bg-slate-50 p-2 rounded border border-slate-100 truncate">
-                                    ⚠️ Bağlantı bulunmuyor
-                                </div>
-                            `}
+                            <div class="link-container text-xs text-slate-400 italic mb-4 bg-slate-50 p-2 rounded border border-slate-100 truncate flex items-center gap-1.5">
+                                <i class="fa-solid fa-spinner fa-spin text-emerald-600 shrink-0"></i>
+                                <span>Bağlantı taranıyor...</span>
+                            </div>
                         </div>
 
                         <div class="pt-3 border-t border-slate-100 grid grid-cols-5 gap-1">
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp')" title="WhatsApp'ta Paylaş" class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 text-lg flex items-center justify-center transition">
+                            <button onclick="kopyalaVePaylasByKart(this, 'whatsapp')" title="WhatsApp'ta Paylaş" class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 text-lg flex items-center justify-center transition">
                                 <i class="fa-brands fa-whatsapp"></i>
                             </button>
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'facebook')" title="Facebook'ta Paylaş" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50 text-lg flex items-center justify-center transition">
+                            <button onclick="kopyalaVePaylasByKart(this, 'facebook')" title="Facebook'ta Paylaş" class="p-2 rounded-lg text-blue-600 hover:bg-blue-50 text-lg flex items-center justify-center transition">
                                 <i class="fa-brands fa-facebook-f"></i>
                             </button>
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'instagram')" title="Instagram'da Paylaş" class="p-2 rounded-lg text-pink-600 hover:bg-pink-50 text-lg flex items-center justify-center transition">
+                            <button onclick="kopyalaVePaylasByKart(this, 'instagram')" title="Instagram'da Paylaş" class="p-2 rounded-lg text-pink-600 hover:bg-pink-50 text-lg flex items-center justify-center transition">
                                 <i class="fa-brands fa-instagram"></i>
                             </button>
-                            <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'twitter')" title="X (Twitter)'da Paylaş" class="p-2 rounded-lg text-slate-900 hover:bg-slate-100 text-lg flex items-center justify-center transition">
+                            <button onclick="kopyalaVePaylasByKart(this, 'twitter')" title="X (Twitter)'da Paylaş" class="p-2 rounded-lg text-slate-900 hover:bg-slate-100 text-lg flex items-center justify-center transition">
                                 <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                             </button>
                             <button onclick="dosyaIndir('${item.yol}')" title="Cihaza İndir" class="p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 text-lg flex items-center justify-center transition">
@@ -552,7 +568,7 @@
             if (link && link.trim() !== '') {
                 linkContainer.innerHTML = `<i class="fa-solid fa-link mr-1"></i><a href="${link}" target="_blank" class="hover:underline" title="${link}">${link}</a>`;
             } else {
-                linkContainer.innerHTML = `<span class="text-slate-400 italic">⚠️ İçerikte bağlantı yok.</span>`;
+                linkContainer.innerHTML = `<span class="text-slate-400 italic">⚠️ İçerikte bağlantı bulunmuyor</span>`;
             }
 
             document.getElementById('lbWaBtn').onclick = () => kopyalaVePaylas(yol, link, 'whatsapp');
@@ -579,7 +595,7 @@
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
                 const gorsel = document.getElementById('lightboxGorsel');
-                gorsel.style.transformOrigin = `${xPercent}% ${originY}%`;
+                gorsel.style.transformOrigin = `${xPercent}% ${yPercent}%`;
             }
         }
 
@@ -772,6 +788,13 @@
             if (kart && kart.dataset.yol) {
                 dosyaIndir(kart.dataset.yol);
             }
+        }
+
+        function kopyalaVePaylasByKart(btn, platform) {
+            const kart = btn.closest('.gorsel-kart');
+            const dosyaUrl = kart.dataset.yol;
+            const ozelLink = kart.dataset.link;
+            kopyalaVePaylas(dosyaUrl, ozelLink, platform);
         }
 
         async function kopyalaVePaylas(dosyaUrl, ozelLink, platform) {
