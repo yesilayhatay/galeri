@@ -226,43 +226,52 @@
             }
         }
 
+        // Tek bir kartın sayaçlarını güncelleyen optimize fonksiyon
+        async function kartSayaciniGuncelle(kart) {
+            if (!kart) return;
+            const id = kart.dataset.id;
+            const waSpan = kart.querySelector('.count-whatsapp');
+            const igSpan = kart.querySelector('.count-instagram');
+            const fbSpan = kart.querySelector('.count-facebook');
+            const twSpan = kart.querySelector('.count-twitter');
+            const heartSpan = kart.querySelector('.count-heart');
+            const dlSpan = kart.querySelector('.count-download');
+            const heartIcon = kart.querySelector('.icon-heart');
+
+            const [wa, ig, fb, tw, heart, dl] = await Promise.all([
+                sayacGetirAPI(id, 'whatsapp'),
+                sayacGetirAPI(id, 'instagram'),
+                sayacGetirAPI(id, 'facebook'),
+                sayacGetirAPI(id, 'twitter'),
+                sayacGetirAPI(id, 'heart'),
+                sayacGetirAPI(id, 'download')
+            ]);
+
+            if (waSpan) waSpan.textContent = wa > 0 ? wa : '';
+            if (igSpan) igSpan.textContent = ig > 0 ? ig : '';
+            if (fbSpan) fbSpan.textContent = fb > 0 ? fb : '';
+            if (twSpan) twSpan.textContent = tw > 0 ? tw : '';
+            if (dlSpan) dlSpan.textContent = dl > 0 ? dl : '';
+            
+            if (heartSpan) {
+                heartSpan.textContent = heart > 0 ? heart : '';
+            }
+            if (heartIcon) {
+                if (heart > 0) {
+                    heartIcon.className = "icon-heart fa-solid fa-heart text-rose-500 text-sm";
+                } else {
+                    heartIcon.className = "icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-sm";
+                }
+            }
+        }
+
+        // Tüm görünür kartların sayaçlarını API yüklenmesini rahatlatarak sırayla güncelle
         async function sayaclariGuncelleDOM() {
             const kartlar = document.querySelectorAll('.gorsel-kart');
             for (const kart of kartlar) {
-                const id = kart.dataset.id;
-                const waSpan = kart.querySelector('.count-whatsapp');
-                const igSpan = kart.querySelector('.count-instagram');
-                const fbSpan = kart.querySelector('.count-facebook');
-                const twSpan = kart.querySelector('.count-twitter');
-                const heartSpan = kart.querySelector('.count-heart');
-                const dlSpan = kart.querySelector('.count-download');
-                const heartIcon = kart.querySelector('.icon-heart');
-
-                const [wa, ig, fb, tw, heart, dl] = await Promise.all([
-                    sayacGetirAPI(id, 'whatsapp'),
-                    sayacGetirAPI(id, 'instagram'),
-                    sayacGetirAPI(id, 'facebook'),
-                    sayacGetirAPI(id, 'twitter'),
-                    sayacGetirAPI(id, 'heart'),
-                    sayacGetirAPI(id, 'download')
-                ]);
-
-                if (waSpan) waSpan.textContent = wa > 0 ? wa : '';
-                if (igSpan) igSpan.textContent = ig > 0 ? ig : '';
-                if (fbSpan) fbSpan.textContent = fb > 0 ? fb : '';
-                if (twSpan) twSpan.textContent = tw > 0 ? tw : '';
-                if (dlSpan) dlSpan.textContent = dl > 0 ? dl : '';
-                
-                if (heartSpan) {
-                    heartSpan.textContent = heart > 0 ? heart : '';
-                }
-                if (heartIcon) {
-                    if (heart > 0) {
-                        heartIcon.className = "icon-heart fa-solid fa-heart text-rose-500 text-sm";
-                    } else {
-                        heartIcon.className = "icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-sm";
-                    }
-                }
+                if (kart.style.display === 'none') continue;
+                await kartSayaciniGuncelle(kart);
+                await new Promise(r => setTimeout(r, 50)); // API rate-limit koruması
             }
         }
 
@@ -676,7 +685,7 @@
             heartBtn.innerHTML = `<i class="${lbHeartIconClass}"></i>`;
             heartBtn.onclick = async () => {
                 await sayacArtirAPI(id, 'heart');
-                await sayaclariGuncelleDOM();
+                await kartSayaciniGuncelle(kart);
                 await lightboxIcerikGuncelle();
                 showToast('❤️ İçerik beğenildi!');
             };
@@ -688,7 +697,7 @@
                 const rect = e.target.getBoundingClientRect();
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
-                zoomUygula(1.3, xPercent, yPercent); // Azaltılmış tıklama zoom oranı
+                zoomUygula(1.3, xPercent, yPercent);
             } else {
                 zoomSifirla();
             }
@@ -774,7 +783,7 @@
                     originY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
                 }
 
-                const delta = e.deltaY < 0 ? 0.1 : -0.1; // Hassaslaştırılmış zoom adımı
+                const delta = e.deltaY < 0 ? 0.1 : -0.1;
                 let newScale = currentScale + delta;
 
                 if (newScale <= 1) {
@@ -881,14 +890,16 @@
         async function kalpTikla(event, id) {
             event.stopPropagation();
             await sayacArtirAPI(id, 'heart');
-            await sayaclariGuncelleDOM();
+            const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
+            if (kart) await kartSayaciniGuncelle(kart);
             showToast('❤️ İçerik beğenildi!');
         }
 
         async function dosyaIndirKartTikla(event, dosyaYolu, id) {
             event.stopPropagation();
             await sayacArtirAPI(id, 'download');
-            await sayaclariGuncelleDOM();
+            const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
+            if (kart) await kartSayaciniGuncelle(kart);
             dosyaIndir(dosyaYolu);
         }
 
@@ -929,7 +940,7 @@
             const kart = gorunurKartlar[lightboxMevcutIndex];
             if (kart && kart.dataset.yol) {
                 await sayacArtirAPI(kart.dataset.id, 'download');
-                await sayaclariGuncelleDOM();
+                await kartSayaciniGuncelle(kart);
                 dosyaIndir(kart.dataset.yol);
             }
         }
@@ -937,7 +948,8 @@
         async function kopyalaVePaylas(dosyaUrl, ozelLink, platform, id) {
             try {
                 await sayacArtirAPI(id, platform);
-                await sayaclariGuncelleDOM();
+                const kart = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
+                if (kart) await kartSayaciniGuncelle(kart);
 
                 if (ozelLink && ozelLink.trim() !== '') {
                     try {
