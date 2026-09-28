@@ -383,7 +383,7 @@
                     const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
 
                     const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
-                    const ozellink = ozgunLinkBul(item.public_id, aramaMetinHavuzu);
+                    const ozellink = ozgunLinkBul(item, aramaMetinHavuzu);
                     const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                     return {
@@ -625,7 +625,7 @@
                             const aramaMetinHavuzu = `${temizPublicId} ${item.public_id} ${cloudinaryTags} ${kat}`.toLowerCase();
 
                             const etiketler = otomatıkEtiketCikar(aramaMetinHavuzu);
-                            const ozellink = ozgunLinkBul(item.public_id, aramaMetinHavuzu);
+                            const ozellink = ozgunLinkBul(item, aramaMetinHavuzu);
                             const uniqueId = item.public_id.replace(/[^a-zA-Z0-9]/g, '_');
 
                             return {
