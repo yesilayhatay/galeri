@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yeşilay Hatay Şubesi - Dijital Medya Galerisi</title>
+  <style>
+    :root { --primary: #008752; --bg: #f4f6f8; --card-bg: #ffffff; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #333; }
+    header { text-align: center; margin-bottom: 30px; }
+    header h1 { color: var(--primary); margin-bottom: 5px; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+    .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; display: flex; flex-direction: column; }
+    .card:hover { transform: translateY(-4px); }
+    .card img { width: 100%; height: 220px; object-fit: cover; }
+    .card-body { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+    .card-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 8px; }
+    .card-desc { font-size: 0.9rem; color: #666; margin-bottom: 12px; flex-grow: 1; }
+    .link-box { background: #eef7f2; border: 1px dashed var(--primary); padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; word-break: break-all; margin-bottom: 10px; color: var(--primary); }
+    .btn-copy { background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; transition: background 0.2s; }
+    .btn-copy:hover { background: #006b40; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; display: none; z-index: 1000; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Yeşilay Hatay Şubesi</h1>
+    <p>Dijital Medya Arşivi & Afiş Galerisi</p>
+  </header>
+
+  <div class="gallery" id="gallery">
+    <!-- Görseller Cloudinary API ile buraya dinamik dolacak -->
+  </div>
+
+  <div id="toast" class="toast">🔗 Bağlantı panoya kopyalandı!</div>
+
+  <script>
+    const CLOUD_NAME = 'yxfloyya';
+    const API_KEY = '357192655923719';
+
+    async function loadGallery() {
+      const galleryEl = document.getElementById('gallery');
+      try {
+        // Cloudinary Medya Listesi API İsteği
+        const response = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/v1727500000.json`);
+        
+        if (!response.ok) {
+          galleryEl.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Görseller yüklenirken bir erişim izni hatası oluştu. Lütfen Cloudinary Security > Resource list ayarını kontrol edin.</p>';
+          return;
+        }
+
+        const data = await response.json();
+        galleryEl.innerHTML = '';
+
+        data.resources.forEach(img => {
+          const imgUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${img.public_id}.${img.format}`;
+          // EXIF/Açıklama alanına yazılan metin veya varsayılan isim
+          const description = img.context?.custom?.caption || img.public_id;
+          
+          // Metin içinde web linki arama regex'i
+          const urlMatch = description.match(/(https?:\/\/[^\s]+)/g);
+          const detectedLink = urlMatch ? urlMatch[0] : imgUrl;
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${imgUrl}" alt="${img.public_id}" loading="lazy">
+            <div class="card-body">
+              <div class="card-title">${img.public_id}</div>
+              <div class="card-desc">${description}</div>
+              <div class="link-box">🔗 ${detectedLink}</div>
+              <button class="btn-copy" onclick="copyToClipboard('${detectedLink}')">Bağlantıyı Kopyala & Paylaş</button>
+            </div>
+          `;
+          galleryEl.appendChild(card);
+        });
+      } catch (err) {
+        galleryEl.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Henüz yüklenmiş görsel bulunamadı veya arayüz hazırlanıyor.</p>';
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2500);
+      });
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
