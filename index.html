@@ -47,7 +47,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
-                    <input type="text" id="aramaKutusu" oninput="aramaYap(this.value)" placeholder="Cloudinary içeriklerinde ara (OCR, etiket, kelime...)" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
+                    <input type="text" id="aramaKutusu" oninput="aramaYap(this.value)" placeholder="Anahtar sözcük ile ara" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
                 </div>
             </div>
 
@@ -656,7 +656,7 @@
                 }
             }
 
-            html += `<button onclick="sayfaDegistir(${mevcutSayfa + 1})" ${mevcutSayfa === toplamSayfa ? 'disabled class="opacity-40 cursor-not-allowed bg-white text-slate-400 px-3 py-1.5 rounded-lg border text-xs"' : 'class="bg-white hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg border text-xs font-semibold"'}>Sonraki</button>`;
+            html += `<button onclick="sayfaDegistir(${mevcutSayfa + 1})" ${mevcutSayfa === toplamSayfa ? 'disabled class="opacity-40 cursor-not-allowed bg-white text-slate-400 px-3 py-1.5 rounded-lg border text-xs"' : 'class="bg-white hover:bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-lg border text-xs font-semibold"'}>Sonraki</button>`;
 
             container.innerHTML = html;
         }
@@ -685,10 +685,15 @@
             const tumKonularBtn = document.querySelector('.tag-btn');
             if (tumKonularBtn) tumKonularBtn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
 
-            if (aramaMetni !== '') {
-                aramaYap(aramaMetni);
-            } else {
+            const aramaInput = document.getElementById('aramaKutusu');
+
+            if (kat === 'hepsi') {
+                if (aramaInput) aramaInput.value = '';
+                aramaMetni = '';
                 filtreleVeSayfala();
+            } else {
+                if (aramaInput) aramaInput.value = kat;
+                aramaYap(kat);
             }
         }
 
@@ -700,7 +705,7 @@
             document.querySelectorAll('.tag-btn').forEach(b => {
                 b.className = "tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-3 py-1 rounded-md text-xs font-medium transition border border-slate-200";
             });
-            btn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
+            if (btn) btn.className = "tag-btn bg-slate-800 text-white px-3 py-1 rounded-md text-xs font-medium transition";
 
             document.querySelectorAll('.kat-btn').forEach(b => {
                 b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
@@ -708,10 +713,15 @@
             const tumKatBtn = document.querySelector('.kat-btn');
             if (tumKatBtn) tumKatBtn.className = "kat-btn bg-emerald-700 text-white px-4 py-1.5 rounded-full font-bold text-xs shadow-sm transition";
 
-            if (aramaMetni !== '') {
-                aramaYap(aramaMetni);
-            } else {
+            const aramaInput = document.getElementById('aramaKutusu');
+
+            if (tag === 'hepsi') {
+                if (aramaInput) aramaInput.value = '';
+                aramaMetni = '';
                 filtreleVeSayfala();
+            } else {
+                if (aramaInput) aramaInput.value = tag;
+                aramaYap(tag);
             }
         }
 
@@ -801,7 +811,7 @@
                 const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
                 const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
                 const gorsel = document.getElementById('lightboxGorsel');
-                gorsel.style.transformOrigin = `${xPercent}% ${originY}%`;
+                gorsel.style.transformOrigin = `${xPercent}% ${yPercent}%`;
             }
         }
 
