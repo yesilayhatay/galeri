@@ -99,20 +99,21 @@
     <div>
         <div class="max-w-7xl mx-auto p-2 md:p-8">
             <header class="mb-4">
-                <div class="max-w-xl md:max-w-4xl mx-auto px-2 md:px-0 text-center">
+                <!-- px-1 ile Kartların kenar boşluklarına milimetrik hizalandı -->
+                <div class="max-w-xl md:max-w-4xl mx-auto px-1 md:px-0 text-center">
                     
-                    <div class="flex justify-center mb-1.5 px-2">
+                    <div class="flex justify-center mb-1.5">
                         <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90 w-full md:w-auto">
-                            <!-- Masaüstünde 700px zorlaması eklendi -->
+                            <!-- Masaüstünde 700px, mobilde tam genişlik -->
                             <img src="./banner.png" alt="Yeşilay Hatay Dijital Medya Galerisi" class="w-full md:w-[700px] md:max-w-none object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.onerror=null; this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg';">
                         </a>
                     </div>
                     
                     <p class="text-slate-700 font-semibold mt-2 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
-                    <p class="text-slate-500 mt-1 font-medium text-[0.7rem] px-2 max-w-2xl mx-auto">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
+                    <p class="text-slate-500 mt-1 font-medium text-[0.7rem] max-w-2xl mx-auto">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
                     
                     <!-- CodePen Referanslı Neon Uygulama Yükleme Butonu -->
-                    <div id="installContainer" class="hidden mt-5 flex justify-center px-4 md:px-0">
+                    <div id="installContainer" class="hidden mt-5 flex justify-center">
                         <div class="glowing-wrapper max-w-sm">
                             <button onclick="uygulamaYukle()" class="btn-glow px-6 py-3 font-bold text-[11px] md:text-xs transition flex items-center justify-center gap-2.5 w-full md:w-auto">
                                 <i class="fa-solid fa-mobile-screen-button icon-pulse text-sm"></i> Telefonuna Uygulama Olarak Yükle
@@ -130,8 +131,8 @@
                 </div>
             </header>
 
-            <!-- Kategoriler - Sabit Açık -->
-            <div class="mb-3 px-2 md:px-0 text-center">
+            <!-- Kategoriler - Sabit Açık ve Hizalı (px-1) -->
+            <div class="mb-3 px-1 md:px-0 text-center">
                 <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Kategoriler</div>
                 <div id="kategoriContainer" class="flex flex-wrap justify-center gap-1.5">
                     <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition">
@@ -140,10 +141,14 @@
                 </div>
             </div>
 
-            <!-- Konu Filtreleri - Mobil Akordeon -->
-            <div class="mb-5 bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-4 md:mx-1 overflow-hidden">
-                <button onclick="toggleAccordion('konuContent', 'konuIcon')" class="w-full md:cursor-default flex md:block items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0 md:mb-2 md:text-center focus:outline-none p-2.5 md:p-0 bg-slate-50 md:bg-transparent">
-                    <span class="md:w-full md:text-center block">Konuya Göre Filtrele</span>
+            <!-- Konu Filtreleri - Kartlarla aynı boşluk hizalaması için mx-1 kullanıldı -->
+            <div class="mb-5 bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-1 md:mx-1 overflow-hidden">
+                <!-- Arama kutusu ile ikon hizasını milimetrik eşitleyen buton tasarımı -->
+                <button onclick="toggleAccordion('konuContent', 'konuIcon')" class="relative w-full md:cursor-default flex md:block items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0 md:mb-2 md:text-center focus:outline-none py-2.5 pr-4 pl-10 md:p-0 bg-slate-50 md:bg-transparent">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 md:hidden">
+                        <i class="fa-solid fa-filter text-[13px]"></i>
+                    </span>
+                    <span class="md:w-full md:text-center block text-left">Konuya Göre Filtrele</span>
                     <i id="konuIcon" class="fa-solid fa-chevron-down text-slate-400 md:hidden transition-transform"></i>
                 </button>
                 <div id="konuContent" class="hidden md:flex flex-wrap justify-center gap-1 p-2 md:p-0 border-t border-slate-100 md:border-none">
@@ -167,6 +172,7 @@
                 </div>
             </div>
 
+            <!-- Kartların bulunduğu Grid ve px-1 -->
             <div id="galeriGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 px-1">
                 <div class="col-span-full text-center py-12 text-slate-500 font-semibold">
                     <i class="fa-solid fa-spinner fa-spin text-3xl text-emerald-700 mb-3 block"></i>
@@ -323,9 +329,9 @@
             }
         }
 
-        // Konu Akordeon Aç/Kapat Mantığı (Sadece mobilde Konular için kullanılır)
+        // Konu Akordeon Aç/Kapat Mantığı (Sadece mobilde Konular için)
         function toggleAccordion(contentId, iconId) {
-            if (window.innerWidth >= 768) return; // Masaüstünde işlem yapma
+            if (window.innerWidth >= 768) return; 
             const content = document.getElementById(contentId);
             const icon = document.getElementById(iconId);
             
@@ -359,7 +365,6 @@
             'etkinlik': 'https://www.instagram.com/yesilayhatay'
         };
 
-        // Genç arama kriteri genişletildi
         const SABIT_ETIKETLER = {
             'Tütün': ['tutun', 'tütün', 'sigara', 'nikotin', 'nargile', 'puf', 'vape', 'duman'],
             'Alkol': ['alkol', 'icki', 'içki', 'bira', 'sarap', 'şarap', 'raki', 'rakı', 'kadeh'],
@@ -531,7 +536,7 @@
                     };
                 });
                 
-                // Yalnızca açılışta rastgele karıştırır. Sonrasında düzenli kalır.
+                // Yalnızca açılışta rastgele karıştırır.
                 tumVeriler = diziyiKaristir(tumVeriler);
                 
                 kategoriButonlariniCiz(Array.from(kategorilerSet));
@@ -578,7 +583,6 @@
         function galeriKartlariniCiz() {
             const grid = document.getElementById('galeriGrid');
             if (gorunurVeriler.length === 0) {
-                // İstendiği gibi içerik bulunamadı mesajı ve uyarı
                 grid.innerHTML = `
                     <div class="col-span-full text-center py-12 flex flex-col items-center justify-center px-4">
                         <div class="text-slate-500 font-semibold mb-2">Aradığınız kriterlere uygun içerik bulunamadı.</div>
@@ -611,7 +615,6 @@
                                     ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] px-2 py-1.5 rounded-lg border border-emerald-100 font-medium flex items-center justify-center leading-none">#${e}</span>`).join('')}
                                 </div>
                                 
-                                <!-- Kutusuz Temiz İndir / Link İkonları -->
                                 <div class="flex items-center gap-2 shrink-0">
                                     <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="İndir" class="text-slate-500 hover:text-emerald-700 transition flex items-center justify-center h-full">
                                         <i class="fa-solid fa-download text-[14px] md:text-base"></i>
@@ -674,7 +677,6 @@
 
         document.addEventListener('DOMContentLoaded', () => { cloudinaryVerileriniCek(); touchOlaylariniBagla(); mouseWheelZoomBagla(); });
 
-        // Arama Kutusundan Tetiklenen Anahtar Temizleyici Arama Fonksiyonu
         function aramaKutusuTetiklendi(deger) {
             if (deger.trim() !== '') {
                 aktifKategori = 'hepsi';
@@ -695,7 +697,6 @@
 
         function aramaYap(deger) {
             let islenenArama = deger.toLowerCase().trim();
-            // "gençlik" aramalarını "genç" kelimesine dönüştür
             if (islenenArama.includes('gençlik')) islenenArama = islenenArama.replace(/gençlik/g, 'genç');
             if (islenenArama.includes('genclik')) islenenArama = islenenArama.replace(/genclik/g, 'genc');
             
