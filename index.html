@@ -14,8 +14,9 @@
     
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico">
-    <link rel="icon" type="image/png" href="./favicon.png">
-    <link rel="apple-touch-icon" href="./favicon.png">
+    <!-- PWA ikonlarında app.png kullanımı -->
+    <link rel="icon" type="image/png" href="./app.png">
+    <link rel="apple-touch-icon" href="./app.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -39,6 +40,34 @@
                 max-height: 70vh;
             }
         }
+        
+        /* Dönen Işıklı Buton CSS Animasyonu */
+        @keyframes spin-slow {
+            100% { transform: rotate(360deg); }
+        }
+        .glowing-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 9999px;
+            padding: 2px;
+            display: inline-flex;
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            .glowing-wrapper {
+                width: auto;
+            }
+        }
+        .glowing-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 90deg at 50% 50%, transparent 0%, #10b981 50%, transparent 100%);
+            animation: spin-slow 3s linear infinite;
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden">
@@ -46,19 +75,24 @@
     <div>
         <div class="max-w-7xl mx-auto p-2 md:p-8">
             <header class="mb-4 text-center">
-                <div class="flex justify-center mb-1.5">
-                    <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90">
-                        <img src="./logo.png" alt="Yeşilay Hatay Dijital Medya Galerisi" class="h-16 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.onerror=null; this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg';">
+                <!-- Banner: Mobilde arama kutusu ile aynı genişlikte (max-w-xl w-full), Masaüstünde kendi boyutunda -->
+                <div class="flex justify-center mb-1.5 px-2">
+                    <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90 w-full max-w-xl md:w-auto">
+                        <img src="./banner.png" alt="Yeşilay Hatay Dijital Medya Galerisi" class="w-full md:w-auto md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.onerror=null; this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg';">
                     </a>
                 </div>
-                <p class="text-slate-700 font-semibold mt-1 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
-                <p class="text-slate-500 mt-1 max-w-2xl mx-auto font-medium text-[0.7rem]">Paylaşılmak istenen medyanın hedef linki cihazınıza otomatik olarak kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
                 
-                <!-- Akıllı Uygulama Yükleme Butonu (Sadece tarayıcıda açıldığında görünür) -->
-                <div id="installContainer" class="hidden mt-4 flex justify-center">
-                    <button onclick="uygulamaYukle()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-full font-semibold text-[11px] shadow-md transition flex items-center gap-2">
-                        <i class="fa-solid fa-mobile-screen-button"></i> Telefonuna Uygulama Olarak Yükle
-                    </button>
+                <p class="text-slate-700 font-semibold mt-2 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
+                <!-- Revize Edilmiş Metin -->
+                <p class="text-slate-500 mt-1 max-w-2xl mx-auto font-medium text-[0.7rem] px-2">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenir.</p>
+                
+                <!-- Işıklı Akıllı Uygulama Yükleme Butonu -->
+                <div id="installContainer" class="hidden mt-4 flex justify-center px-4 md:px-0">
+                    <div class="glowing-wrapper">
+                        <button onclick="uygulamaYukle()" class="relative z-10 w-full bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-full font-bold text-xs shadow-md transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-mobile-screen-button"></i> Telefonuna Uygulama Olarak Yükle
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -71,18 +105,26 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 text-center">Kategoriler</div>
-                <div class="flex flex-wrap justify-center gap-1.5" id="kategoriContainer">
+            <!-- Kategoriler - Mobil Akordeon -->
+            <div class="mb-3 px-2 md:px-0">
+                <button onclick="toggleAccordion('kategoriContent', 'kategoriIcon')" class="w-full md:cursor-default flex md:block items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 md:text-center focus:outline-none bg-white md:bg-transparent p-2 md:p-0 rounded-lg shadow-sm md:shadow-none border border-slate-200 md:border-none">
+                    <span class="md:w-full md:text-center block">Kategoriler</span>
+                    <i id="kategoriIcon" class="fa-solid fa-chevron-down text-slate-400 md:hidden transition-transform"></i>
+                </button>
+                <div id="kategoriContent" class="hidden md:flex flex-wrap justify-center gap-1.5 transition-all duration-300">
                     <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition">
                         TÜM KATEGORİLER
                     </button>
                 </div>
             </div>
 
-            <div class="mb-5 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 mx-1">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele</div>
-                <div class="flex flex-wrap justify-center gap-1">
+            <!-- Konu Filtreleri - Mobil Akordeon -->
+            <div class="mb-5 bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-2 md:mx-1 overflow-hidden">
+                <button onclick="toggleAccordion('konuContent', 'konuIcon')" class="w-full md:cursor-default flex md:block items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0 md:mb-2 md:text-center focus:outline-none p-2.5 md:p-0 bg-slate-50 md:bg-transparent">
+                    <span class="md:w-full md:text-center block">Konuya Göre Filtrele</span>
+                    <i id="konuIcon" class="fa-solid fa-chevron-down text-slate-400 md:hidden transition-transform"></i>
+                </button>
+                <div id="konuContent" class="hidden md:flex flex-wrap justify-center gap-1 p-2 md:p-0 border-t border-slate-100 md:border-none">
                     <button onclick="etiketFiltrele('hepsi', this)" class="tag-btn bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Tüm Konular</button>
                     <button onclick="etiketFiltrele('Tütün', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Tütün</button>
                     <button onclick="etiketFiltrele('Alkol', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Alkol</button>
@@ -119,7 +161,7 @@
         <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından Gemini ile hazırlanmıştır.
     </footer>
 
-    <!-- iPhone (iOS) Kurulum Yönergesi Modalı -->
+    <!-- iPhone Yükleme Modalı -->
     <div id="iosInstallModal" class="fixed inset-0 bg-slate-950/80 z-[60] hidden flex-col justify-end sm:justify-center items-center p-4 backdrop-blur-md transition-all duration-300" onclick="this.classList.add('hidden')">
         <div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center shadow-2xl mb-4 sm:mb-0 relative" onclick="event.stopPropagation()">
             <button onclick="document.getElementById('iosInstallModal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl transition"><i class="fa-solid fa-xmark"></i></button>
@@ -147,6 +189,7 @@
         </div>
     </div>
 
+    <!-- Lightbox (Büyük Görsel Gösterici) -->
     <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex-col justify-between p-2 md:p-4 backdrop-blur-md select-none overflow-hidden" onclick="lightboxKapat(event)">
         <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0 transition-opacity duration-300 mt-2">
             <div class="flex gap-1.5 bg-slate-900/80 p-1 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
@@ -186,6 +229,7 @@
         </div>
     </div>
 
+    <!-- Firebase -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
@@ -211,43 +255,42 @@
         window.fbIncrement = increment;
     </script>
 
-    <!-- PWA Kurulum Butonu Mantığı -->
+    <!-- PWA Kaydı -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => {
+                    console.log('SW kayıt hatası:', err);
+                });
+            });
+        }
+    </script>
+
+    <!-- PWA Yükleme Butonu Mantığı -->
     <script>
         let deferredPrompt;
-
-        // Sayfa yüklendiğinde iOS Kontrolü ve Buton Gösterimi
         window.addEventListener('load', () => {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            // Uygulama zaten yüklenmiş ve o şekilde mi açılmış kontrol et
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             
             const ic = document.getElementById('installContainer');
             if (isIOS && !isStandalone && ic) {
-                ic.classList.remove('hidden'); // iPhone ise ve uygulama değilse butonu göster
-            }
-            
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js').catch(err => {
-                    console.log('Service Worker kayıt başarısız:', err);
-                });
+                ic.classList.remove('hidden');
             }
         });
 
-        // Android'de kurulabilir olduğu tespit edilince
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             const ic = document.getElementById('installContainer');
-            if(ic) ic.classList.remove('hidden'); // Butonu göster
+            if(ic) ic.classList.remove('hidden'); 
         });
 
         function uygulamaYukle() {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             if (isIOS) {
-                // iPhone ise özel yönerge penceresini aç
                 document.getElementById('iosInstallModal').classList.remove('hidden');
             } else if (deferredPrompt) {
-                // Android ise yerleşik yükleme penceresini tetikle
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
@@ -257,8 +300,26 @@
                 });
             }
         }
+
+        // Akordeon Aç/Kapat Mantığı (Mobil için)
+        function toggleAccordion(contentId, iconId) {
+            if (window.innerWidth >= 768) return; // Masaüstünde işlem yapma
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                content.classList.add('flex');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                content.classList.remove('flex');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
     </script>
 
+    <!-- Ana İşlevsellik -->
     <script>
         const CLOUD_NAME = "yesilay-hatay";
         const TAG_NAME = "yesilay-hatay";
@@ -346,15 +407,19 @@
         async function kartSayaciniGuncelle(kart) {
             if (!kart) return;
             const id = kart.dataset.id;
-            const [wa, ig, fb, tw, heart, dl] = await Promise.all([
+            
+            // Link sayacı da eklendi
+            const [wa, ig, fb, tw, heart, dl, linkCount] = await Promise.all([
                 sayacGetirAPI(id, 'whatsapp'), sayacGetirAPI(id, 'instagram'),
                 sayacGetirAPI(id, 'facebook'), sayacGetirAPI(id, 'twitter'),
-                sayacGetirAPI(id, 'heart'), sayacGetirAPI(id, 'download')
+                sayacGetirAPI(id, 'heart'), sayacGetirAPI(id, 'download'), sayacGetirAPI(id, 'link')
             ]);
-            ['whatsapp','instagram','facebook','twitter','download'].forEach((p, i) => {
+            
+            ['whatsapp','instagram','facebook','twitter','download','link'].forEach((p, i) => {
                 const s = kart.querySelector(`.count-${p}`);
                 if(s) s.textContent = arguments[1][i] > 0 ? arguments[1][i] : '';
-            }, null, [wa, ig, fb, tw, dl]);
+            }, null, [wa, ig, fb, tw, dl, linkCount]);
+            
             const heartSpan = kart.querySelector('.count-heart');
             const heartIcon = kart.querySelector('.icon-heart');
             if (heartSpan) heartSpan.textContent = heart > 0 ? heart : '';
@@ -458,6 +523,15 @@
             sayfalamaButonlariCiz(toplamSayfa);
         }
 
+        // Link Tıklama Sayıcı Fonksiyonu Eklendi
+        function linkTikla(e, id, url) {
+            e.stopPropagation();
+            sayacArtirAPI(id, 'link');
+            const k = document.querySelector(`.gorsel-kart[data-id="${id}"]`);
+            if (k) { const s = k.querySelector('.count-link'); if (s) s.textContent = (parseInt(s.textContent) || 0) + 1; }
+            window.open(url, '_blank');
+        }
+
         function galeriKartlariniCiz() {
             const grid = document.getElementById('galeriGrid');
             if (gorunurVeriler.length === 0) {
@@ -471,7 +545,8 @@
             grid.innerHTML = sayfadakiVeriler.map(item => `
                 <div class="gorsel-kart bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg border border-slate-200" data-id="${item.id}" data-yol="${item.yol}">
                     
-                    <div class="relative bg-slate-900/5 h-56 sm:h-64 md:h-72 flex items-center justify-center cursor-pointer group overflow-hidden" onclick="lightboxAcById('${item.id}')">
+                    <!-- Kart Boyutları Düzenlendi: h-48 mobil, md:h-80 masaüstü -->
+                    <div class="relative bg-slate-900/5 h-48 sm:h-64 md:h-80 flex items-center justify-center cursor-pointer group overflow-hidden" onclick="lightboxAcById('${item.id}')">
                         ${item.is_video ? `
                             <video src="${item.yol}" class="w-full h-full object-cover rounded-t-xl" preload="metadata"></video>
                             <div class="absolute inset-0 flex items-center justify-center"><span class="bg-slate-900/70 text-white w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-lg group-hover:scale-110 transition"><i class="fa-solid fa-play ml-0.5"></i></span></div>
@@ -482,18 +557,29 @@
 
                     <div class="p-2 md:p-3 flex-1 flex flex-col justify-between bg-white">
                         <div>
-                            <div class="flex justify-between items-start mb-2.5 gap-2 min-h-[24px]">
-                                <div class="flex flex-wrap gap-1">
+                            <!-- İndir ve Link Butonları Etiketlerle Aynı Satırda, Eşit Yükseklikte -->
+                            <div class="flex justify-between items-start mb-2.5 gap-2 min-h-[28px]">
+                                <div class="flex flex-wrap gap-1 items-center">
                                     ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] px-1.5 py-0.5 rounded border border-emerald-100 font-medium">#${e}</span>`).join('')}
                                 </div>
-                                ${item.link ? `
-                                    <a href="${item.link}" target="_blank" title="Bağlantıya Git" class="text-blue-500 hover:text-blue-700 bg-blue-50 p-1.5 rounded-lg border border-blue-100 flex-shrink-0 transition flex items-center justify-center shadow-sm" onclick="event.stopPropagation()">
-                                        <i class="fa-solid fa-link text-[11px] md:text-[13px]"></i>
-                                    </a>
-                                ` : ``}
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <!-- İndir Butonu Buraya Alındı -->
+                                    <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="İndir" class="text-slate-500 hover:text-emerald-700 bg-slate-50 p-1.5 rounded-lg border border-slate-200 transition flex items-center justify-center shadow-sm">
+                                        <i class="fa-solid fa-download text-[11px] md:text-[13px]"></i>
+                                        <span class="font-semibold text-[9px] ml-1 count-download empty:hidden"></span>
+                                    </button>
+                                    <!-- Link Butonu -->
+                                    ${item.link ? `
+                                        <button onclick="linkTikla(event, '${item.id}', '${item.link}')" title="Bağlantıya Git" class="text-blue-500 hover:text-blue-700 bg-blue-50 p-1.5 rounded-lg border border-blue-100 transition flex items-center justify-center shadow-sm">
+                                            <i class="fa-solid fa-link text-[11px] md:text-[13px]"></i>
+                                            <span class="font-semibold text-[9px] ml-1 count-link empty:hidden"></span>
+                                        </button>
+                                    ` : ``}
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Firebase Sayaçlı Sosyal İkonlar Geri Geldi -->
                         <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between w-full px-1">
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp" class="flex items-center gap-1 hover:text-emerald-600 transition">
                                 <i class="fa-brands fa-whatsapp text-emerald-600 text-[14px] md:text-base"></i><span class="font-semibold text-[10px] text-slate-500 count-whatsapp"></span>
@@ -510,9 +596,6 @@
                             </button>
                             <button onclick="kalpTikla(event, '${item.id}')" title="Beğen" class="flex items-center gap-1 transition">
                                 <i class="icon-heart fa-regular fa-heart text-slate-400 hover:text-rose-500 text-[14px] md:text-base"></i><span class="font-semibold text-[10px] text-rose-600 count-heart"></span>
-                            </button>
-                            <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="İndir" class="flex items-center gap-1 hover:text-emerald-700 transition">
-                                <i class="fa-solid fa-download text-slate-600 text-[14px] md:text-base"></i><span class="font-semibold text-[10px] text-slate-500 count-download"></span>
                             </button>
                         </div>
                     </div>
