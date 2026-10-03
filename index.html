@@ -51,9 +51,15 @@
                         <img src="./logo.png" alt="Yeşilay Hatay Dijital Medya Galerisi" class="h-16 md:h-24 object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.onerror=null; this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg';">
                     </a>
                 </div>
-                <!-- Başlık kaldırıldı -->
                 <p class="text-slate-700 font-semibold mt-1 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
                 <p class="text-slate-500 mt-1 max-w-2xl mx-auto font-medium text-[0.7rem]">Paylaşılmak istenen medyanın hedef linki cihazınıza otomatik olarak kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
+                
+                <!-- Akıllı Uygulama Yükleme Butonu (Sadece tarayıcıda açıldığında görünür) -->
+                <div id="installContainer" class="hidden mt-4 flex justify-center">
+                    <button onclick="uygulamaYukle()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-full font-semibold text-[11px] shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-mobile-screen-button"></i> Telefonuna Uygulama Olarak Yükle
+                    </button>
+                </div>
             </header>
 
             <div class="mb-3 max-w-xl mx-auto px-2">
@@ -108,11 +114,38 @@
         </div>
     </div>
 
-    <!-- Mobil görünümde Gökhan Maraşlıoğlu satır atlayacak şekilde güncellendi -->
     <footer class="mt-10 bg-emerald-950 text-white text-center py-4 px-4 text-[10px] md:text-xs font-medium border-t border-emerald-900 leading-relaxed">
         Bu sayfa Yeşilay Hatay Şubesi Tanıtım ve Medya Komisyonu B. / <br class="block md:hidden">
         <a href="https://gokhanmaraslioglu.com.tr" target="_blank" rel="noopener noreferrer" class="underline hover:text-emerald-200 transition font-bold">Gökhan Maraşlıoğlu</a> tarafından Gemini ile hazırlanmıştır.
     </footer>
+
+    <!-- iPhone (iOS) Kurulum Yönergesi Modalı -->
+    <div id="iosInstallModal" class="fixed inset-0 bg-slate-950/80 z-[60] hidden flex-col justify-end sm:justify-center items-center p-4 backdrop-blur-md transition-all duration-300" onclick="this.classList.add('hidden')">
+        <div class="bg-white p-6 rounded-3xl w-full max-w-sm text-center shadow-2xl mb-4 sm:mb-0 relative" onclick="event.stopPropagation()">
+            <button onclick="document.getElementById('iosInstallModal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl transition"><i class="fa-solid fa-xmark"></i></button>
+            <div class="bg-slate-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl text-slate-800">
+                <i class="fa-brands fa-apple"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1">iPhone'a Yükle</h3>
+            <p class="text-[11px] text-slate-500 mb-5">Galeriyi uygulama olarak eklemek için şu adımları izleyin:</p>
+            
+            <div class="text-left space-y-4 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-50 text-blue-600 p-2 rounded-lg shrink-0 w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+                    <p class="text-xs text-slate-700 font-medium">1. Alt menüdeki <b>Paylaş</b> ikonuna dokunun.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-100 text-slate-700 p-2 rounded-lg shrink-0 w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-square-plus"></i></div>
+                    <p class="text-xs text-slate-700 font-medium">2. <b>Ana Ekrana Ekle</b> seçeneğini seçin.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-emerald-50 text-emerald-600 p-2 rounded-lg shrink-0 w-8 h-8 flex items-center justify-center"><i class="fa-solid fa-check"></i></div>
+                    <p class="text-xs text-slate-700 font-medium">3. Sağ üst köşedeki <b>Ekle</b> butonuna basın.</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('iosInstallModal').classList.add('hidden')" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl font-bold text-xs transition shadow-sm">Anladım</button>
+        </div>
+    </div>
 
     <div id="lightboxModal" class="fixed inset-0 bg-slate-950/95 z-50 hidden flex-col justify-between p-2 md:p-4 backdrop-blur-md select-none overflow-hidden" onclick="lightboxKapat(event)">
         <div id="lightboxTopBar" class="w-full flex justify-between items-center z-40 max-w-7xl mx-auto shrink-0 transition-opacity duration-300 mt-2">
@@ -178,13 +211,51 @@
         window.fbIncrement = increment;
     </script>
 
+    <!-- PWA Kurulum Butonu Mantığı -->
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
+        let deferredPrompt;
+
+        // Sayfa yüklendiğinde iOS Kontrolü ve Buton Gösterimi
+        window.addEventListener('load', () => {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            // Uygulama zaten yüklenmiş ve o şekilde mi açılmış kontrol et
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            
+            const ic = document.getElementById('installContainer');
+            if (isIOS && !isStandalone && ic) {
+                ic.classList.remove('hidden'); // iPhone ise ve uygulama değilse butonu göster
+            }
+            
+            if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js').catch(err => {
                     console.log('Service Worker kayıt başarısız:', err);
                 });
-            });
+            }
+        });
+
+        // Android'de kurulabilir olduğu tespit edilince
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const ic = document.getElementById('installContainer');
+            if(ic) ic.classList.remove('hidden'); // Butonu göster
+        });
+
+        function uygulamaYukle() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (isIOS) {
+                // iPhone ise özel yönerge penceresini aç
+                document.getElementById('iosInstallModal').classList.remove('hidden');
+            } else if (deferredPrompt) {
+                // Android ise yerleşik yükleme penceresini tetikle
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('installContainer').classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                });
+            }
         }
     </script>
 
@@ -241,7 +312,6 @@
         let startY = 0;
         let initialPinchDist = 0;
 
-        // Dizi karıştırma (shuffle) fonksiyonu
         function diziyiKaristir(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -353,7 +423,6 @@
                     };
                 });
                 
-                // Sayfa ilk yüklendiğinde görselleri rastgele karıştır
                 tumVeriler = diziyiKaristir(tumVeriler);
                 
                 kategoriButonlariniCiz(Array.from(kategorilerSet));
@@ -402,7 +471,6 @@
             grid.innerHTML = sayfadakiVeriler.map(item => `
                 <div class="gorsel-kart bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg border border-slate-200" data-id="${item.id}" data-yol="${item.yol}">
                     
-                    <!-- Kart boyu biraz kısaltıldı ve object-cover ile tam sığdırıldı -->
                     <div class="relative bg-slate-900/5 h-56 sm:h-64 md:h-72 flex items-center justify-center cursor-pointer group overflow-hidden" onclick="lightboxAcById('${item.id}')">
                         ${item.is_video ? `
                             <video src="${item.yol}" class="w-full h-full object-cover rounded-t-xl" preload="metadata"></video>
@@ -414,7 +482,6 @@
 
                     <div class="p-2 md:p-3 flex-1 flex flex-col justify-between bg-white">
                         <div>
-                            <!-- Etiketler ve Link aynı satırda sağa-sola yaslı -->
                             <div class="flex justify-between items-start mb-2.5 gap-2 min-h-[24px]">
                                 <div class="flex flex-wrap gap-1">
                                     ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] px-1.5 py-0.5 rounded border border-emerald-100 font-medium">#${e}</span>`).join('')}
@@ -427,7 +494,6 @@
                             </div>
                         </div>
 
-                        <!-- İkonlar, sayaçlarla beraber ve sağa/sola yayılmış (justify-between) -->
                         <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between w-full px-1">
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp" class="flex items-center gap-1 hover:text-emerald-600 transition">
                                 <i class="fa-brands fa-whatsapp text-emerald-600 text-[14px] md:text-base"></i><span class="font-semibold text-[10px] text-slate-500 count-whatsapp"></span>
@@ -495,7 +561,6 @@
                         return { idx, id: item.public_id.replace(/[^a-zA-Z0-9]/g, '_'), yol: mediaUrl, kategori: kat, link: ozgunLinkBul(item, aramaMetinHavuzu), etiketler: otomatıkEtiketCikar(aramaMetinHavuzu), is_video: isVid, aramaHavuzu: aramaMetinHavuzu };
                     });
                     
-                    // Arama sonuçlarını da karıştır
                     gorunurVeriler = diziyiKaristir(gorunurVeriler);
 
                     if (aktifKategori !== 'hepsi') gorunurVeriler = gorunurVeriler.filter(item => toSlug(item.kategori) === toSlug(aktifKategori));
