@@ -1,26 +1,20 @@
-const CACHE_NAME = 'yesilay-galeri-v1';
-const urlsToCache = [
-  './',
-  './index.html',
-  './favicon.png',
-  './favicon.ico',
-  './logo.png'
-];
+const CACHE_NAME = 'yesilay-galeri-v2';
 
+// Kurulum (Install) aşaması - Beklemeden hemen aktif ol
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
-  );
+    self.skipWaiting();
 });
 
+// Aktivasyon aşaması
+self.addEventListener('activate', event => {
+    event.waitUntil(clients.claim());
+});
+
+// Fetch (Ağ istekleri) aşaması - PWA için zorunludur
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
-      })
-  );
+    event.respondWith(
+        fetch(event.request).catch(() => {
+            return caches.match(event.request);
+        })
+    );
 });
