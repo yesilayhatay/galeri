@@ -2,20 +2,23 @@
   "name": "Yeşilay Medya Galerisi",
   "short_name": "Medya Galerisi",
   "description": "Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.",
-  "start_url": "./index.html",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
   "background_color": "#f1f5f9",
   "theme_color": "#064e3b",
   "icons": [
     {
-      "src": "./favicon.png",
+      "src": "logo.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "./favicon.png",
+      "src": "app.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
