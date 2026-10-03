@@ -40,13 +40,13 @@
             }
         }
         
-        /* CodePen Referanslı Neon Glowing Buton */
+        /* CodePen Referanslı Neon Glowing Buton - İnce ve rounded-xl Ayarlı */
         .btn-glow {
             position: relative;
             z-index: 0;
-            border-radius: 9999px;
+            border-radius: 0.75rem; /* Arama kutusu ile aynı köşe yumuşatması */
             color: #fff;
-            background: #1e293b; /* slate-800 */
+            background: #064e3b; /* Koyu yeşil - emerald-900 */
             border: none;
             outline: none;
             cursor: pointer;
@@ -55,16 +55,16 @@
             content: '';
             background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
             position: absolute;
-            top: -2px;
-            left: -2px;
+            top: -1px; /* Çerçeve inceltildi */
+            left: -1px;
             background-size: 400%;
             z-index: -1;
-            filter: blur(5px);
-            width: calc(100% + 4px);
-            height: calc(100% + 4px);
+            filter: blur(4px);
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
             animation: glowing 20s linear infinite;
-            opacity: 1; /* Sürekli açık */
-            border-radius: 9999px;
+            opacity: 1; 
+            border-radius: 0.75rem;
         }
         .btn-glow:after {
             z-index: -1;
@@ -72,10 +72,10 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: #1e293b; /* Ana buton rengi maskesi */
+            background: #064e3b; /* Ana buton rengi maskesi */
             left: 0;
             top: 0;
-            border-radius: 9999px;
+            border-radius: 0.75rem;
         }
         @keyframes glowing {
             0% { background-position: 0 0; }
@@ -83,13 +83,13 @@
             100% { background-position: 0 0; }
         }
 
-        /* Telefon İkonu Büyüyüp Küçülme (Pulse) Efekti */
+        /* Telefon İkonu Çok Yavaş (Pulse) Efekti */
         @keyframes pulse-icon {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3); }
+            50% { transform: scale(1.15); } /* Eskisine göre daha nazik büyüyor */
         }
         .icon-pulse {
-            animation: pulse-icon 1.5s ease-in-out infinite;
+            animation: pulse-icon 3s ease-in-out infinite; /* Animasyon çok daha yavaş (3 saniye) */
             display: inline-block;
         }
     </style>
@@ -106,7 +106,8 @@
                 </div>
                 
                 <p class="text-slate-700 font-semibold mt-2 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
-                <p class="text-slate-500 mt-1 max-w-2xl mx-auto font-medium text-[0.7rem] px-2">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenir.</p>
+                <!-- Revize Edilmiş Metin (eklenebilir) -->
+                <p class="text-slate-500 mt-1 max-w-2xl mx-auto font-medium text-[0.7rem] px-2">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
                 
                 <!-- CodePen Referanslı Neon Uygulama Yükleme Butonu -->
                 <div id="installContainer" class="hidden mt-5 flex justify-center px-4 md:px-0">
@@ -125,7 +126,7 @@
                 </div>
             </div>
 
-            <!-- Kategoriler - Sabit Açık (Akordeon İptal) -->
+            <!-- Kategoriler - Sabit Açık -->
             <div class="mb-3 px-2 md:px-0">
                 <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 text-center">Kategoriler</div>
                 <div id="kategoriContainer" class="flex flex-wrap justify-center gap-1.5">
@@ -135,10 +136,13 @@
                 </div>
             </div>
 
-            <!-- Konu Filtreleri - Sabit Açık (Akordeon İptal) -->
-            <div class="mb-5 bg-white p-2 md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-2 md:mx-1">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 text-center">Konuya Göre Filtrele</div>
-                <div class="flex flex-wrap justify-center gap-1">
+            <!-- Konu Filtreleri - Mobil Akordeon -->
+            <div class="mb-5 bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-2 md:mx-1 overflow-hidden">
+                <button onclick="toggleAccordion('konuContent', 'konuIcon')" class="w-full md:cursor-default flex md:block items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0 md:mb-2 md:text-center focus:outline-none p-2.5 md:p-0 bg-slate-50 md:bg-transparent">
+                    <span class="md:w-full md:text-center block">Konuya Göre Filtrele</span>
+                    <i id="konuIcon" class="fa-solid fa-chevron-down text-slate-400 md:hidden transition-transform"></i>
+                </button>
+                <div id="konuContent" class="hidden md:flex flex-wrap justify-center gap-1 p-2 md:p-0 border-t border-slate-100 md:border-none">
                     <button onclick="etiketFiltrele('hepsi', this)" class="tag-btn bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Tüm Konular</button>
                     <button onclick="etiketFiltrele('Tütün', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Tütün</button>
                     <button onclick="etiketFiltrele('Alkol', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Alkol</button>
@@ -314,6 +318,23 @@
                 });
             }
         }
+
+        // Konu Akordeon Aç/Kapat Mantığı (Sadece mobilde Konular için kullanılır)
+        function toggleAccordion(contentId, iconId) {
+            if (window.innerWidth >= 768) return; // Masaüstünde işlem yapma
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                content.classList.add('flex');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                content.classList.remove('flex');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
     </script>
 
     <!-- Ana İşlevsellik -->
@@ -370,14 +391,6 @@
         let startY = 0;
         let initialPinchDist = 0;
 
-        function diziyiKaristir(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
         async function sayacGetirAPI(id, tip) {
             const key = `sayac_${id}_${tip}`.replace(/[^a-zA-Z0-9_]/g, '_');
             try {
@@ -401,7 +414,6 @@
             } catch (err) {}
         }
 
-        // SAYAÇLAR BURADA INDEX 4 ESKİ GÜVENLİ FORMATINA DÖNDÜRÜLDÜ (Döngü hatasından arındırıldı)
         async function kartSayaciniGuncelle(kart) {
             if (!kart) return;
             const id = kart.dataset.id;
@@ -506,8 +518,6 @@
                     };
                 });
                 
-                tumVeriler = diziyiKaristir(tumVeriler);
-                
                 kategoriButonlariniCiz(Array.from(kategorilerSet));
                 filtreleVeSayfala();
             } catch (err) {
@@ -552,7 +562,12 @@
         function galeriKartlariniCiz() {
             const grid = document.getElementById('galeriGrid');
             if (gorunurVeriler.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-semibold">Aradığınız kriterlere uygun içerik bulunamadı.</div>`;
+                // İstendiği gibi içerik bulunamadı mesajı ve Tıkla uyarısı
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 flex flex-col items-center justify-center">
+                        <div class="text-slate-500 font-semibold mb-2">Aradığınız kriterlere uygun içerik bulunamadı.</div>
+                        <div class="text-[11px] md:text-xs text-slate-400 font-medium">Seçili kategoride ilgili konu olmayabilir, <b class="font-bold text-slate-700">Tüm Kategorileri</b> aktif ederek başka bir konu seçin ya da yeni bir arama yapın.</div>
+                    </div>`;
                 document.getElementById('sayfalamaContainer').innerHTML = '';
                 return;
             }
@@ -575,24 +590,23 @@
                         <div>
                             <div class="flex justify-between items-start mb-2.5 gap-2 min-h-[28px]">
                                 <div class="flex flex-wrap gap-1 items-center">
-                                    ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] px-1.5 py-0.5 rounded border border-emerald-100 font-medium">#${e}</span>`).join('')}
+                                    ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] px-2 py-1.5 rounded-lg border border-emerald-100 font-medium flex items-center justify-center leading-none">#${e}</span>`).join('')}
                                 </div>
                                 <div class="flex items-center gap-1.5 shrink-0">
-                                    <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="İndir" class="text-slate-500 hover:text-emerald-700 bg-slate-50 p-1.5 rounded-lg border border-slate-200 transition flex items-center justify-center shadow-sm">
+                                    <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="İndir" class="text-slate-500 hover:text-emerald-700 bg-slate-50 p-1.5 rounded-lg border border-slate-200 transition flex items-center justify-center shadow-sm h-full">
                                         <i class="fa-solid fa-download text-[11px] md:text-[13px]"></i>
-                                        <span class="font-semibold text-[9px] ml-1 count-download"></span>
+                                        <span class="font-semibold text-[9px] ml-1 count-download empty:hidden"></span>
                                     </button>
                                     ${item.link ? `
-                                        <button onclick="linkTikla(event, '${item.id}', '${item.link}')" title="Bağlantıya Git" class="text-blue-500 hover:text-blue-700 bg-blue-50 p-1.5 rounded-lg border border-blue-100 transition flex items-center justify-center shadow-sm">
+                                        <button onclick="linkTikla(event, '${item.id}', '${item.link}')" title="Bağlantıya Git" class="text-blue-500 hover:text-blue-700 bg-blue-50 p-1.5 rounded-lg border border-blue-100 transition flex items-center justify-center shadow-sm h-full">
                                             <i class="fa-solid fa-link text-[11px] md:text-[13px]"></i>
-                                            <span class="font-semibold text-[9px] ml-1 count-link"></span>
+                                            <span class="font-semibold text-[9px] ml-1 count-link empty:hidden"></span>
                                         </button>
                                     ` : ``}
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Index 4 Formatında Sayaç Gösterimi -->
                         <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between w-full px-1">
                             <button onclick="kopyalaVePaylas('${item.yol}', '${item.link}', 'whatsapp', '${item.id}')" title="WhatsApp" class="flex items-center gap-1 hover:text-emerald-600 transition">
                                 <i class="fa-brands fa-whatsapp text-emerald-600 text-[14px] md:text-base"></i>
@@ -661,8 +675,6 @@
                         return { idx, id: item.public_id.replace(/[^a-zA-Z0-9]/g, '_'), yol: mediaUrl, kategori: kat, link: ozgunLinkBul(item, aramaMetinHavuzu), etiketler: otomatıkEtiketCikar(aramaMetinHavuzu), is_video: isVid, aramaHavuzu: aramaMetinHavuzu };
                     });
                     
-                    gorunurVeriler = diziyiKaristir(gorunurVeriler);
-
                     if (aktifKategori !== 'hepsi') gorunurVeriler = gorunurVeriler.filter(item => toSlug(item.kategori) === toSlug(aktifKategori));
                     mevcutSayfa = 1;
                     galeriKartlariniCiz();
