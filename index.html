@@ -50,7 +50,7 @@
             border: none;
             outline: none;
             cursor: pointer;
-            height: 100%; /* Yüksekliği eşitlemek için */
+            height: 100%;
             width: 100%;
         }
         .btn-glow:before {
@@ -85,7 +85,7 @@
             100% { background-position: 0 0; }
         }
 
-        /* Telefon İkonu Çok Yavaş (Pulse) Efekti */
+        /* Telefon İkonu Kalp Atışı (Pulse) Efekti */
         @keyframes pulse-icon {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.15); } 
@@ -110,82 +110,82 @@
                         </a>
                     </div>
                     
-                    <div class="md:text-center">
+                    <div class="text-center">
                         <p class="text-slate-700 font-semibold mt-2 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
                         <p class="text-slate-500 mt-1 font-medium text-[0.7rem] max-w-2xl mx-auto">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
                     </div>
 
-                    <!-- Masaüstü Grid Yerleşimi / Mobil Esnek Yerleşim -->
-                    <div class="mt-5 grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                    <!-- Esnek Yönetim Alanı: Kategoriler, Filtre, Arama, Buton -->
+                    <div class="mt-5 flex flex-col md:flex-row md:flex-wrap items-stretch md:items-center gap-y-3 gap-x-4 px-1 md:px-0">
                         
-                        <!-- Sağ Sütunlar (Arama ve Yükleme Butonu) (Mobilde Üstte Görünür) -->
-                        <div class="md:col-span-2 md:col-start-3 flex flex-col sm:flex-row gap-3 w-full">
-                            <!-- CodePen Referanslı Neon Uygulama Yükleme Butonu -->
-                            <div id="installContainer" class="hidden flex-1 h-10 w-full">
+                        <!-- 1. SIRA: KATEGORİLER (Mobil: En Üst, Masaüstü: Sol Yarı) -->
+                        <div class="order-1 w-full md:flex-1 md:w-auto">
+                            <div id="kategoriContainer" class="flex flex-wrap justify-center md:justify-start gap-1.5 md:gap-2">
+                                <button onclick="kategoriFiltrele('TANITIM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0">TANITIM</button>
+                                <button onclick="kategoriFiltrele('DERGİ', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0">DERGİ</button>
+                                <button onclick="kategoriFiltrele('YEDAM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0">YEDAM</button>
+                                <button onclick="kategoriFiltrele('YAYIN', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0">YAYIN</button>
+                                <button onclick="kategoriFiltrele('TBM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0">TBM</button>
+                                <button onclick="kategoriFiltrele('MARKET', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0">MARKET</button>
+                                <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0">TÜMÜ</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. SIRA: KONUYA GÖRE FİLTRELE (Mobil: Ortada Akordeon, Masaüstü: Alta İnen Tam Genişlik) -->
+                        <div class="order-2 md:order-3 w-full bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                            <button onclick="toggleAccordion('konuContent', 'konuIcon')" class="relative w-full md:cursor-default flex md:block items-center justify-between text-[11px] md:text-xs font-bold text-slate-500 uppercase tracking-wider md:mb-2 md:text-center focus:outline-none h-11 md:h-auto py-0 pr-4 pl-10 md:p-0 bg-slate-50 md:bg-transparent transition">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 md:hidden">
+                                    <i class="fa-solid fa-filter text-[13px]"></i>
+                                </span>
+                                <span class="md:w-full md:text-center block text-left">Konuya Göre Filtrele</span>
+                                <i id="konuIcon" class="fa-solid fa-chevron-down text-slate-400 md:hidden transition-transform"></i>
+                            </button>
+                            <div id="konuContent" class="hidden md:flex flex-wrap justify-center gap-1 p-2 md:p-0 border-t border-slate-100 md:border-none">
+                                <button onclick="etiketFiltrele('hepsi', this)" class="tag-btn bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Tüm Konular</button>
+                                <button onclick="etiketFiltrele('Tütün', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Tütün</button>
+                                <button onclick="etiketFiltrele('Alkol', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Alkol</button>
+                                <button onclick="etiketFiltrele('Madde', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Madde</button>
+                                <button onclick="etiketFiltrele('Kumar', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Kumar</button>
+                                <button onclick="etiketFiltrele('Teknoloji', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Teknoloji</button>
+                                <button onclick="etiketFiltrele('Aile', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Aile</button>
+                                <button onclick="etiketFiltrele('Çocuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Çocuk</button>
+                                <button onclick="etiketFiltrele('Gençlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Gençlik</button>
+                                <button onclick="etiketFiltrele('Eğitim', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Eğitim</button>
+                                <button onclick="etiketFiltrele('Etkinlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Etkinlik</button>
+                                <button onclick="etiketFiltrele('Gönüllülük', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Gönüllülük</button>
+                                <button onclick="etiketFiltrele('Savunuculuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Savunuculuk</button>
+                                <button onclick="etiketFiltrele('Sanat', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Sanat</button>
+                                <button onclick="etiketFiltrele('Yayın', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Yayın</button>
+                                <button onclick="etiketFiltrele('YEDAM', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#YEDAM</button>
+                                <button onclick="etiketFiltrele('Market', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Market</button>
+                            </div>
+                        </div>
+
+                        <!-- 3. SIRA: ARAMA & YÜKLEME (Mobil: En Altta Yan Yana, Masaüstü: Sağ Yarıda Yan Yana) -->
+                        <div class="order-3 md:order-2 w-full md:w-auto flex flex-row gap-2 md:gap-3 shrink-0">
+                            
+                            <!-- Arama Kutusu -->
+                            <div class="relative flex-1 md:w-64 h-11 transition-all duration-300">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                                <input type="text" id="aramaKutusu" oninput="aramaKutusuTetiklendi(this.value)" placeholder="Anahtar sözcük ile ara" class="w-full h-full pl-10 pr-4 bg-white border border-slate-200 rounded-xl text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
+                            </div>
+
+                            <!-- Uygulama Olarak Yükle Butonu -->
+                            <div id="installContainer" class="hidden flex-1 md:w-auto h-11 transition-all duration-300">
                                 <div class="glowing-wrapper w-full h-full">
-                                    <button onclick="uygulamaYukle()" class="btn-glow px-4 font-bold text-[11px] md:text-xs transition flex items-center justify-center gap-2">
-                                        <i class="fa-solid fa-mobile-screen-button icon-pulse text-sm"></i> Uygulama Olarak Yükle
+                                    <button onclick="uygulamaYukle()" class="btn-glow px-2 md:px-5 font-bold text-[11px] md:text-sm transition flex items-center justify-center gap-1.5 md:gap-2 leading-tight">
+                                        <i class="fa-solid fa-mobile-screen-button icon-pulse text-sm md:text-base"></i>
+                                        <span class="whitespace-nowrap">Uygulama Olarak Yükle</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Arama Kutusu -->
-                            <div class="relative flex-1 h-10 w-full flex-grow">
-                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-magnifying-glass"></i>
-                                </span>
-                                <input type="text" id="aramaKutusu" oninput="aramaKutusuTetiklendi(this.value)" placeholder="Anahtar sözcük ile ara" class="w-full h-full pl-10 pr-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
-                            </div>
-                        </div>
-
-                        <!-- Sol Sütunlar (Kategoriler) (Mobilde Altta Görünür) -->
-                        <div class="md:col-span-2 md:row-start-1 w-full mt-3 md:mt-0">
-                            <!-- Kategori başlığı kaldırıldı -->
-                            <div id="kategoriContainer" class="flex flex-wrap justify-center md:justify-start gap-1.5">
-                                <button onclick="kategoriFiltrele('TANITIM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">TANITIM</button>
-                                <button onclick="kategoriFiltrele('DERGİ', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">DERGİ</button>
-                                <button onclick="kategoriFiltrele('YEDAM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">YEDAM</button>
-                                <button onclick="kategoriFiltrele('YAYIN', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">YAYIN</button>
-                                <button onclick="kategoriFiltrele('TBM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">TBM</button>
-                                <button onclick="kategoriFiltrele('MARKET', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">MARKET</button>
-                                <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">TÜMÜ</button>
-                            </div>
                         </div>
                     </div>
-
                 </div>
             </header>
-
-            <!-- Konu Filtreleri - Kartlarla aynı boşluk hizalaması için mx-1 kullanıldı -->
-            <div class="mb-5 bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-1 md:mx-0 overflow-hidden">
-                <!-- Arama kutusu ile ikon hizasını milimetrik eşitleyen buton tasarımı -->
-                <button onclick="toggleAccordion('konuContent', 'konuIcon')" class="relative w-full md:cursor-default flex md:block items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0 md:mb-2 md:text-center focus:outline-none py-2.5 pr-4 pl-10 md:p-0 bg-slate-50 md:bg-transparent">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 md:hidden">
-                        <i class="fa-solid fa-filter text-[13px]"></i>
-                    </span>
-                    <span class="md:w-full md:text-center block text-left">Konuya Göre Filtrele</span>
-                    <i id="konuIcon" class="fa-solid fa-chevron-down text-slate-400 md:hidden transition-transform"></i>
-                </button>
-                <div id="konuContent" class="hidden md:flex flex-wrap justify-center gap-1 p-2 md:p-0 border-t border-slate-100 md:border-none">
-                    <button onclick="etiketFiltrele('hepsi', this)" class="tag-btn bg-slate-800 text-white px-2.5 py-1 rounded-md text-[11px] font-medium transition">Tüm Konular</button>
-                    <button onclick="etiketFiltrele('Tütün', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Tütün</button>
-                    <button onclick="etiketFiltrele('Alkol', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Alkol</button>
-                    <button onclick="etiketFiltrele('Madde', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Madde</button>
-                    <button onclick="etiketFiltrele('Kumar', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Kumar</button>
-                    <button onclick="etiketFiltrele('Teknoloji', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Teknoloji</button>
-                    <button onclick="etiketFiltrele('Aile', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Aile</button>
-                    <button onclick="etiketFiltrele('Çocuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Çocuk</button>
-                    <button onclick="etiketFiltrele('Gençlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Gençlik</button>
-                    <button onclick="etiketFiltrele('Eğitim', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Eğitim</button>
-                    <button onclick="etiketFiltrele('Etkinlik', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Etkinlik</button>
-                    <button onclick="etiketFiltrele('Gönüllülük', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Gönüllülük</button>
-                    <button onclick="etiketFiltrele('Savunuculuk', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Savunuculuk</button>
-                    <button onclick="etiketFiltrele('Sanat', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Sanat</button>
-                    <button onclick="etiketFiltrele('Yayın', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Yayın</button>
-                    <button onclick="etiketFiltrele('YEDAM', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#YEDAM</button>
-                    <button onclick="etiketFiltrele('Market', this)" class="tag-btn bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 px-2.5 py-1 rounded-md text-[11px] font-medium transition border border-slate-200">#Market</button>
-                </div>
-            </div>
 
             <!-- Kartların bulunduğu Grid ve px-1 -->
             <div id="galeriGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 px-1 md:px-0">
@@ -195,7 +195,7 @@
                 </div>
             </div>
 
-            <div id="sayfalamaContainer" class="mt-8 flex justify-center items-center gap-2"></div>
+            <div id="sayfalamaContainer" class="mt-8 flex justify-center items-center gap-2 px-1"></div>
         </div>
     </div>
 
@@ -344,7 +344,7 @@
             }
         }
 
-        // Konu Akordeon Aç/Kapat Mantığı (Sadece mobilde Konular için)
+        // Konu Akordeon Aç/Kapat Mantığı (Sadece mobilde)
         function toggleAccordion(contentId, iconId) {
             if (window.innerWidth >= 768) return; 
             const content = document.getElementById(contentId);
@@ -621,7 +621,6 @@
                                     ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] px-2 py-1.5 rounded-lg border border-emerald-100 font-medium flex items-center justify-center leading-none">#${e}</span>`).join('')}
                                 </div>
                                 
-                                <!-- Kutusuz Temiz İndir / Link İkonları -->
                                 <div class="flex items-center gap-2 shrink-0">
                                     <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="İndir" class="text-slate-500 hover:text-emerald-700 transition flex items-center justify-center h-full">
                                         <i class="fa-solid fa-download text-[14px] md:text-base"></i>
@@ -690,8 +689,8 @@
                 aktifEtiket = 'hepsi';
                 
                 document.querySelectorAll('.kat-btn').forEach(b => {
-                    if(b.textContent.trim() === 'TÜMÜ') b.className = "kat-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition";
-                    else b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition";
+                    if(b.textContent.trim() === 'TÜMÜ') b.className = "kat-btn bg-emerald-700 text-white px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0";
+                    else b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0";
                 });
 
                 document.querySelectorAll('.tag-btn').forEach(b => {
@@ -737,7 +736,7 @@
             }, 350);
         }
 
-        // Akıllı Paginasyon (Mobil için 1'den 5'e sınırlandırma)
+        // Akıllı Paginasyon
         function sayfalamaButonlariCiz(toplamSayfa) {
             const container = document.getElementById('sayfalamaContainer');
             if (!container) return;
@@ -779,8 +778,8 @@
 
         function kategoriFiltrele(kat, btn) {
             aktifKategori = kat; mevcutSayfa = 1;
-            document.querySelectorAll('.kat-btn').forEach(b => b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition");
-            btn.className = "kat-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition";
+            document.querySelectorAll('.kat-btn').forEach(b => b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0");
+            btn.className = "kat-btn bg-emerald-700 text-white px-3 md:px-5 rounded-xl font-bold text-[11px] md:text-sm shadow-sm transition h-11 flex items-center justify-center shrink-0";
             const a = document.getElementById('aramaKutusu');
             if (kat === 'hepsi') { if (a) a.value = ''; aramaMetni = ''; filtreleVeSayfala(); }
             else { if (a && a.value.trim() !== '') aramaYap(a.value); else filtreleVeSayfala(); }
