@@ -40,7 +40,7 @@
             }
         }
         
-        /* CodePen Referanslı Neon Glowing Buton - İnce ve rounded-xl Ayarlı */
+        /* Neon Glowing Buton CSS Animasyonu */
         .btn-glow {
             position: relative;
             z-index: 0;
@@ -50,6 +50,8 @@
             border: none;
             outline: none;
             cursor: pointer;
+            height: 100%; /* Yüksekliği eşitlemek için */
+            width: 100%;
         }
         .btn-glow:before {
             content: '';
@@ -99,50 +101,63 @@
     <div>
         <div class="max-w-7xl mx-auto p-2 md:p-8">
             <header class="mb-4">
-                <!-- px-1 ile Kartların kenar boşluklarına milimetrik hizalandı -->
-                <div class="max-w-xl md:max-w-4xl mx-auto px-1 md:px-0 text-center">
+                <div class="max-w-xl md:max-w-none mx-auto px-1 md:px-0 text-center md:text-left">
                     
-                    <div class="flex justify-center mb-1.5">
+                    <div class="flex justify-center md:justify-center mb-1.5">
                         <a href="https://www.instagram.com/yesilayhatay" target="_blank" rel="noopener noreferrer" class="inline-block transition hover:opacity-90 w-full md:w-auto">
                             <!-- Masaüstünde 700px, mobilde tam genişlik -->
                             <img src="./banner.png" alt="Yeşilay Hatay Dijital Medya Galerisi" class="w-full md:w-[700px] md:max-w-none object-contain mx-auto rounded-xl shadow-sm border border-slate-200" onerror="this.onerror=null; this.src='https://res.cloudinary.com/yesilay-hatay/image/upload/v1/yesilay-hatay.jpg';">
                         </a>
                     </div>
                     
-                    <p class="text-slate-700 font-semibold mt-2 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
-                    <p class="text-slate-500 mt-1 font-medium text-[0.7rem] max-w-2xl mx-auto">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
-                    
-                    <!-- CodePen Referanslı Neon Uygulama Yükleme Butonu -->
-                    <div id="installContainer" class="hidden mt-5 flex justify-center">
-                        <div class="glowing-wrapper max-w-sm">
-                            <button onclick="uygulamaYukle()" class="btn-glow px-6 py-3 font-bold text-[11px] md:text-xs transition flex items-center justify-center gap-2.5 w-full md:w-auto">
-                                <i class="fa-solid fa-mobile-screen-button icon-pulse text-sm"></i> Telefonuna Uygulama Olarak Yükle
-                            </button>
+                    <div class="md:text-center">
+                        <p class="text-slate-700 font-semibold mt-2 text-[0.8rem]">Kurumsal içeriklere tek noktadan ulaşın, tek tıkla paylaşın.</p>
+                        <p class="text-slate-500 mt-1 font-medium text-[0.7rem] max-w-2xl mx-auto">Yönlendirilen medyanın hedef linki cihazınıza otomatik kopyalanır ve paylaşılacak uygulamada link olarak kolayca eklenebilir.</p>
+                    </div>
+
+                    <!-- Masaüstü Grid Yerleşimi / Mobil Esnek Yerleşim -->
+                    <div class="mt-5 grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                        
+                        <!-- Sağ Sütunlar (Arama ve Yükleme Butonu) (Mobilde Üstte Görünür) -->
+                        <div class="md:col-span-2 md:col-start-3 flex flex-col sm:flex-row gap-3 w-full">
+                            <!-- CodePen Referanslı Neon Uygulama Yükleme Butonu -->
+                            <div id="installContainer" class="hidden flex-1 h-10 w-full">
+                                <div class="glowing-wrapper w-full h-full">
+                                    <button onclick="uygulamaYukle()" class="btn-glow px-4 font-bold text-[11px] md:text-xs transition flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-mobile-screen-button icon-pulse text-sm"></i> Uygulama Olarak Yükle
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Arama Kutusu -->
+                            <div class="relative flex-1 h-10 w-full flex-grow">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+                                <input type="text" id="aramaKutusu" oninput="aramaKutusuTetiklendi(this.value)" placeholder="Anahtar sözcük ile ara" class="w-full h-full pl-10 pr-4 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
+                            </div>
+                        </div>
+
+                        <!-- Sol Sütunlar (Kategoriler) (Mobilde Altta Görünür) -->
+                        <div class="md:col-span-2 md:row-start-1 w-full mt-3 md:mt-0">
+                            <!-- Kategori başlığı kaldırıldı -->
+                            <div id="kategoriContainer" class="flex flex-wrap justify-center md:justify-start gap-1.5">
+                                <button onclick="kategoriFiltrele('TANITIM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">TANITIM</button>
+                                <button onclick="kategoriFiltrele('DERGİ', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">DERGİ</button>
+                                <button onclick="kategoriFiltrele('YEDAM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">YEDAM</button>
+                                <button onclick="kategoriFiltrele('YAYIN', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">YAYIN</button>
+                                <button onclick="kategoriFiltrele('TBM', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">TBM</button>
+                                <button onclick="kategoriFiltrele('MARKET', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">MARKET</button>
+                                <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition">TÜMÜ</button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Arama Kutusu -->
-                    <div class="mt-4 relative max-w-xl mx-auto">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </span>
-                        <input type="text" id="aramaKutusu" oninput="aramaKutusuTetiklendi(this.value)" placeholder="Anahtar sözcük ile ara" class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 shadow-sm transition">
-                    </div>
                 </div>
             </header>
 
-            <!-- Kategoriler - Sabit Açık ve Hizalı (px-1) -->
-            <div class="mb-3 px-1 md:px-0 text-center">
-                <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Kategoriler</div>
-                <div id="kategoriContainer" class="flex flex-wrap justify-center gap-1.5">
-                    <button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition">
-                        TÜM KATEGORİLER
-                    </button>
-                </div>
-            </div>
-
             <!-- Konu Filtreleri - Kartlarla aynı boşluk hizalaması için mx-1 kullanıldı -->
-            <div class="mb-5 bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-1 md:mx-1 overflow-hidden">
+            <div class="mb-5 bg-white md:p-2.5 rounded-xl shadow-sm border border-slate-200 mx-1 md:mx-0 overflow-hidden">
                 <!-- Arama kutusu ile ikon hizasını milimetrik eşitleyen buton tasarımı -->
                 <button onclick="toggleAccordion('konuContent', 'konuIcon')" class="relative w-full md:cursor-default flex md:block items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-0 md:mb-2 md:text-center focus:outline-none py-2.5 pr-4 pl-10 md:p-0 bg-slate-50 md:bg-transparent">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 md:hidden">
@@ -173,7 +188,7 @@
             </div>
 
             <!-- Kartların bulunduğu Grid ve px-1 -->
-            <div id="galeriGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 px-1">
+            <div id="galeriGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 px-1 md:px-0">
                 <div class="col-span-full text-center py-12 text-slate-500 font-semibold">
                     <i class="fa-solid fa-spinner fa-spin text-3xl text-emerald-700 mb-3 block"></i>
                     Görseller Cloudinary sunucusundan yükleniyor...
@@ -521,11 +536,11 @@
                 const res = await fetch(url);
                 if (!res.ok) throw new Error("Cloudinary erişim hatası");
                 const data = await res.json();
-                const kategorilerSet = new Set();
+                
                 tumVeriler = data.resources.map((item, idx) => {
                     const pathParts = item.public_id.split('/');
                     let kat = pathParts.length > 1 ? pathParts[0].toUpperCase() : (otomatıkEtiketCikar(item.public_id)[0] || "GENEL").toUpperCase();
-                    kategorilerSet.add(kat);
+                    
                     const isVid = ['mp4', 'webm', 'mov', 'mkv', 'avi'].includes(item.format ? item.format.toLowerCase() : '') || item.resource_type === 'video';
                     const mediaUrl = `https://res.cloudinary.com/${CLOUD_NAME}/${isVid ? 'video' : 'image'}/upload/v${item.version}/${item.public_id}.${item.format}`;
                     const aramaMetinHavuzu = `${item.public_id.replace(/[-_\\/]/g, ' ')} ${item.public_id} ${(item.tags || []).join(' ')} ${kat}`.toLowerCase();
@@ -536,21 +551,12 @@
                     };
                 });
                 
-                // Yalnızca açılışta rastgele karıştırır.
                 tumVeriler = diziyiKaristir(tumVeriler);
                 
-                kategoriButonlariniCiz(Array.from(kategorilerSet));
                 filtreleVeSayfala();
             } catch (err) {
                 grid.innerHTML = `<div class="col-span-full bg-amber-50 border border-amber-200 text-amber-800 p-6 rounded-xl text-center my-8"><i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i><p class="font-semibold">İçerikler Yüklenemedi!</p></div>`;
             }
-        }
-
-        function kategoriButonlariniCiz(kategoriler) {
-            const container = document.getElementById('kategoriContainer');
-            let html = `<button onclick="kategoriFiltrele('hepsi', this)" class="kat-btn bg-emerald-700 text-white px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition">TÜM KATEGORİLER</button>`;
-            kategoriler.forEach(kat => html += `<button onclick="kategoriFiltrele('${kat}', this)" class="kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition">${kat}</button>`);
-            container.innerHTML = html;
         }
 
         function filtreleVeSayfala() {
@@ -587,7 +593,7 @@
                     <div class="col-span-full text-center py-12 flex flex-col items-center justify-center px-4">
                         <div class="text-slate-500 font-semibold mb-2">Aradığınız kriterlere uygun içerik bulunamadı.</div>
                         <div class="text-[11px] md:text-xs text-slate-400 font-medium max-w-sm leading-relaxed">
-                            Seçili kategoride ilgili konu olmayabilir, <b class="font-bold text-slate-700">Tüm Kategorileri</b> aktif ederek başka bir konu seçin ya da yeni bir arama yapın.
+                            Seçili kategoride ilgili konu olmayabilir, <b class="font-bold text-slate-700">TÜMÜ</b> sekmesini aktif ederek başka bir konu seçin ya da yeni bir arama yapın.
                         </div>
                     </div>`;
                 document.getElementById('sayfalamaContainer').innerHTML = '';
@@ -615,6 +621,7 @@
                                     ${item.etiketler.map(e => `<span class="bg-emerald-50 text-emerald-700 text-[9px] md:text-[10px] px-2 py-1.5 rounded-lg border border-emerald-100 font-medium flex items-center justify-center leading-none">#${e}</span>`).join('')}
                                 </div>
                                 
+                                <!-- Kutusuz Temiz İndir / Link İkonları -->
                                 <div class="flex items-center gap-2 shrink-0">
                                     <button onclick="dosyaIndirKartTikla(event, '${item.yol}', '${item.id}')" title="İndir" class="text-slate-500 hover:text-emerald-700 transition flex items-center justify-center h-full">
                                         <i class="fa-solid fa-download text-[14px] md:text-base"></i>
@@ -683,8 +690,8 @@
                 aktifEtiket = 'hepsi';
                 
                 document.querySelectorAll('.kat-btn').forEach(b => {
-                    if(b.textContent.trim() === 'TÜM KATEGORİLER') b.className = "kat-btn bg-emerald-700 text-white px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition";
-                    else b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition";
+                    if(b.textContent.trim() === 'TÜMÜ') b.className = "kat-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition";
+                    else b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition";
                 });
 
                 document.querySelectorAll('.tag-btn').forEach(b => {
@@ -772,8 +779,8 @@
 
         function kategoriFiltrele(kat, btn) {
             aktifKategori = kat; mevcutSayfa = 1;
-            document.querySelectorAll('.kat-btn').forEach(b => b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition");
-            btn.className = "kat-btn bg-emerald-700 text-white px-3 py-1 rounded-full font-bold text-[11px] shadow-sm transition";
+            document.querySelectorAll('.kat-btn').forEach(b => b.className = "kat-btn bg-white hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition");
+            btn.className = "kat-btn bg-emerald-700 text-white px-3 py-1.5 rounded-full font-bold text-[11px] shadow-sm transition";
             const a = document.getElementById('aramaKutusu');
             if (kat === 'hepsi') { if (a) a.value = ''; aramaMetni = ''; filtreleVeSayfala(); }
             else { if (a && a.value.trim() !== '') aramaYap(a.value); else filtreleVeSayfala(); }
